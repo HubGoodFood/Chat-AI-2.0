@@ -1,0 +1,15 @@
+services:
+  - type: web
+    name: chat-ai-2-0
+    env: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: python app.py
+    envVars:
+      - key: FLASK_ENV
+        value: production
+      - key: LLM_API_URL
+        value: https://llm.chutes.ai/v1/chat/completions
+      - key: LLM_MODEL
+        value: deepseek-ai/DeepSeek-V3-0324
+      # LLM_API_KEY 需要在Render控制台中手动设置为敏感环境变量
+      # SECRET_KEY 建议在Render控制台中设置一个随机字符串
