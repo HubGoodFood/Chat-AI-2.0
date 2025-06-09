@@ -4,8 +4,8 @@
 import jieba
 import re
 from typing import List, Dict, Any, Tuple
-from data_processor import DataProcessor
-from llm_client import LLMClient
+from .data_processor import DataProcessor
+from .llm_client import LLMClient
 
 
 class KnowledgeRetriever:

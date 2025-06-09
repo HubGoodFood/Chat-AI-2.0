@@ -19,12 +19,12 @@ class DataProcessor:
         """加载产品和政策数据"""
         try:
             # 加载产品数据
-            self.products_df = pd.read_csv('products.csv')
+            self.products_df = pd.read_csv('data/products.csv')
             # 清理列名中的空格
             self.products_df.columns = self.products_df.columns.str.strip()
-            
+
             # 加载政策数据
-            with open('policy.json', 'r', encoding='utf-8') as f:
+            with open('data/policy.json', 'r', encoding='utf-8') as f:
                 self.policy_data = json.load(f)
             
             # 建立关键词索引

@@ -62,8 +62,8 @@ SECRET_KEY=your_random_secret_key
 #### 4. 数据准备
 
 确保以下文件存在：
-- `products.csv` - 产品数据
-- `policy.json` - 政策数据
+- `data/products.csv` - 产品数据
+- `data/policy.json` - 政策数据
 
 #### 5. 启动系统
 
@@ -116,26 +116,45 @@ python app.py
 ## 📁 项目结构
 
 ```
-果蔬客服AI系统/
-├── app.py                 # Flask主应用
-├── data_processor.py      # 数据处理模块
-├── llm_client.py         # LLM客户端
-├── knowledge_retriever.py # 知识检索模块
-├── test_system.py        # 测试脚本
-├── test_api.py           # API测试脚本
-├── start.py              # 启动脚本
-├── requirements.txt      # 依赖包列表
-├── render.yaml           # Render部署配置
-├── .env.example          # 环境变量示例
-├── products.csv          # 产品数据
-├── policy.json           # 政策数据
-├── templates/            # HTML模板
-│   ├── index.html        # 主页面
-│   ├── 404.html          # 404错误页
-│   └── 500.html          # 500错误页
-├── RENDER_DEPLOYMENT.md  # 部署指南
-├── PROJECT_SUMMARY.md    # 项目总结
-└── README.md             # 项目文档
+Chat AI 2.0/
+├── src/                          # 源代码目录
+│   ├── __init__.py
+│   ├── models/                   # 核心业务模块
+│   │   ├── __init__.py
+│   │   ├── knowledge_retriever.py    # 知识检索模块
+│   │   ├── data_processor.py         # 数据处理模块
+│   │   └── llm_client.py            # LLM客户端
+│   └── utils/                    # 工具函数
+│       ├── __init__.py
+│       └── generate_secret_key.py   # 密钥生成工具
+├── tests/                        # 测试文件
+│   ├── __init__.py
+│   ├── test_api.py              # API测试脚本
+│   └── test_system.py           # 系统测试脚本
+├── data/                         # 数据文件
+│   ├── products.csv             # 产品数据
+│   └── policy.json              # 政策数据
+├── docs/                         # 文档目录
+│   ├── PROJECT_SUMMARY.md       # 项目总结
+│   ├── DEPLOYMENT_CHECKLIST.md  # 部署检查清单
+│   ├── GITHUB_SETUP.md          # GitHub设置指南
+│   ├── RENDER_DEPLOYMENT.md     # Render部署指南
+│   ├── render_env_setup_guide.md # 环境设置指南
+│   ├── secret_key_lifecycle_guide.md # 密钥管理指南
+│   └── security_best_practices.md # 安全最佳实践
+├── scripts/                      # 脚本文件
+│   └── upload_to_github.bat     # GitHub上传脚本
+├── templates/                    # HTML模板
+│   ├── index.html               # 主页面
+│   ├── 404.html                 # 404错误页
+│   └── 500.html                 # 500错误页
+├── static/                       # 静态资源
+├── app.py                        # Flask主应用
+├── start.py                      # 启动脚本
+├── requirements.txt              # Python依赖
+├── render.yaml                   # 部署配置
+├── .env.example                  # 环境变量示例
+└── README.md                     # 项目文档
 ```
 
 ## 🧪 测试系统
@@ -143,23 +162,23 @@ python app.py
 ### 运行完整测试
 
 ```bash
-python test_system.py
+python tests/test_system.py
 ```
 
 ### 运行特定测试
 
 ```bash
-python test_system.py data      # 数据加载测试
-python test_system.py product   # 产品搜索测试
-python test_system.py policy    # 政策搜索测试
-python test_system.py ai        # AI回答测试
-python test_system.py performance # 性能测试
+python tests/test_system.py data      # 数据加载测试
+python tests/test_system.py product   # 产品搜索测试
+python tests/test_system.py policy    # 政策搜索测试
+python tests/test_system.py ai        # AI回答测试
+python tests/test_system.py performance # 性能测试
 ```
 
 ### API测试
 
 ```bash
-python test_api.py              # 测试所有API端点
+python tests/test_api.py              # 测试所有API端点
 ```
 
 ## 📊 数据格式
@@ -273,12 +292,12 @@ FLASK_ENV=production
 
 ### 更新产品数据
 
-1. 编辑 `products.csv` 文件
+1. 编辑 `data/products.csv` 文件
 2. 重启系统自动加载新数据
 
 ### 更新政策信息
 
-1. 编辑 `policy.json` 文件
+1. 编辑 `data/policy.json` 文件
 2. 重启系统自动加载新政策
 
 ### 系统升级

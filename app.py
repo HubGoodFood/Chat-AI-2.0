@@ -5,7 +5,7 @@ from flask import Flask, render_template, request, jsonify, session
 import uuid
 import os
 from datetime import datetime
-from knowledge_retriever import KnowledgeRetriever
+from src.models.knowledge_retriever import KnowledgeRetriever
 from dotenv import load_dotenv
 
 # 加载环境变量
