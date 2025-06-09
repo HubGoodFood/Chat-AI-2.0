@@ -481,6 +481,7 @@ cp -r data/ backup/data_$(date +%Y%m%d)/
 - **🎉 项目完成总结**: [docs/FINAL_PROJECT_SUMMARY.md](docs/FINAL_PROJECT_SUMMARY.md)
 - **🚀 部署指南**: [docs/RENDER_DEPLOYMENT.md](docs/RENDER_DEPLOYMENT.md)
 - **🔒 安全最佳实践**: [docs/security_best_practices.md](docs/security_best_practices.md)
+- **📝 项目改进建议**: [docs/PROJECT_IMPROVEMENT_GUIDE.md](docs/PROJECT_IMPROVEMENT_GUIDE.md)
 
 ## 📄 许可证
 
