@@ -32,24 +32,40 @@ AI对话层 (LLM API调用 + 提示词工程)
 
 ## 🚀 快速开始
 
-### 1. 环境要求
+### 本地开发
+
+#### 1. 环境要求
 
 - Python 3.7+
 - 网络连接 (调用LLM API)
 
-### 2. 安装依赖
+#### 2. 安装依赖
 
 ```bash
 pip install -r requirements.txt
 ```
 
-### 3. 数据准备
+#### 3. 环境变量配置
+
+复制 `.env.example` 为 `.env` 并配置：
+
+```bash
+cp .env.example .env
+```
+
+编辑 `.env` 文件，填入您的API密钥：
+```
+LLM_API_KEY=your_deepseek_api_key_here
+SECRET_KEY=your_random_secret_key
+```
+
+#### 4. 数据准备
 
 确保以下文件存在：
 - `products.csv` - 产品数据
 - `policy.json` - 政策数据
 
-### 4. 启动系统
+#### 5. 启动系统
 
 ```bash
 python start.py
@@ -61,9 +77,41 @@ python start.py
 python app.py
 ```
 
-### 5. 访问系统
+#### 6. 访问系统
 
 打开浏览器访问: http://localhost:5000
+
+### 云端部署 (Render)
+
+#### 快速部署到Render云平台
+
+1. **Fork或克隆此仓库**到您的GitHub账户
+
+2. **登录Render控制台**: https://render.com
+
+3. **创建Web Service**:
+   - 点击 "New +" → "Web Service"
+   - 连接您的GitHub仓库
+   - 选择此项目
+
+4. **配置服务**:
+   - **Name**: `chat-ai-2-0`
+   - **Environment**: `Python`
+   - **Build Command**: `pip install -r requirements.txt`
+   - **Start Command**: `python app.py`
+
+5. **设置环境变量**:
+   ```
+   LLM_API_KEY=您的DeepSeek API密钥
+   SECRET_KEY=随机生成的密钥字符串
+   FLASK_ENV=production
+   ```
+
+6. **部署**: 点击 "Create Web Service"，等待部署完成
+
+7. **访问**: 部署成功后获得 `.onrender.com` 域名
+
+📖 **详细部署指南**: 查看 [RENDER_DEPLOYMENT.md](RENDER_DEPLOYMENT.md)
 
 ## 📁 项目结构
 
@@ -74,14 +122,19 @@ python app.py
 ├── llm_client.py         # LLM客户端
 ├── knowledge_retriever.py # 知识检索模块
 ├── test_system.py        # 测试脚本
+├── test_api.py           # API测试脚本
 ├── start.py              # 启动脚本
 ├── requirements.txt      # 依赖包列表
+├── render.yaml           # Render部署配置
+├── .env.example          # 环境变量示例
 ├── products.csv          # 产品数据
 ├── policy.json           # 政策数据
 ├── templates/            # HTML模板
 │   ├── index.html        # 主页面
 │   ├── 404.html          # 404错误页
 │   └── 500.html          # 500错误页
+├── RENDER_DEPLOYMENT.md  # 部署指南
+├── PROJECT_SUMMARY.md    # 项目总结
 └── README.md             # 项目文档
 ```
 
@@ -101,6 +154,12 @@ python test_system.py product   # 产品搜索测试
 python test_system.py policy    # 政策搜索测试
 python test_system.py ai        # AI回答测试
 python test_system.py performance # 性能测试
+```
+
+### API测试
+
+```bash
+python test_api.py              # 测试所有API端点
 ```
 
 ## 📊 数据格式
@@ -136,14 +195,37 @@ python test_system.py performance # 性能测试
 
 ## 🔧 配置说明
 
-### LLM API配置
+### 环境变量配置
 
-在 `llm_client.py` 中配置：
+系统支持通过环境变量进行配置，主要变量包括：
 
-```python
-self.api_url = "https://llm.chutes.ai/v1/chat/completions"
-self.api_key = "your_api_key"
-self.model = "deepseek-ai/DeepSeek-V3-0324"
+| 变量名 | 说明 | 默认值 | 必需 |
+|--------|------|--------|------|
+| `LLM_API_KEY` | DeepSeek API密钥 | - | ✅ |
+| `LLM_API_URL` | API端点地址 | https://llm.chutes.ai/v1/chat/completions | ❌ |
+| `LLM_MODEL` | 模型名称 | deepseek-ai/DeepSeek-V3-0324 | ❌ |
+| `SECRET_KEY` | Flask会话密钥 | 默认密钥 | ✅ |
+| `FLASK_ENV` | Flask环境 | development | ❌ |
+| `PORT` | 服务端口 | 5000 | ❌ |
+
+### 本地开发配置
+
+创建 `.env` 文件：
+
+```bash
+LLM_API_KEY=your_deepseek_api_key
+SECRET_KEY=your_random_secret_key
+FLASK_ENV=development
+```
+
+### 生产环境配置
+
+在Render等云平台中设置环境变量：
+
+```bash
+LLM_API_KEY=your_deepseek_api_key
+SECRET_KEY=your_random_secret_key
+FLASK_ENV=production
 ```
 
 ### 系统提示词
