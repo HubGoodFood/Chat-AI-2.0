@@ -1,0 +1,1439 @@
+{
+  "last_updated": "2025-06-09T02:46:00.427786",
+  "products": {
+    "1": {
+      "product_name": "农场素食散养走地萨松母鸡    ",
+      "category": " 禽类产品     ",
+      "specification": " 只           ",
+      "price": 23.99,
+      "unit": " 只      ",
+      "current_stock": 100,
+      "min_stock_warning": 10,
+      "description": "            ",
+      "image_url": "",
+      "status": "active",
+      "created_at": "2025-06-09T02:34:23.516461",
+      "updated_at": "2025-06-09T02:46:00.427786",
+      "stock_history": [
+        {
+          "action": "初始化",
+          "quantity": 100,
+          "timestamp": "2025-06-09T02:34:23.516461",
+          "operator": "system",
+          "note": "系统初始化库存"
+        },
+        {
+          "action": "增加库存",
+          "quantity": 10,
+          "old_stock": 100,
+          "new_stock": 110,
+          "timestamp": "2025-06-09T02:39:04.557106",
+          "operator": "测试员",
+          "note": "测试增加库存"
+        },
+        {
+          "action": "减少库存",
+          "quantity": -10,
+          "old_stock": 110,
+          "new_stock": 100,
+          "timestamp": "2025-06-09T02:39:04.559783",
+          "operator": "测试员",
+          "note": "恢复原始库存"
+        },
+        {
+          "action": "增加库存",
+          "quantity": 5,
+          "old_stock": 100,
+          "new_stock": 105,
+          "timestamp": "2025-06-09T02:45:29.286296",
+          "operator": "测试员",
+          "note": "集成测试库存调整"
+        },
+        {
+          "action": "减少库存",
+          "quantity": -5,
+          "old_stock": 105,
+          "new_stock": 100,
+          "timestamp": "2025-06-09T02:45:29.290294",
+          "operator": "测试员",
+          "note": "恢复原始库存"
+        },
+        {
+          "action": "增加库存",
+          "quantity": 5,
+          "old_stock": 100,
+          "new_stock": 105,
+          "timestamp": "2025-06-09T02:46:00.424775",
+          "operator": "测试员",
+          "note": "集成测试库存调整"
+        },
+        {
+          "action": "减少库存",
+          "quantity": -5,
+          "old_stock": 105,
+          "new_stock": 100,
+          "timestamp": "2025-06-09T02:46:00.427786",
+          "operator": "测试员",
+          "note": "恢复原始库存"
+        }
+      ]
+    },
+    "2": {
+      "product_name": "农场新鲜童子公鸡            ",
+      "category": " 禽类产品     ",
+      "specification": " 只           ",
+      "price": 23.0,
+      "unit": " 2只     ",
+      "current_stock": 100,
+      "min_stock_warning": 10,
+      "description": "            ",
+      "image_url": "",
+      "status": "active",
+      "created_at": "2025-06-09T02:34:23.517458",
+      "updated_at": "2025-06-09T02:34:23.517458",
+      "stock_history": [
+        {
+          "action": "初始化",
+          "quantity": 100,
+          "timestamp": "2025-06-09T02:34:23.517458",
+          "operator": "system",
+          "note": "系统初始化库存"
+        }
+      ]
+    },
+    "3": {
+      "product_name": "端午特价农场土鸡蛋          ",
+      "category": " 蛋类         ",
+      "specification": " 版           ",
+      "price": 29.0,
+      "unit": " 2版     ",
+      "current_stock": 100,
+      "min_stock_warning": 10,
+      "description": "            ",
+      "image_url": "",
+      "status": "active",
+      "created_at": "2025-06-09T02:34:23.517458",
+      "updated_at": "2025-06-09T02:34:23.517458",
+      "stock_history": [
+        {
+          "action": "初始化",
+          "quantity": 100,
+          "timestamp": "2025-06-09T02:34:23.517458",
+          "operator": "system",
+          "note": "系统初始化库存"
+        }
+      ]
+    },
+    "4": {
+      "product_name": "大师傅新鲜做好吃的：谭头水饺",
+      "category": " 美味熟食/面点",
+      "specification": " 袋           ",
+      "price": 25.0,
+      "unit": " 袋      ",
+      "current_stock": 100,
+      "min_stock_warning": 10,
+      "description": "            ",
+      "image_url": "",
+      "status": "active",
+      "created_at": "2025-06-09T02:34:23.517458",
+      "updated_at": "2025-06-09T02:34:23.517458",
+      "stock_history": [
+        {
+          "action": "初始化",
+          "quantity": 100,
+          "timestamp": "2025-06-09T02:34:23.517458",
+          "operator": "system",
+          "note": "系统初始化库存"
+        }
+      ]
+    },
+    "5": {
+      "product_name": "新鲜做红糟肉笋饼            ",
+      "category": " 新鲜蔬菜     ",
+      "specification": " 个           ",
+      "price": 15.0,
+      "unit": " 4个     ",
+      "current_stock": 100,
+      "min_stock_warning": 10,
+      "description": "            ",
+      "image_url": "",
+      "status": "active",
+      "created_at": "2025-06-09T02:34:23.517458",
+      "updated_at": "2025-06-09T02:34:23.517458",
+      "stock_history": [
+        {
+          "action": "初始化",
+          "quantity": 100,
+          "timestamp": "2025-06-09T02:34:23.517458",
+          "operator": "system",
+          "note": "系统初始化库存"
+        }
+      ]
+    },
+    "6": {
+      "product_name": "新鲜做柠檬泡椒风爪          ",
+      "category": " 美味熟食/面点",
+      "specification": " 包           ",
+      "price": 29.99,
+      "unit": " 2包     ",
+      "current_stock": 100,
+      "min_stock_warning": 10,
+      "description": "            ",
+      "image_url": "",
+      "status": "active",
+      "created_at": "2025-06-09T02:34:23.517458",
+      "updated_at": "2025-06-09T02:34:23.517458",
+      "stock_history": [
+        {
+          "action": "初始化",
+          "quantity": 100,
+          "timestamp": "2025-06-09T02:34:23.517458",
+          "operator": "system",
+          "note": "系统初始化库存"
+        }
+      ]
+    },
+    "7": {
+      "product_name": "香糟肉光饼                  ",
+      "category": " 美味熟食/面点",
+      "specification": " 个           ",
+      "price": 15.0,
+      "unit": " 4个     ",
+      "current_stock": 100,
+      "min_stock_warning": 10,
+      "description": "            ",
+      "image_url": "",
+      "status": "active",
+      "created_at": "2025-06-09T02:34:23.517458",
+      "updated_at": "2025-06-09T02:34:23.517458",
+      "stock_history": [
+        {
+          "action": "初始化",
+          "quantity": 100,
+          "timestamp": "2025-06-09T02:34:23.517458",
+          "operator": "system",
+          "note": "系统初始化库存"
+        }
+      ]
+    },
+    "8": {
+      "product_name": "爆汁小籠包子                ",
+      "category": " 美味熟食/面点",
+      "specification": " 25个         ",
+      "price": 20.0,
+      "unit": " 包      ",
+      "current_stock": 100,
+      "min_stock_warning": 10,
+      "description": "            ",
+      "image_url": "",
+      "status": "active",
+      "created_at": "2025-06-09T02:34:23.517458",
+      "updated_at": "2025-06-09T02:34:23.517458",
+      "stock_history": [
+        {
+          "action": "初始化",
+          "quantity": 100,
+          "timestamp": "2025-06-09T02:34:23.517458",
+          "operator": "system",
+          "note": "系统初始化库存"
+        }
+      ]
+    },
+    "9": {
+      "product_name": "手工花卷                    ",
+      "category": " 美味熟食/面点",
+      "specification": " 15个         ",
+      "price": 21.0,
+      "unit": " 包      ",
+      "current_stock": 100,
+      "min_stock_warning": 10,
+      "description": "            ",
+      "image_url": "",
+      "status": "active",
+      "created_at": "2025-06-09T02:34:23.517458",
+      "updated_at": "2025-06-09T02:34:23.517458",
+      "stock_history": [
+        {
+          "action": "初始化",
+          "quantity": 100,
+          "timestamp": "2025-06-09T02:34:23.517458",
+          "operator": "system",
+          "note": "系统初始化库存"
+        }
+      ]
+    },
+    "10": {
+      "product_name": "拇指生煎包                  ",
+      "category": " 美味熟食/面点",
+      "specification": " 50个         ",
+      "price": 21.0,
+      "unit": " 包      ",
+      "current_stock": 100,
+      "min_stock_warning": 10,
+      "description": "            ",
+      "image_url": "",
+      "status": "active",
+      "created_at": "2025-06-09T02:34:23.517458",
+      "updated_at": "2025-06-09T02:34:23.517458",
+      "stock_history": [
+        {
+          "action": "初始化",
+          "quantity": 100,
+          "timestamp": "2025-06-09T02:34:23.517458",
+          "operator": "system",
+          "note": "系统初始化库存"
+        }
+      ]
+    },
+    "11": {
+      "product_name": "手包肉打皮燕丸              ",
+      "category": " 美味熟食/面点",
+      "specification": " 0.8磅        ",
+      "price": 15.5,
+      "unit": " 包      ",
+      "current_stock": 100,
+      "min_stock_warning": 10,
+      "description": "            ",
+      "image_url": "",
+      "status": "active",
+      "created_at": "2025-06-09T02:34:23.517458",
+      "updated_at": "2025-06-09T02:34:23.517458",
+      "stock_history": [
+        {
+          "action": "初始化",
+          "quantity": 100,
+          "timestamp": "2025-06-09T02:34:23.517458",
+          "operator": "system",
+          "note": "系统初始化库存"
+        }
+      ]
+    },
+    "12": {
+      "product_name": "北京口味咸火燒              ",
+      "category": " 美味熟食/面点",
+      "specification": " 5个          ",
+      "price": 10.0,
+      "unit": " 份      ",
+      "current_stock": 100,
+      "min_stock_warning": 10,
+      "description": "            ",
+      "image_url": "",
+      "status": "active",
+      "created_at": "2025-06-09T02:34:23.517458",
+      "updated_at": "2025-06-09T02:34:23.517458",
+      "stock_history": [
+        {
+          "action": "初始化",
+          "quantity": 100,
+          "timestamp": "2025-06-09T02:34:23.517458",
+          "operator": "system",
+          "note": "系统初始化库存"
+        }
+      ]
+    },
+    "13": {
+      "product_name": "北京口味甜火烧              ",
+      "category": " 美味熟食/面点",
+      "specification": " 5个          ",
+      "price": 10.0,
+      "unit": " 份      ",
+      "current_stock": 100,
+      "min_stock_warning": 10,
+      "description": "            ",
+      "image_url": "",
+      "status": "active",
+      "created_at": "2025-06-09T02:34:23.517458",
+      "updated_at": "2025-06-09T02:34:23.517458",
+      "stock_history": [
+        {
+          "action": "初始化",
+          "quantity": 100,
+          "timestamp": "2025-06-09T02:34:23.517458",
+          "operator": "system",
+          "note": "系统初始化库存"
+        }
+      ]
+    },
+    "14": {
+      "product_name": "手工皮蛋鲜肉馄炖            ",
+      "category": " 面点         ",
+      "specification": " 12个/盒      ",
+      "price": 18.0,
+      "unit": " 2盒     ",
+      "current_stock": 100,
+      "min_stock_warning": 10,
+      "description": "            ",
+      "image_url": "",
+      "status": "active",
+      "created_at": "2025-06-09T02:34:23.517458",
+      "updated_at": "2025-06-09T02:34:23.517458",
+      "stock_history": [
+        {
+          "action": "初始化",
+          "quantity": 100,
+          "timestamp": "2025-06-09T02:34:23.517458",
+          "operator": "system",
+          "note": "系统初始化库存"
+        }
+      ]
+    },
+    "15": {
+      "product_name": "手工鲜肉馄炖                ",
+      "category": " 面点         ",
+      "specification": " 12个/盒      ",
+      "price": 18.0,
+      "unit": " 盒      ",
+      "current_stock": 100,
+      "min_stock_warning": 10,
+      "description": "            ",
+      "image_url": "",
+      "status": "active",
+      "created_at": "2025-06-09T02:34:23.517458",
+      "updated_at": "2025-06-09T02:34:23.517458",
+      "stock_history": [
+        {
+          "action": "初始化",
+          "quantity": 100,
+          "timestamp": "2025-06-09T02:34:23.517458",
+          "operator": "system",
+          "note": "系统初始化库存"
+        }
+      ]
+    },
+    "16": {
+      "product_name": "新鮮做筋道意大利面          ",
+      "category": " 美味熟食/面点",
+      "specification": " LB           ",
+      "price": 9.8,
+      "unit": " 2LB     ",
+      "current_stock": 100,
+      "min_stock_warning": 10,
+      "description": "            ",
+      "image_url": "",
+      "status": "active",
+      "created_at": "2025-06-09T02:34:23.517458",
+      "updated_at": "2025-06-09T02:34:23.517458",
+      "stock_history": [
+        {
+          "action": "初始化",
+          "quantity": 100,
+          "timestamp": "2025-06-09T02:34:23.517458",
+          "operator": "system",
+          "note": "系统初始化库存"
+        }
+      ]
+    },
+    "17": {
+      "product_name": "新鲜插蛏                    ",
+      "category": " 海鲜河鲜     ",
+      "specification": " 2盒          ",
+      "price": 26.0,
+      "unit": " 2盒     ",
+      "current_stock": 100,
+      "min_stock_warning": 10,
+      "description": " 蛏子       ",
+      "image_url": "",
+      "status": "active",
+      "created_at": "2025-06-09T02:34:23.517458",
+      "updated_at": "2025-06-09T02:34:23.517458",
+      "stock_history": [
+        {
+          "action": "初始化",
+          "quantity": 100,
+          "timestamp": "2025-06-09T02:34:23.517458",
+          "operator": "system",
+          "note": "系统初始化库存"
+        }
+      ]
+    },
+    "18": {
+      "product_name": "好鸭爽鸭血                  ",
+      "category": " 禽类产品     ",
+      "specification": " 5盒          ",
+      "price": 10.0,
+      "unit": " 5盒     ",
+      "current_stock": 100,
+      "min_stock_warning": 10,
+      "description": "            ",
+      "image_url": "",
+      "status": "active",
+      "created_at": "2025-06-09T02:34:23.517458",
+      "updated_at": "2025-06-09T02:34:23.517458",
+      "stock_history": [
+        {
+          "action": "初始化",
+          "quantity": 100,
+          "timestamp": "2025-06-09T02:34:23.517458",
+          "operator": "system",
+          "note": "系统初始化库存"
+        }
+      ]
+    },
+    "19": {
+      "product_name": "深海螺片                    ",
+      "category": " 海鲜河鲜     ",
+      "specification": " 包           ",
+      "price": 26.0,
+      "unit": " 包      ",
+      "current_stock": 100,
+      "min_stock_warning": 10,
+      "description": "            ",
+      "image_url": "",
+      "status": "active",
+      "created_at": "2025-06-09T02:34:23.517458",
+      "updated_at": "2025-06-09T02:34:23.517458",
+      "stock_history": [
+        {
+          "action": "初始化",
+          "quantity": 100,
+          "timestamp": "2025-06-09T02:34:23.517458",
+          "operator": "system",
+          "note": "系统初始化库存"
+        }
+      ]
+    },
+    "20": {
+      "product_name": "鸦片鱼头                    ",
+      "category": " 海鲜河鲜     ",
+      "specification": " 5磅左右      ",
+      "price": 42.0,
+      "unit": " 5磅左右 ",
+      "current_stock": 100,
+      "min_stock_warning": 10,
+      "description": " 鱼头       ",
+      "image_url": "",
+      "status": "active",
+      "created_at": "2025-06-09T02:34:23.517458",
+      "updated_at": "2025-06-09T02:34:23.517458",
+      "stock_history": [
+        {
+          "action": "初始化",
+          "quantity": 100,
+          "timestamp": "2025-06-09T02:34:23.517458",
+          "operator": "system",
+          "note": "系统初始化库存"
+        }
+      ]
+    },
+    "21": {
+      "product_name": "台湾香肠                    ",
+      "category": " 美味熟食/面点",
+      "specification": " 2包          ",
+      "price": 22.0,
+      "unit": " 2包     ",
+      "current_stock": 100,
+      "min_stock_warning": 10,
+      "description": "            ",
+      "image_url": "",
+      "status": "active",
+      "created_at": "2025-06-09T02:34:23.517458",
+      "updated_at": "2025-06-09T02:34:23.517458",
+      "stock_history": [
+        {
+          "action": "初始化",
+          "quantity": 100,
+          "timestamp": "2025-06-09T02:34:23.517458",
+          "operator": "system",
+          "note": "系统初始化库存"
+        }
+      ]
+    },
+    "22": {
+      "product_name": "锁鲜炖文蛤                  ",
+      "category": " 海鲜河鲜     ",
+      "specification": " 2盒          ",
+      "price": 22.0,
+      "unit": " 2盒     ",
+      "current_stock": 100,
+      "min_stock_warning": 10,
+      "description": " 蛤蜊       ",
+      "image_url": "",
+      "status": "active",
+      "created_at": "2025-06-09T02:34:23.517458",
+      "updated_at": "2025-06-09T02:34:23.517458",
+      "stock_history": [
+        {
+          "action": "初始化",
+          "quantity": 100,
+          "timestamp": "2025-06-09T02:34:23.517458",
+          "operator": "system",
+          "note": "系统初始化库存"
+        }
+      ]
+    },
+    "23": {
+      "product_name": "好吃咸晒鲜黄花鱼片          ",
+      "category": " 海鲜河鲜     ",
+      "specification": " 包           ",
+      "price": 26.0,
+      "unit": " 包      ",
+      "current_stock": 100,
+      "min_stock_warning": 10,
+      "description": " 黄花鱼     ",
+      "image_url": "",
+      "status": "active",
+      "created_at": "2025-06-09T02:34:23.518463",
+      "updated_at": "2025-06-09T02:34:23.518463",
+      "stock_history": [
+        {
+          "action": "初始化",
+          "quantity": 100,
+          "timestamp": "2025-06-09T02:34:23.518463",
+          "operator": "system",
+          "note": "系统初始化库存"
+        }
+      ]
+    },
+    "24": {
+      "product_name": "水晶蝦餃                    ",
+      "category": " 美味熟食/面点",
+      "specification": " 版           ",
+      "price": 7.99,
+      "unit": " 版      ",
+      "current_stock": 100,
+      "min_stock_warning": 10,
+      "description": " 虾饺       ",
+      "image_url": "",
+      "status": "active",
+      "created_at": "2025-06-09T02:34:23.518463",
+      "updated_at": "2025-06-09T02:34:23.518463",
+      "stock_history": [
+        {
+          "action": "初始化",
+          "quantity": 100,
+          "timestamp": "2025-06-09T02:34:23.518463",
+          "operator": "system",
+          "note": "系统初始化库存"
+        }
+      ]
+    },
+    "25": {
+      "product_name": "农场青江菜                  ",
+      "category": " 新鲜蔬菜     ",
+      "specification": " 2lb左右      ",
+      "price": 5.99,
+      "unit": " 2lb左右 ",
+      "current_stock": 100,
+      "min_stock_warning": 10,
+      "description": " 青菜;小白菜",
+      "image_url": "",
+      "status": "active",
+      "created_at": "2025-06-09T02:34:23.518463",
+      "updated_at": "2025-06-09T02:34:23.518463",
+      "stock_history": [
+        {
+          "action": "初始化",
+          "quantity": 100,
+          "timestamp": "2025-06-09T02:34:23.518463",
+          "operator": "system",
+          "note": "系统初始化库存"
+        }
+      ]
+    },
+    "26": {
+      "product_name": "农场嫩西兰花苔Broccolini    ",
+      "category": " 新鲜蔬菜     ",
+      "specification": " 3把          ",
+      "price": 9.0,
+      "unit": " 3把     ",
+      "current_stock": 100,
+      "min_stock_warning": 10,
+      "description": " 西兰花     ",
+      "image_url": "",
+      "status": "active",
+      "created_at": "2025-06-09T02:34:23.518463",
+      "updated_at": "2025-06-09T02:34:23.518463",
+      "stock_history": [
+        {
+          "action": "初始化",
+          "quantity": 100,
+          "timestamp": "2025-06-09T02:34:23.518463",
+          "operator": "system",
+          "note": "系统初始化库存"
+        }
+      ]
+    },
+    "27": {
+      "product_name": "农场新鲜平菇                ",
+      "category": " 新鲜蔬菜     ",
+      "specification": " 3磅          ",
+      "price": 23.0,
+      "unit": " 3磅     ",
+      "current_stock": 100,
+      "min_stock_warning": 10,
+      "description": " 蘑菇       ",
+      "image_url": "",
+      "status": "active",
+      "created_at": "2025-06-09T02:34:23.518463",
+      "updated_at": "2025-06-09T02:34:23.518463",
+      "stock_history": [
+        {
+          "action": "初始化",
+          "quantity": 100,
+          "timestamp": "2025-06-09T02:34:23.518463",
+          "operator": "system",
+          "note": "系统初始化库存"
+        }
+      ]
+    },
+    "28": {
+      "product_name": "日本贝贝南瓜                ",
+      "category": " 新鲜蔬菜     ",
+      "specification": " 箱           ",
+      "price": 38.0,
+      "unit": " 箱      ",
+      "current_stock": 100,
+      "min_stock_warning": 10,
+      "description": " 南瓜       ",
+      "image_url": "",
+      "status": "active",
+      "created_at": "2025-06-09T02:34:23.518463",
+      "updated_at": "2025-06-09T02:34:23.518463",
+      "stock_history": [
+        {
+          "action": "初始化",
+          "quantity": 100,
+          "timestamp": "2025-06-09T02:34:23.518463",
+          "operator": "system",
+          "note": "系统初始化库存"
+        }
+      ]
+    },
+    "29": {
+      "product_name": "巴西姜                      ",
+      "category": " 新鲜蔬菜     ",
+      "specification": " 3磅左右      ",
+      "price": 6.99,
+      "unit": " 3磅左右 ",
+      "current_stock": 100,
+      "min_stock_warning": 10,
+      "description": " 姜         ",
+      "image_url": "",
+      "status": "active",
+      "created_at": "2025-06-09T02:34:23.518463",
+      "updated_at": "2025-06-09T02:34:23.518463",
+      "stock_history": [
+        {
+          "action": "初始化",
+          "quantity": 100,
+          "timestamp": "2025-06-09T02:34:23.518463",
+          "operator": "system",
+          "note": "系统初始化库存"
+        }
+      ]
+    },
+    "30": {
+      "product_name": "茭白                        ",
+      "category": " 新鲜蔬菜     ",
+      "specification": " 2磅          ",
+      "price": 25.0,
+      "unit": " 2磅     ",
+      "current_stock": 100,
+      "min_stock_warning": 10,
+      "description": " 水笋       ",
+      "image_url": "",
+      "status": "active",
+      "created_at": "2025-06-09T02:34:23.518463",
+      "updated_at": "2025-06-09T02:34:23.518463",
+      "stock_history": [
+        {
+          "action": "初始化",
+          "quantity": 100,
+          "timestamp": "2025-06-09T02:34:23.518463",
+          "operator": "system",
+          "note": "系统初始化库存"
+        }
+      ]
+    },
+    "31": {
+      "product_name": "新鲜花生                    ",
+      "category": " 新鲜蔬菜     ",
+      "specification": " 5磅          ",
+      "price": 19.0,
+      "unit": " 5磅     ",
+      "current_stock": 100,
+      "min_stock_warning": 10,
+      "description": "            ",
+      "image_url": "",
+      "status": "active",
+      "created_at": "2025-06-09T02:34:23.518463",
+      "updated_at": "2025-06-09T02:34:23.518463",
+      "stock_history": [
+        {
+          "action": "初始化",
+          "quantity": 100,
+          "timestamp": "2025-06-09T02:34:23.518463",
+          "operator": "system",
+          "note": "系统初始化库存"
+        }
+      ]
+    },
+    "32": {
+      "product_name": "新鲜农场玉米                ",
+      "category": " 新鲜蔬菜     ",
+      "specification": " 箱           ",
+      "price": 30.0,
+      "unit": " 箱      ",
+      "current_stock": 100,
+      "min_stock_warning": 10,
+      "description": "            ",
+      "image_url": "",
+      "status": "active",
+      "created_at": "2025-06-09T02:34:23.518463",
+      "updated_at": "2025-06-09T02:34:23.518463",
+      "stock_history": [
+        {
+          "action": "初始化",
+          "quantity": 100,
+          "timestamp": "2025-06-09T02:34:23.518463",
+          "operator": "system",
+          "note": "系统初始化库存"
+        }
+      ]
+    },
+    "33": {
+      "product_name": "Olivia 农场有机嫩菠菜叶     ",
+      "category": " 新鲜蔬菜     ",
+      "specification": " 3盒          ",
+      "price": 8.99,
+      "unit": " 3盒     ",
+      "current_stock": 100,
+      "min_stock_warning": 10,
+      "description": " 有机菠菜   ",
+      "image_url": "",
+      "status": "active",
+      "created_at": "2025-06-09T02:34:23.518463",
+      "updated_at": "2025-06-09T02:34:23.518463",
+      "stock_history": [
+        {
+          "action": "初始化",
+          "quantity": 100,
+          "timestamp": "2025-06-09T02:34:23.518463",
+          "operator": "system",
+          "note": "系统初始化库存"
+        }
+      ]
+    },
+    "34": {
+      "product_name": "台灣香瓜                    ",
+      "category": " 时令水果     ",
+      "specification": " 箱           ",
+      "price": 69.0,
+      "unit": " 箱      ",
+      "current_stock": 100,
+      "min_stock_warning": 10,
+      "description": " 香瓜       ",
+      "image_url": "",
+      "status": "active",
+      "created_at": "2025-06-09T02:34:23.518463",
+      "updated_at": "2025-06-09T02:34:23.518463",
+      "stock_history": [
+        {
+          "action": "初始化",
+          "quantity": 100,
+          "timestamp": "2025-06-09T02:34:23.518463",
+          "operator": "system",
+          "note": "系统初始化库存"
+        }
+      ]
+    },
+    "35": {
+      "product_name": "新鲜山楂                    ",
+      "category": " 时令水果     ",
+      "specification": " 3磅          ",
+      "price": 42.0,
+      "unit": " 3磅     ",
+      "current_stock": 100,
+      "min_stock_warning": 10,
+      "description": "            ",
+      "image_url": "",
+      "status": "active",
+      "created_at": "2025-06-09T02:34:23.518463",
+      "updated_at": "2025-06-09T02:34:23.518463",
+      "stock_history": [
+        {
+          "action": "初始化",
+          "quantity": 100,
+          "timestamp": "2025-06-09T02:34:23.518463",
+          "operator": "system",
+          "note": "系统初始化库存"
+        }
+      ]
+    },
+    "36": {
+      "product_name": "红心芭乐                    ",
+      "category": " 时令水果     ",
+      "specification": " 5lb          ",
+      "price": 36.0,
+      "unit": " 5lb     ",
+      "current_stock": 100,
+      "min_stock_warning": 10,
+      "description": " 番石榴     ",
+      "image_url": "",
+      "status": "active",
+      "created_at": "2025-06-09T02:34:23.518463",
+      "updated_at": "2025-06-09T02:34:23.518463",
+      "stock_history": [
+        {
+          "action": "初始化",
+          "quantity": 100,
+          "timestamp": "2025-06-09T02:34:23.518463",
+          "operator": "system",
+          "note": "系统初始化库存"
+        }
+      ]
+    },
+    "37": {
+      "product_name": "甜大红石榴                  ",
+      "category": " 时令水果     ",
+      "specification": " 箱           ",
+      "price": 30.0,
+      "unit": " 箱      ",
+      "current_stock": 100,
+      "min_stock_warning": 10,
+      "description": "            ",
+      "image_url": "",
+      "status": "active",
+      "created_at": "2025-06-09T02:34:23.518463",
+      "updated_at": "2025-06-09T02:34:23.518463",
+      "stock_history": [
+        {
+          "action": "初始化",
+          "quantity": 100,
+          "timestamp": "2025-06-09T02:34:23.518463",
+          "operator": "system",
+          "note": "系统初始化库存"
+        }
+      ]
+    },
+    "38": {
+      "product_name": "彩色金丝芒                  ",
+      "category": " 时令水果     ",
+      "specification": " 箱           ",
+      "price": 65.0,
+      "unit": " 箱      ",
+      "current_stock": 100,
+      "min_stock_warning": 10,
+      "description": " 芒果       ",
+      "image_url": "",
+      "status": "active",
+      "created_at": "2025-06-09T02:34:23.518463",
+      "updated_at": "2025-06-09T02:34:23.518463",
+      "stock_history": [
+        {
+          "action": "初始化",
+          "quantity": 100,
+          "timestamp": "2025-06-09T02:34:23.518463",
+          "operator": "system",
+          "note": "系统初始化库存"
+        }
+      ]
+    },
+    "39": {
+      "product_name": "越南龙眼                    ",
+      "category": " 时令水果     ",
+      "specification": " 箱           ",
+      "price": 59.0,
+      "unit": " 箱      ",
+      "current_stock": 100,
+      "min_stock_warning": 10,
+      "description": " 桂圆       ",
+      "image_url": "",
+      "status": "active",
+      "created_at": "2025-06-09T02:34:23.518463",
+      "updated_at": "2025-06-09T02:34:23.518463",
+      "stock_history": [
+        {
+          "action": "初始化",
+          "quantity": 100,
+          "timestamp": "2025-06-09T02:34:23.518463",
+          "operator": "system",
+          "note": "系统初始化库存"
+        }
+      ]
+    },
+    "40": {
+      "product_name": "甜哈密瓜                    ",
+      "category": " 时令水果     ",
+      "specification": " 3个          ",
+      "price": 18.99,
+      "unit": " 3个     ",
+      "current_stock": 100,
+      "min_stock_warning": 10,
+      "description": " 哈密瓜     ",
+      "image_url": "",
+      "status": "active",
+      "created_at": "2025-06-09T02:34:23.518463",
+      "updated_at": "2025-06-09T02:34:23.518463",
+      "stock_history": [
+        {
+          "action": "初始化",
+          "quantity": 100,
+          "timestamp": "2025-06-09T02:34:23.518463",
+          "operator": "system",
+          "note": "系统初始化库存"
+        }
+      ]
+    },
+    "41": {
+      "product_name": "韩国香瓜                    ",
+      "category": " 时令水果     ",
+      "specification": " 6个          ",
+      "price": 18.0,
+      "unit": " 6个     ",
+      "current_stock": 100,
+      "min_stock_warning": 10,
+      "description": "            ",
+      "image_url": "",
+      "status": "active",
+      "created_at": "2025-06-09T02:34:23.518463",
+      "updated_at": "2025-06-09T02:34:23.518463",
+      "stock_history": [
+        {
+          "action": "初始化",
+          "quantity": 100,
+          "timestamp": "2025-06-09T02:34:23.518463",
+          "operator": "system",
+          "note": "系统初始化库存"
+        }
+      ]
+    },
+    "42": {
+      "product_name": "天花板金色奇异果            ",
+      "category": " 时令水果     ",
+      "specification": " 箱           ",
+      "price": 48.0,
+      "unit": " 箱      ",
+      "current_stock": 100,
+      "min_stock_warning": 10,
+      "description": " 猕猴桃     ",
+      "image_url": "",
+      "status": "active",
+      "created_at": "2025-06-09T02:34:23.518463",
+      "updated_at": "2025-06-09T02:34:23.518463",
+      "stock_history": [
+        {
+          "action": "初始化",
+          "quantity": 100,
+          "timestamp": "2025-06-09T02:34:23.518463",
+          "operator": "system",
+          "note": "系统初始化库存"
+        }
+      ]
+    },
+    "43": {
+      "product_name": "新鲜墨西哥山竹              ",
+      "category": " 时令水果     ",
+      "specification": " 15磅连箱     ",
+      "price": 160.0,
+      "unit": " 15磅连箱",
+      "current_stock": 100,
+      "min_stock_warning": 10,
+      "description": "            ",
+      "image_url": "",
+      "status": "active",
+      "created_at": "2025-06-09T02:34:23.518463",
+      "updated_at": "2025-06-09T02:34:23.518463",
+      "stock_history": [
+        {
+          "action": "初始化",
+          "quantity": 100,
+          "timestamp": "2025-06-09T02:34:23.518463",
+          "operator": "system",
+          "note": "系统初始化库存"
+        }
+      ]
+    },
+    "44": {
+      "product_name": "以色列甜orri 柑             ",
+      "category": " 时令水果     ",
+      "specification": " 箱           ",
+      "price": 48.0,
+      "unit": " 箱      ",
+      "current_stock": 100,
+      "min_stock_warning": 10,
+      "description": " 橙子;柑橘  ",
+      "image_url": "",
+      "status": "active",
+      "created_at": "2025-06-09T02:34:23.518463",
+      "updated_at": "2025-06-09T02:34:23.518463",
+      "stock_history": [
+        {
+          "action": "初始化",
+          "quantity": 100,
+          "timestamp": "2025-06-09T02:34:23.518463",
+          "operator": "system",
+          "note": "系统初始化库存"
+        }
+      ]
+    },
+    "45": {
+      "product_name": "爱妃苹果                    ",
+      "category": " 时令水果     ",
+      "specification": " 大箱         ",
+      "price": 60.0,
+      "unit": " 大箱    ",
+      "current_stock": 100,
+      "min_stock_warning": 10,
+      "description": " 苹果       ",
+      "image_url": "",
+      "status": "active",
+      "created_at": "2025-06-09T02:34:23.519459",
+      "updated_at": "2025-06-09T02:34:23.519459",
+      "stock_history": [
+        {
+          "action": "初始化",
+          "quantity": 100,
+          "timestamp": "2025-06-09T02:34:23.519459",
+          "operator": "system",
+          "note": "系统初始化库存"
+        }
+      ]
+    },
+    "46": {
+      "product_name": "白玉桃                      ",
+      "category": " 时令水果     ",
+      "specification": " 箱           ",
+      "price": 55.0,
+      "unit": " 箱      ",
+      "current_stock": 100,
+      "min_stock_warning": 10,
+      "description": " 桃子       ",
+      "image_url": "",
+      "status": "active",
+      "created_at": "2025-06-09T02:34:23.519459",
+      "updated_at": "2025-06-09T02:34:23.519459",
+      "stock_history": [
+        {
+          "action": "初始化",
+          "quantity": 100,
+          "timestamp": "2025-06-09T02:34:23.519459",
+          "operator": "system",
+          "note": "系统初始化库存"
+        }
+      ]
+    },
+    "47": {
+      "product_name": "Sunkist 浓味甜橙            ",
+      "category": " 时令水果     ",
+      "specification": " 箱           ",
+      "price": 50.0,
+      "unit": " 箱      ",
+      "current_stock": 100,
+      "min_stock_warning": 10,
+      "description": " 橙子       ",
+      "image_url": "",
+      "status": "active",
+      "created_at": "2025-06-09T02:34:23.519459",
+      "updated_at": "2025-06-09T02:34:23.519459",
+      "stock_history": [
+        {
+          "action": "初始化",
+          "quantity": 100,
+          "timestamp": "2025-06-09T02:34:23.519459",
+          "operator": "system",
+          "note": "系统初始化库存"
+        }
+      ]
+    },
+    "48": {
+      "product_name": "红毛丹                      ",
+      "category": " 时令水果     ",
+      "specification": " 箱           ",
+      "price": 30.0,
+      "unit": " 箱      ",
+      "current_stock": 100,
+      "min_stock_warning": 10,
+      "description": "            ",
+      "image_url": "",
+      "status": "active",
+      "created_at": "2025-06-09T02:34:23.519459",
+      "updated_at": "2025-06-09T02:34:23.519459",
+      "stock_history": [
+        {
+          "action": "初始化",
+          "quantity": 100,
+          "timestamp": "2025-06-09T02:34:23.519459",
+          "operator": "system",
+          "note": "系统初始化库存"
+        }
+      ]
+    },
+    "49": {
+      "product_name": "天花板草莓                  ",
+      "category": " 时令水果     ",
+      "specification": " 箱           ",
+      "price": 28.0,
+      "unit": " 箱      ",
+      "current_stock": 100,
+      "min_stock_warning": 10,
+      "description": "            ",
+      "image_url": "",
+      "status": "active",
+      "created_at": "2025-06-09T02:34:23.519459",
+      "updated_at": "2025-06-09T02:34:23.519459",
+      "stock_history": [
+        {
+          "action": "初始化",
+          "quantity": 100,
+          "timestamp": "2025-06-09T02:34:23.519459",
+          "operator": "system",
+          "note": "系统初始化库存"
+        }
+      ]
+    },
+    "50": {
+      "product_name": "糯米荔枝                    ",
+      "category": " 时令水果     ",
+      "specification": " 10lb连箱     ",
+      "price": 200.0,
+      "unit": " 10lb连箱",
+      "current_stock": 100,
+      "min_stock_warning": 10,
+      "description": " 荔枝       ",
+      "image_url": "",
+      "status": "active",
+      "created_at": "2025-06-09T02:34:23.519459",
+      "updated_at": "2025-06-09T02:34:23.519459",
+      "stock_history": [
+        {
+          "action": "初始化",
+          "quantity": 100,
+          "timestamp": "2025-06-09T02:34:23.519459",
+          "operator": "system",
+          "note": "系统初始化库存"
+        }
+      ]
+    },
+    "51": {
+      "product_name": "天花板凤梨                  ",
+      "category": " 时令水果     ",
+      "specification": " 箱           ",
+      "price": 35.0,
+      "unit": " 箱      ",
+      "current_stock": 100,
+      "min_stock_warning": 10,
+      "description": " 菠萝       ",
+      "image_url": "",
+      "status": "active",
+      "created_at": "2025-06-09T02:34:23.519459",
+      "updated_at": "2025-06-09T02:34:23.519459",
+      "stock_history": [
+        {
+          "action": "初始化",
+          "quantity": 100,
+          "timestamp": "2025-06-09T02:34:23.519459",
+          "operator": "system",
+          "note": "系统初始化库存"
+        }
+      ]
+    },
+    "52": {
+      "product_name": "甜cotton candy 葡萄         ",
+      "category": " 时令水果     ",
+      "specification": " 箱           ",
+      "price": 50.0,
+      "unit": " 箱      ",
+      "current_stock": 100,
+      "min_stock_warning": 10,
+      "description": " 葡萄       ",
+      "image_url": "",
+      "status": "active",
+      "created_at": "2025-06-09T02:34:23.519459",
+      "updated_at": "2025-06-09T02:34:23.519459",
+      "stock_history": [
+        {
+          "action": "初始化",
+          "quantity": 100,
+          "timestamp": "2025-06-09T02:34:23.519459",
+          "operator": "system",
+          "note": "系统初始化库存"
+        }
+      ]
+    },
+    "53": {
+      "product_name": "大王中王                    ",
+      "category": " 优选干货     ",
+      "specification": " 包           ",
+      "price": 6.99,
+      "unit": " 包      ",
+      "current_stock": 100,
+      "min_stock_warning": 10,
+      "description": "            ",
+      "image_url": "",
+      "status": "active",
+      "created_at": "2025-06-09T02:34:23.519459",
+      "updated_at": "2025-06-09T02:34:23.519459",
+      "stock_history": [
+        {
+          "action": "初始化",
+          "quantity": 100,
+          "timestamp": "2025-06-09T02:34:23.519459",
+          "operator": "system",
+          "note": "系统初始化库存"
+        }
+      ]
+    },
+    "54": {
+      "product_name": "甘蔗马蹄饮                  ",
+      "category": " 优选干货     ",
+      "specification": " 5根          ",
+      "price": 25.0,
+      "unit": " 5根     ",
+      "current_stock": 100,
+      "min_stock_warning": 10,
+      "description": "            ",
+      "image_url": "",
+      "status": "active",
+      "created_at": "2025-06-09T02:34:23.519459",
+      "updated_at": "2025-06-09T02:34:23.519459",
+      "stock_history": [
+        {
+          "action": "初始化",
+          "quantity": 100,
+          "timestamp": "2025-06-09T02:34:23.519459",
+          "operator": "system",
+          "note": "系统初始化库存"
+        }
+      ]
+    },
+    "55": {
+      "product_name": "傻小胖糯玉米                ",
+      "category": " 新鲜蔬菜     ",
+      "specification": " 3包x400g     ",
+      "price": 11.99,
+      "unit": " 3包x400g",
+      "current_stock": 100,
+      "min_stock_warning": 10,
+      "description": " 糯玉米     ",
+      "image_url": "",
+      "status": "active",
+      "created_at": "2025-06-09T02:34:23.519459",
+      "updated_at": "2025-06-09T02:34:23.519459",
+      "stock_history": [
+        {
+          "action": "初始化",
+          "quantity": 100,
+          "timestamp": "2025-06-09T02:34:23.519459",
+          "operator": "system",
+          "note": "系统初始化库存"
+        }
+      ]
+    },
+    "56": {
+      "product_name": "双黄海鸭蛋                  ",
+      "category": " 蛋类         ",
+      "specification": " 盒           ",
+      "price": 39.0,
+      "unit": " 盒      ",
+      "current_stock": 100,
+      "min_stock_warning": 10,
+      "description": "            ",
+      "image_url": "",
+      "status": "active",
+      "created_at": "2025-06-09T02:34:23.519459",
+      "updated_at": "2025-06-09T02:34:23.519459",
+      "stock_history": [
+        {
+          "action": "初始化",
+          "quantity": 100,
+          "timestamp": "2025-06-09T02:34:23.519459",
+          "operator": "system",
+          "note": "系统初始化库存"
+        }
+      ]
+    },
+    "57": {
+      "product_name": "七彩菌菇包                  ",
+      "category": " 新鲜蔬菜     ",
+      "specification": " 2包          ",
+      "price": 10.0,
+      "unit": " 2包     ",
+      "current_stock": 100,
+      "min_stock_warning": 10,
+      "description": " 蘑菇       ",
+      "image_url": "",
+      "status": "active",
+      "created_at": "2025-06-09T02:34:23.519459",
+      "updated_at": "2025-06-09T02:34:23.519459",
+      "stock_history": [
+        {
+          "action": "初始化",
+          "quantity": 100,
+          "timestamp": "2025-06-09T02:34:23.519459",
+          "operator": "system",
+          "note": "系统初始化库存"
+        }
+      ]
+    },
+    "58": {
+      "product_name": "威州5年参须                 ",
+      "category": " 优选干货     ",
+      "specification": " 磅           ",
+      "price": 19.0,
+      "unit": " 磅      ",
+      "current_stock": 100,
+      "min_stock_warning": 10,
+      "description": " 人参须     ",
+      "image_url": "",
+      "status": "active",
+      "created_at": "2025-06-09T02:34:23.519459",
+      "updated_at": "2025-06-09T02:34:23.519459",
+      "stock_history": [
+        {
+          "action": "初始化",
+          "quantity": 100,
+          "timestamp": "2025-06-09T02:34:23.519459",
+          "operator": "system",
+          "note": "系统初始化库存"
+        }
+      ]
+    },
+    "59": {
+      "product_name": "纸皮核桃                    ",
+      "category": " 时令水果     ",
+      "specification": " 盒           ",
+      "price": 21.0,
+      "unit": " 盒      ",
+      "current_stock": 100,
+      "min_stock_warning": 10,
+      "description": " 核桃       ",
+      "image_url": "",
+      "status": "active",
+      "created_at": "2025-06-09T02:34:23.519459",
+      "updated_at": "2025-06-09T02:34:23.519459",
+      "stock_history": [
+        {
+          "action": "初始化",
+          "quantity": 100,
+          "timestamp": "2025-06-09T02:34:23.519459",
+          "operator": "system",
+          "note": "系统初始化库存"
+        }
+      ]
+    },
+    "60": {
+      "product_name": "农家黑笋丝                  ",
+      "category": " 新鲜蔬菜     ",
+      "specification": " 磅           ",
+      "price": 16.0,
+      "unit": " 磅      ",
+      "current_stock": 100,
+      "min_stock_warning": 10,
+      "description": " 笋丝       ",
+      "image_url": "",
+      "status": "active",
+      "created_at": "2025-06-09T02:34:23.519459",
+      "updated_at": "2025-06-09T02:34:23.519459",
+      "stock_history": [
+        {
+          "action": "初始化",
+          "quantity": 100,
+          "timestamp": "2025-06-09T02:34:23.519459",
+          "operator": "system",
+          "note": "系统初始化库存"
+        }
+      ]
+    }
+  }
+}

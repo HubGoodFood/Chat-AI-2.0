@@ -1,0 +1,314 @@
+<!-- 产品管理模态框模板 -->
+
+<!-- 添加/编辑产品模态框 -->
+<div id="productModal" class="modal-template">
+    <h2 id="productModalTitle">添加产品</h2>
+    <form id="productForm">
+        <div class="form-row">
+            <div class="form-group">
+                <label for="productName">产品名称 *</label>
+                <input type="text" id="productName" name="product_name" required>
+            </div>
+            <div class="form-group">
+                <label for="productCategory">产品分类 *</label>
+                <select id="productCategory" name="category" required>
+                    <option value="">请选择分类</option>
+                    <option value="禽类产品">禽类产品</option>
+                    <option value="蛋类">蛋类</option>
+                    <option value="美味熟食/面点">美味熟食/面点</option>
+                    <option value="新鲜蔬菜">新鲜蔬菜</option>
+                    <option value="海鲜河鲜">海鲜河鲜</option>
+                    <option value="时令水果">时令水果</option>
+                    <option value="优选干货">优选干货</option>
+                </select>
+            </div>
+        </div>
+        
+        <div class="form-row">
+            <div class="form-group">
+                <label for="productPrice">价格 *</label>
+                <input type="number" id="productPrice" name="price" step="0.01" required>
+            </div>
+            <div class="form-group">
+                <label for="productUnit">单位 *</label>
+                <input type="text" id="productUnit" name="unit" required placeholder="如：个、斤、包">
+            </div>
+        </div>
+        
+        <div class="form-row">
+            <div class="form-group">
+                <label for="productSpecification">规格</label>
+                <input type="text" id="productSpecification" name="specification" placeholder="如：500g、2个装">
+            </div>
+            <div class="form-group">
+                <label for="initialStock">初始库存</label>
+                <input type="number" id="initialStock" name="initial_stock" min="0" value="0">
+            </div>
+        </div>
+        
+        <div class="form-row">
+            <div class="form-group">
+                <label for="minStockWarning">最小库存警告</label>
+                <input type="number" id="minStockWarning" name="min_stock_warning" min="0" value="10">
+            </div>
+            <div class="form-group">
+                <label for="productStatus">状态</label>
+                <select id="productStatus" name="status">
+                    <option value="active">正常</option>
+                    <option value="inactive">停用</option>
+                </select>
+            </div>
+        </div>
+        
+        <div class="form-group">
+            <label for="productDescription">产品描述</label>
+            <textarea id="productDescription" name="description" rows="3" placeholder="产品关键词、特点等"></textarea>
+        </div>
+        
+        <div class="form-group">
+            <label for="productImage">产品图片URL</label>
+            <input type="url" id="productImage" name="image_url" placeholder="http://example.com/image.jpg">
+        </div>
+        
+        <div class="form-actions">
+            <button type="button" class="secondary-btn" onclick="admin.closeModal()">取消</button>
+            <button type="submit" class="primary-btn">保存</button>
+        </div>
+    </form>
+</div>
+
+<!-- 库存调整模态框 -->
+<div id="stockModal" class="modal-template">
+    <h2>调整库存</h2>
+    <div id="stockProductInfo" class="product-info">
+        <!-- 产品信息将在这里显示 -->
+    </div>
+    
+    <form id="stockForm">
+        <input type="hidden" id="stockProductId" name="product_id">
+        
+        <div class="form-group">
+            <label for="stockChange">库存变动</label>
+            <div class="stock-input-group">
+                <button type="button" class="stock-btn decrease" onclick="admin.adjustStockInput(-1)">-</button>
+                <input type="number" id="stockChange" name="quantity_change" value="0">
+                <button type="button" class="stock-btn increase" onclick="admin.adjustStockInput(1)">+</button>
+            </div>
+            <small class="form-help">正数为增加库存，负数为减少库存</small>
+        </div>
+        
+        <div class="form-group">
+            <label for="stockNote">备注</label>
+            <textarea id="stockNote" name="note" rows="3" placeholder="库存变动原因..."></textarea>
+        </div>
+        
+        <div class="form-actions">
+            <button type="button" class="secondary-btn" onclick="admin.closeModal()">取消</button>
+            <button type="submit" class="primary-btn">确认调整</button>
+        </div>
+    </form>
+</div>
+
+<!-- 反馈详情模态框 -->
+<div id="feedbackModal" class="modal-template">
+    <h2>反馈详情</h2>
+    <div id="feedbackDetail">
+        <!-- 反馈详情将在这里显示 -->
+    </div>
+</div>
+
+<!-- 添加反馈模态框 -->
+<div id="addFeedbackModal" class="modal-template">
+    <h2>添加客户反馈</h2>
+    <form id="feedbackForm">
+        <div class="form-row">
+            <div class="form-group">
+                <label for="feedbackProductName">产品名称 *</label>
+                <input type="text" id="feedbackProductName" name="product_name" required>
+            </div>
+            <div class="form-group">
+                <label for="feedbackType">反馈类型 *</label>
+                <select id="feedbackType" name="feedback_type" required>
+                    <option value="">请选择类型</option>
+                    <option value="positive">正面反馈</option>
+                    <option value="negative">负面反馈</option>
+                </select>
+            </div>
+        </div>
+        
+        <div class="form-row">
+            <div class="form-group">
+                <label for="customerWechatName">客户微信昵称 *</label>
+                <input type="text" id="customerWechatName" name="customer_wechat_name" required>
+            </div>
+            <div class="form-group">
+                <label for="customerGroupNumber">客户所在群号 *</label>
+                <input type="text" id="customerGroupNumber" name="customer_group_number" required>
+            </div>
+        </div>
+        
+        <div class="form-row">
+            <div class="form-group">
+                <label for="paymentStatus">付款状态 *</label>
+                <select id="paymentStatus" name="payment_status" required>
+                    <option value="">请选择状态</option>
+                    <option value="已付款">已付款</option>
+                    <option value="未付款">未付款</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="productImageUrl">产品图片URL</label>
+                <input type="url" id="productImageUrl" name="product_image" placeholder="http://example.com/image.jpg">
+            </div>
+        </div>
+        
+        <div class="form-group">
+            <label for="feedbackContent">反馈内容 *</label>
+            <textarea id="feedbackContent" name="feedback_content" rows="4" required placeholder="客户反馈的具体内容..."></textarea>
+        </div>
+        
+        <div class="form-group">
+            <label for="customerImages">客户上传图片URL</label>
+            <textarea id="customerImages" name="customer_images" rows="2" placeholder="多个图片URL请用换行分隔"></textarea>
+            <small class="form-help">每行一个图片URL</small>
+        </div>
+        
+        <div class="form-actions">
+            <button type="button" class="secondary-btn" onclick="admin.closeModal()">取消</button>
+            <button type="submit" class="primary-btn">添加反馈</button>
+        </div>
+    </form>
+</div>
+
+<!-- 处理反馈模态框 -->
+<div id="processFeedbackModal" class="modal-template">
+    <h2>处理反馈</h2>
+    <div id="processFeedbackInfo">
+        <!-- 反馈信息将在这里显示 -->
+    </div>
+    
+    <form id="processFeedbackForm">
+        <input type="hidden" id="processFeedbackId" name="feedback_id">
+        
+        <div class="form-group">
+            <label for="processingStatus">处理状态 *</label>
+            <select id="processingStatus" name="status" required>
+                <option value="待处理">待处理</option>
+                <option value="处理中">处理中</option>
+                <option value="已解决">已解决</option>
+            </select>
+        </div>
+        
+        <div class="form-group">
+            <label for="processingNotes">处理备注</label>
+            <textarea id="processingNotes" name="notes" rows="4" placeholder="处理过程、解决方案等..."></textarea>
+        </div>
+        
+        <div class="form-actions">
+            <button type="button" class="secondary-btn" onclick="admin.closeModal()">取消</button>
+            <button type="submit" class="primary-btn">更新状态</button>
+        </div>
+    </form>
+</div>
+
+<style>
+.modal-template {
+    display: none;
+}
+
+.form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+    margin-bottom: 15px;
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: 500;
+    color: #333;
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+    width: 100%;
+    padding: 8px 12px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 14px;
+}
+
+.form-group textarea {
+    resize: vertical;
+}
+
+.form-help {
+    display: block;
+    margin-top: 5px;
+    font-size: 12px;
+    color: #6c757d;
+}
+
+.form-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 20px;
+    padding-top: 20px;
+    border-top: 1px solid #e9ecef;
+}
+
+.product-info {
+    background: #f8f9fa;
+    padding: 15px;
+    border-radius: 5px;
+    margin-bottom: 20px;
+}
+
+.stock-input-group {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.stock-btn {
+    width: 40px;
+    height: 40px;
+    border: 1px solid #ddd;
+    background: #f8f9fa;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 18px;
+    font-weight: bold;
+}
+
+.stock-btn:hover {
+    background: #e9ecef;
+}
+
+.stock-btn.increase {
+    color: #28a745;
+}
+
+.stock-btn.decrease {
+    color: #dc3545;
+}
+
+#stockChange {
+    text-align: center;
+    font-weight: bold;
+    max-width: 100px;
+}
+
+@media (max-width: 768px) {
+    .form-row {
+        grid-template-columns: 1fr;
+    }
+}
+</style>

@@ -6,6 +6,11 @@ import uuid
 import os
 from datetime import datetime
 from src.models.knowledge_retriever import KnowledgeRetriever
+from src.models.admin_auth import AdminAuth
+from src.models.inventory_manager import InventoryManager
+from src.models.feedback_manager import FeedbackManager
+from src.models.operation_logger import operation_logger, log_admin_operation
+from src.models.data_exporter import data_exporter
 from dotenv import load_dotenv
 
 # 加载环境变量
@@ -17,14 +22,23 @@ app.secret_key = os.environ.get('SECRET_KEY', 'fruit_vegetable_ai_service_2024')
 # 全局变量
 knowledge_retriever = None
 conversation_sessions = {}
+admin_auth = None
+inventory_manager = None
+feedback_manager = None
 
 
 def initialize_system():
     """初始化系统"""
-    global knowledge_retriever
+    global knowledge_retriever, admin_auth, inventory_manager, feedback_manager
     try:
         knowledge_retriever = KnowledgeRetriever()
         knowledge_retriever.initialize()
+
+        # 初始化管理员模块
+        admin_auth = AdminAuth()
+        inventory_manager = InventoryManager()
+        feedback_manager = FeedbackManager()
+
         print("✅ 果蔬客服AI系统初始化成功！")
         return True
     except Exception as e:
@@ -193,6 +207,1014 @@ def health_check():
         'system_ready': knowledge_retriever is not None,
         'timestamp': datetime.now().isoformat()
     })
+
+
+# ==================== 管理员路由 ====================
+
+@app.route('/admin/login')
+def admin_login_page():
+    """管理员登录页面"""
+    return render_template('admin/login.html')
+
+
+@app.route('/admin/dashboard')
+def admin_dashboard():
+    """管理员控制台"""
+    return render_template('admin/dashboard.html')
+
+
+@app.route('/api/admin/login', methods=['POST'])
+def admin_login():
+    """管理员登录API"""
+    try:
+        data = request.get_json()
+        username = data.get('username', '').strip()
+        password = data.get('password', '').strip()
+
+        if not username or not password:
+            return jsonify({
+                'success': False,
+                'error': '请输入用户名和密码'
+            })
+
+        if admin_auth:
+            session_token = admin_auth.login(username, password)
+            if session_token:
+                session['admin_token'] = session_token
+                return jsonify({
+                    'success': True,
+                    'message': '登录成功'
+                })
+            else:
+                return jsonify({
+                    'success': False,
+                    'error': '用户名或密码错误'
+                })
+        else:
+            return jsonify({
+                'success': False,
+                'error': '系统暂时不可用'
+            })
+
+    except Exception as e:
+        print(f"管理员登录错误: {e}")
+        return jsonify({
+            'success': False,
+            'error': '登录失败，请稍后再试'
+        })
+
+
+@app.route('/api/admin/logout', methods=['POST'])
+def admin_logout():
+    """管理员登出API"""
+    try:
+        admin_token = session.get('admin_token')
+        if admin_token and admin_auth:
+            admin_auth.logout(admin_token)
+
+        session.pop('admin_token', None)
+
+        return jsonify({
+            'success': True,
+            'message': '已退出登录'
+        })
+
+    except Exception as e:
+        print(f"管理员登出错误: {e}")
+        return jsonify({
+            'success': False,
+            'error': '登出失败'
+        })
+
+
+@app.route('/api/admin/status')
+def admin_status():
+    """检查管理员认证状态"""
+    try:
+        admin_token = session.get('admin_token')
+
+        if admin_token and admin_auth and admin_auth.verify_session(admin_token):
+            session_info = admin_auth.get_session_info(admin_token)
+            return jsonify({
+                'authenticated': True,
+                'username': session_info.get('username', '管理员') if session_info else '管理员'
+            })
+        else:
+            return jsonify({
+                'authenticated': False
+            })
+
+    except Exception as e:
+        print(f"检查管理员状态错误: {e}")
+        return jsonify({
+            'authenticated': False
+        })
+
+
+def require_admin_auth():
+    """管理员认证装饰器"""
+    admin_token = session.get('admin_token')
+    if not admin_token or not admin_auth or not admin_auth.verify_session(admin_token):
+        return False
+    return True
+
+
+def get_current_operator():
+    """获取当前操作员信息"""
+    admin_token = session.get('admin_token')
+    if admin_token and admin_auth:
+        session_info = admin_auth.get_session_info(admin_token)
+        return session_info.get('username', '管理员') if session_info else '管理员'
+    return '未知用户'
+
+
+# ==================== 库存管理API ====================
+
+@app.route('/api/admin/inventory')
+def get_inventory():
+    """获取库存列表"""
+    try:
+        if not require_admin_auth():
+            return jsonify({'success': False, 'error': '未授权访问'})
+
+        if inventory_manager:
+            products = inventory_manager.get_all_products()
+            return jsonify({
+                'success': True,
+                'data': products
+            })
+        else:
+            return jsonify({
+                'success': False,
+                'error': '库存管理系统不可用'
+            })
+
+    except Exception as e:
+        print(f"获取库存列表错误: {e}")
+        return jsonify({
+            'success': False,
+            'error': '获取库存数据失败'
+        })
+
+
+@app.route('/api/admin/inventory/summary')
+def get_inventory_summary():
+    """获取库存汇总信息"""
+    try:
+        if not require_admin_auth():
+            return jsonify({'success': False, 'error': '未授权访问'})
+
+        if inventory_manager:
+            summary = inventory_manager.get_inventory_summary()
+            return jsonify({
+                'success': True,
+                'data': summary
+            })
+        else:
+            return jsonify({
+                'success': False,
+                'error': '库存管理系统不可用'
+            })
+
+    except Exception as e:
+        print(f"获取库存汇总错误: {e}")
+        return jsonify({
+            'success': False,
+            'error': '获取库存汇总失败'
+        })
+
+
+@app.route('/api/admin/inventory/low-stock')
+def get_low_stock():
+    """获取低库存产品"""
+    try:
+        if not require_admin_auth():
+            return jsonify({'success': False, 'error': '未授权访问'})
+
+        if inventory_manager:
+            low_stock_products = inventory_manager.get_low_stock_products()
+            return jsonify({
+                'success': True,
+                'data': low_stock_products
+            })
+        else:
+            return jsonify({
+                'success': False,
+                'error': '库存管理系统不可用'
+            })
+
+    except Exception as e:
+        print(f"获取低库存产品错误: {e}")
+        return jsonify({
+            'success': False,
+            'error': '获取低库存产品失败'
+        })
+
+
+@app.route('/api/admin/inventory/<product_id>', methods=['GET'])
+def get_product_detail(product_id):
+    """获取产品详情"""
+    try:
+        if not require_admin_auth():
+            return jsonify({'success': False, 'error': '未授权访问'})
+
+        if inventory_manager:
+            product = inventory_manager.get_product_by_id(product_id)
+            if product:
+                return jsonify({
+                    'success': True,
+                    'data': product
+                })
+            else:
+                return jsonify({
+                    'success': False,
+                    'error': '产品不存在'
+                })
+        else:
+            return jsonify({
+                'success': False,
+                'error': '库存管理系统不可用'
+            })
+
+    except Exception as e:
+        print(f"获取产品详情错误: {e}")
+        return jsonify({
+            'success': False,
+            'error': '获取产品详情失败'
+        })
+
+
+@app.route('/api/admin/inventory/<product_id>/stock', methods=['POST'])
+def update_stock(product_id):
+    """更新库存数量"""
+    try:
+        if not require_admin_auth():
+            return jsonify({'success': False, 'error': '未授权访问'})
+
+        data = request.get_json()
+        quantity_change = data.get('quantity_change', 0)
+        note = data.get('note', '')
+
+        # 获取操作员信息
+        operator = get_current_operator()
+
+        if inventory_manager:
+            success = inventory_manager.update_stock(product_id, quantity_change, operator, note)
+
+            # 记录操作日志
+            log_admin_operation(
+                operator=operator,
+                operation_type="update_stock",
+                target_type="inventory",
+                target_id=product_id,
+                details={
+                    "quantity_change": quantity_change,
+                    "note": note
+                },
+                result="success" if success else "failed"
+            )
+
+            if success:
+                return jsonify({
+                    'success': True,
+                    'message': '库存更新成功'
+                })
+            else:
+                return jsonify({
+                    'success': False,
+                    'error': '库存更新失败'
+                })
+        else:
+            return jsonify({
+                'success': False,
+                'error': '库存管理系统不可用'
+            })
+
+    except Exception as e:
+        print(f"更新库存错误: {e}")
+        return jsonify({
+            'success': False,
+            'error': '更新库存失败'
+        })
+
+
+@app.route('/api/admin/inventory', methods=['POST'])
+def add_product():
+    """添加新产品"""
+    try:
+        if not require_admin_auth():
+            return jsonify({'success': False, 'error': '未授权访问'})
+
+        data = request.get_json()
+
+        # 获取操作员信息
+        admin_token = session.get('admin_token')
+        session_info = admin_auth.get_session_info(admin_token)
+        operator = session_info.get('username', '管理员') if session_info else '管理员'
+
+        if inventory_manager:
+            product_id = inventory_manager.add_product(data, operator)
+            if product_id:
+                return jsonify({
+                    'success': True,
+                    'message': '产品添加成功',
+                    'product_id': product_id
+                })
+            else:
+                return jsonify({
+                    'success': False,
+                    'error': '添加产品失败'
+                })
+        else:
+            return jsonify({
+                'success': False,
+                'error': '库存管理系统不可用'
+            })
+
+    except Exception as e:
+        print(f"添加产品错误: {e}")
+        return jsonify({
+            'success': False,
+            'error': '添加产品失败'
+        })
+
+
+@app.route('/api/admin/inventory/<product_id>', methods=['PUT'])
+def update_product(product_id):
+    """更新产品信息"""
+    try:
+        if not require_admin_auth():
+            return jsonify({'success': False, 'error': '未授权访问'})
+
+        data = request.get_json()
+
+        # 获取操作员信息
+        admin_token = session.get('admin_token')
+        session_info = admin_auth.get_session_info(admin_token)
+        operator = session_info.get('username', '管理员') if session_info else '管理员'
+
+        if inventory_manager:
+            success = inventory_manager.update_product(product_id, data, operator)
+            if success:
+                return jsonify({
+                    'success': True,
+                    'message': '产品更新成功'
+                })
+            else:
+                return jsonify({
+                    'success': False,
+                    'error': '产品更新失败'
+                })
+        else:
+            return jsonify({
+                'success': False,
+                'error': '库存管理系统不可用'
+            })
+
+    except Exception as e:
+        print(f"更新产品错误: {e}")
+        return jsonify({
+            'success': False,
+            'error': '更新产品失败'
+        })
+
+
+@app.route('/api/admin/inventory/<product_id>', methods=['DELETE'])
+def delete_product_api(product_id):
+    """删除产品（软删除）"""
+    try:
+        if not require_admin_auth():
+            return jsonify({'success': False, 'error': '未授权访问'})
+
+        if inventory_manager:
+            success = inventory_manager.delete_product(product_id)
+            if success:
+                return jsonify({
+                    'success': True,
+                    'message': '产品删除成功'
+                })
+            else:
+                return jsonify({
+                    'success': False,
+                    'error': '产品删除失败'
+                })
+        else:
+            return jsonify({
+                'success': False,
+                'error': '库存管理系统不可用'
+            })
+
+    except Exception as e:
+        print(f"删除产品错误: {e}")
+        return jsonify({
+            'success': False,
+            'error': '删除产品失败'
+        })
+
+
+# ==================== 反馈管理API ====================
+
+@app.route('/api/admin/feedback')
+def get_feedback():
+    """获取反馈列表"""
+    try:
+        if not require_admin_auth():
+            return jsonify({'success': False, 'error': '未授权访问'})
+
+        status_filter = request.args.get('status')
+        type_filter = request.args.get('type')
+
+        if feedback_manager:
+            feedback_list = feedback_manager.get_all_feedback(status_filter, type_filter)
+            return jsonify({
+                'success': True,
+                'data': feedback_list
+            })
+        else:
+            return jsonify({
+                'success': False,
+                'error': '反馈管理系统不可用'
+            })
+
+    except Exception as e:
+        print(f"获取反馈列表错误: {e}")
+        return jsonify({
+            'success': False,
+            'error': '获取反馈数据失败'
+        })
+
+
+@app.route('/api/admin/feedback/statistics')
+def get_feedback_statistics():
+    """获取反馈统计信息"""
+    try:
+        if not require_admin_auth():
+            return jsonify({'success': False, 'error': '未授权访问'})
+
+        if feedback_manager:
+            statistics = feedback_manager.get_feedback_statistics()
+            return jsonify({
+                'success': True,
+                'data': statistics
+            })
+        else:
+            return jsonify({
+                'success': False,
+                'error': '反馈管理系统不可用'
+            })
+
+    except Exception as e:
+        print(f"获取反馈统计错误: {e}")
+        return jsonify({
+            'success': False,
+            'error': '获取反馈统计失败'
+        })
+
+
+@app.route('/api/admin/feedback/recent')
+def get_recent_feedback():
+    """获取最近反馈"""
+    try:
+        if not require_admin_auth():
+            return jsonify({'success': False, 'error': '未授权访问'})
+
+        days = request.args.get('days', 7, type=int)
+
+        if feedback_manager:
+            recent_feedback = feedback_manager.get_recent_feedback(days)
+            return jsonify({
+                'success': True,
+                'data': recent_feedback
+            })
+        else:
+            return jsonify({
+                'success': False,
+                'error': '反馈管理系统不可用'
+            })
+
+    except Exception as e:
+        print(f"获取最近反馈错误: {e}")
+        return jsonify({
+            'success': False,
+            'error': '获取最近反馈失败'
+        })
+
+
+@app.route('/api/admin/feedback/<feedback_id>')
+def get_feedback_detail(feedback_id):
+    """获取反馈详情"""
+    try:
+        if not require_admin_auth():
+            return jsonify({'success': False, 'error': '未授权访问'})
+
+        if feedback_manager:
+            feedback = feedback_manager.get_feedback_by_id(feedback_id)
+            if feedback:
+                return jsonify({
+                    'success': True,
+                    'data': feedback
+                })
+            else:
+                return jsonify({
+                    'success': False,
+                    'error': '反馈不存在'
+                })
+        else:
+            return jsonify({
+                'success': False,
+                'error': '反馈管理系统不可用'
+            })
+
+    except Exception as e:
+        print(f"获取反馈详情错误: {e}")
+        return jsonify({
+            'success': False,
+            'error': '获取反馈详情失败'
+        })
+
+
+@app.route('/api/admin/feedback', methods=['POST'])
+def add_feedback():
+    """添加新反馈"""
+    try:
+        if not require_admin_auth():
+            return jsonify({'success': False, 'error': '未授权访问'})
+
+        data = request.get_json()
+
+        # 验证必需字段
+        required_fields = ['product_name', 'customer_wechat_name', 'customer_group_number',
+                          'payment_status', 'feedback_type', 'feedback_content']
+
+        for field in required_fields:
+            if not data.get(field):
+                return jsonify({
+                    'success': False,
+                    'error': f'缺少必需字段: {field}'
+                })
+
+        if feedback_manager:
+            feedback_id = feedback_manager.add_feedback(data)
+            if feedback_id:
+                return jsonify({
+                    'success': True,
+                    'message': '反馈添加成功',
+                    'feedback_id': feedback_id
+                })
+            else:
+                return jsonify({
+                    'success': False,
+                    'error': '添加反馈失败'
+                })
+        else:
+            return jsonify({
+                'success': False,
+                'error': '反馈管理系统不可用'
+            })
+
+    except Exception as e:
+        print(f"添加反馈错误: {e}")
+        return jsonify({
+            'success': False,
+            'error': '添加反馈失败'
+        })
+
+
+@app.route('/api/admin/feedback/<feedback_id>/status', methods=['POST'])
+def update_feedback_status(feedback_id):
+    """更新反馈处理状态"""
+    try:
+        if not require_admin_auth():
+            return jsonify({'success': False, 'error': '未授权访问'})
+
+        data = request.get_json()
+        status = data.get('status', '')
+        notes = data.get('notes', '')
+
+        # 获取操作员信息
+        admin_token = session.get('admin_token')
+        session_info = admin_auth.get_session_info(admin_token)
+        processor = session_info.get('username', '管理员') if session_info else '管理员'
+
+        if feedback_manager:
+            success = feedback_manager.update_feedback_status(feedback_id, status, processor, notes)
+            if success:
+                return jsonify({
+                    'success': True,
+                    'message': '反馈状态更新成功'
+                })
+            else:
+                return jsonify({
+                    'success': False,
+                    'error': '反馈状态更新失败'
+                })
+        else:
+            return jsonify({
+                'success': False,
+                'error': '反馈管理系统不可用'
+            })
+
+    except Exception as e:
+        print(f"更新反馈状态错误: {e}")
+        return jsonify({
+            'success': False,
+            'error': '更新反馈状态失败'
+        })
+
+
+@app.route('/api/admin/feedback/<feedback_id>', methods=['DELETE'])
+def delete_feedback_api(feedback_id):
+    """删除反馈记录"""
+    try:
+        if not require_admin_auth():
+            return jsonify({'success': False, 'error': '未授权访问'})
+
+        if feedback_manager:
+            success = feedback_manager.delete_feedback(feedback_id)
+            if success:
+                return jsonify({
+                    'success': True,
+                    'message': '反馈删除成功'
+                })
+            else:
+                return jsonify({
+                    'success': False,
+                    'error': '反馈删除失败'
+                })
+        else:
+            return jsonify({
+                'success': False,
+                'error': '反馈管理系统不可用'
+            })
+
+    except Exception as e:
+        print(f"删除反馈错误: {e}")
+        return jsonify({
+            'success': False,
+            'error': '删除反馈失败'
+        })
+
+
+# ==================== 其他管理API ====================
+
+@app.route('/api/admin/change-password', methods=['POST'])
+def change_admin_password():
+    """修改管理员密码"""
+    try:
+        if not require_admin_auth():
+            return jsonify({'success': False, 'error': '未授权访问'})
+
+        data = request.get_json()
+        old_password = data.get('oldPassword', '')
+        new_password = data.get('newPassword', '')
+
+        if not old_password or not new_password:
+            return jsonify({
+                'success': False,
+                'error': '请输入旧密码和新密码'
+            })
+
+        # 获取当前用户信息
+        admin_token = session.get('admin_token')
+        session_info = admin_auth.get_session_info(admin_token)
+        username = session_info.get('username') if session_info else None
+
+        if not username:
+            return jsonify({
+                'success': False,
+                'error': '获取用户信息失败'
+            })
+
+        if admin_auth:
+            success = admin_auth.change_password(username, old_password, new_password)
+            if success:
+                return jsonify({
+                    'success': True,
+                    'message': '密码修改成功'
+                })
+            else:
+                return jsonify({
+                    'success': False,
+                    'error': '旧密码错误或修改失败'
+                })
+        else:
+            return jsonify({
+                'success': False,
+                'error': '认证系统不可用'
+            })
+
+    except Exception as e:
+        print(f"修改密码错误: {e}")
+        return jsonify({
+            'success': False,
+            'error': '修改密码失败'
+        })
+
+
+# ==================== 数据导出和日志API ====================
+
+@app.route('/api/admin/export/inventory')
+def export_inventory():
+    """导出库存数据"""
+    try:
+        if not require_admin_auth():
+            return jsonify({'success': False, 'error': '未授权访问'})
+
+        format_type = request.args.get('format', 'csv')
+        operator = get_current_operator()
+
+        if inventory_manager:
+            products = inventory_manager.get_all_products()
+
+            if format_type == 'csv':
+                csv_data = data_exporter.export_inventory_to_csv(products)
+
+                # 记录操作日志
+                log_admin_operation(
+                    operator=operator,
+                    operation_type="export",
+                    target_type="inventory",
+                    target_id="all",
+                    details={"format": "csv", "count": len(products)}
+                )
+
+                response = app.response_class(
+                    csv_data,
+                    mimetype='text/csv',
+                    headers={"Content-disposition": f"attachment; filename=inventory_{datetime.now().strftime('%Y%m%d_%H%M%S')}.csv"}
+                )
+                return response
+
+            elif format_type == 'json':
+                json_data = data_exporter.export_to_json(products)
+
+                # 记录操作日志
+                log_admin_operation(
+                    operator=operator,
+                    operation_type="export",
+                    target_type="inventory",
+                    target_id="all",
+                    details={"format": "json", "count": len(products)}
+                )
+
+                response = app.response_class(
+                    json_data,
+                    mimetype='application/json',
+                    headers={"Content-disposition": f"attachment; filename=inventory_{datetime.now().strftime('%Y%m%d_%H%M%S')}.json"}
+                )
+                return response
+
+            else:
+                return jsonify({
+                    'success': False,
+                    'error': '不支持的导出格式'
+                })
+        else:
+            return jsonify({
+                'success': False,
+                'error': '库存管理系统不可用'
+            })
+
+    except Exception as e:
+        print(f"导出库存数据错误: {e}")
+        return jsonify({
+            'success': False,
+            'error': '导出数据失败'
+        })
+
+
+@app.route('/api/admin/export/feedback')
+def export_feedback():
+    """导出反馈数据"""
+    try:
+        if not require_admin_auth():
+            return jsonify({'success': False, 'error': '未授权访问'})
+
+        format_type = request.args.get('format', 'csv')
+        operator = get_current_operator()
+
+        if feedback_manager:
+            feedback_list = feedback_manager.get_all_feedback()
+
+            if format_type == 'csv':
+                csv_data = data_exporter.export_feedback_to_csv(feedback_list)
+
+                # 记录操作日志
+                log_admin_operation(
+                    operator=operator,
+                    operation_type="export",
+                    target_type="feedback",
+                    target_id="all",
+                    details={"format": "csv", "count": len(feedback_list)}
+                )
+
+                response = app.response_class(
+                    csv_data,
+                    mimetype='text/csv',
+                    headers={"Content-disposition": f"attachment; filename=feedback_{datetime.now().strftime('%Y%m%d_%H%M%S')}.csv"}
+                )
+                return response
+
+            elif format_type == 'json':
+                json_data = data_exporter.export_to_json(feedback_list)
+
+                # 记录操作日志
+                log_admin_operation(
+                    operator=operator,
+                    operation_type="export",
+                    target_type="feedback",
+                    target_id="all",
+                    details={"format": "json", "count": len(feedback_list)}
+                )
+
+                response = app.response_class(
+                    json_data,
+                    mimetype='application/json',
+                    headers={"Content-disposition": f"attachment; filename=feedback_{datetime.now().strftime('%Y%m%d_%H%M%S')}.json"}
+                )
+                return response
+
+            else:
+                return jsonify({
+                    'success': False,
+                    'error': '不支持的导出格式'
+                })
+        else:
+            return jsonify({
+                'success': False,
+                'error': '反馈管理系统不可用'
+            })
+
+    except Exception as e:
+        print(f"导出反馈数据错误: {e}")
+        return jsonify({
+            'success': False,
+            'error': '导出数据失败'
+        })
+
+
+@app.route('/api/admin/logs')
+def get_operation_logs():
+    """获取操作日志"""
+    try:
+        if not require_admin_auth():
+            return jsonify({'success': False, 'error': '未授权访问'})
+
+        limit = request.args.get('limit', 100, type=int)
+        operator = request.args.get('operator')
+        operation_type = request.args.get('operation_type')
+        target_type = request.args.get('target_type')
+
+        logs = operation_logger.get_logs(limit, operator, operation_type, target_type)
+
+        return jsonify({
+            'success': True,
+            'data': logs
+        })
+
+    except Exception as e:
+        print(f"获取操作日志错误: {e}")
+        return jsonify({
+            'success': False,
+            'error': '获取操作日志失败'
+        })
+
+
+@app.route('/api/admin/logs/statistics')
+def get_log_statistics():
+    """获取操作统计"""
+    try:
+        if not require_admin_auth():
+            return jsonify({'success': False, 'error': '未授权访问'})
+
+        days = request.args.get('days', 7, type=int)
+        stats = operation_logger.get_operation_statistics(days)
+
+        return jsonify({
+            'success': True,
+            'data': stats
+        })
+
+    except Exception as e:
+        print(f"获取操作统计错误: {e}")
+        return jsonify({
+            'success': False,
+            'error': '获取操作统计失败'
+        })
+
+
+@app.route('/api/admin/export/logs')
+def export_logs():
+    """导出操作日志"""
+    try:
+        if not require_admin_auth():
+            return jsonify({'success': False, 'error': '未授权访问'})
+
+        format_type = request.args.get('format', 'csv')
+        start_date = request.args.get('start_date')
+        end_date = request.args.get('end_date')
+        operator = get_current_operator()
+
+        logs = operation_logger.export_logs(start_date, end_date)
+
+        if format_type == 'csv':
+            csv_data = data_exporter.export_logs_to_csv(logs)
+
+            response = app.response_class(
+                csv_data,
+                mimetype='text/csv',
+                headers={"Content-disposition": f"attachment; filename=operation_logs_{datetime.now().strftime('%Y%m%d_%H%M%S')}.csv"}
+            )
+            return response
+
+        elif format_type == 'json':
+            json_data = data_exporter.export_to_json(logs)
+
+            response = app.response_class(
+                json_data,
+                mimetype='application/json',
+                headers={"Content-disposition": f"attachment; filename=operation_logs_{datetime.now().strftime('%Y%m%d_%H%M%S')}.json"}
+            )
+            return response
+
+        else:
+            return jsonify({
+                'success': False,
+                'error': '不支持的导出格式'
+            })
+
+    except Exception as e:
+        print(f"导出操作日志错误: {e}")
+        return jsonify({
+            'success': False,
+            'error': '导出日志失败'
+        })
+
+
+@app.route('/api/admin/reports/inventory')
+def generate_inventory_report():
+    """生成库存报告"""
+    try:
+        if not require_admin_auth():
+            return jsonify({'success': False, 'error': '未授权访问'})
+
+        if inventory_manager:
+            products = inventory_manager.get_all_products()
+            summary = inventory_manager.get_inventory_summary()
+
+            report = data_exporter.generate_inventory_report(products, summary)
+
+            response = app.response_class(
+                report,
+                mimetype='text/plain',
+                headers={"Content-disposition": f"attachment; filename=inventory_report_{datetime.now().strftime('%Y%m%d_%H%M%S')}.md"}
+            )
+            return response
+        else:
+            return jsonify({
+                'success': False,
+                'error': '库存管理系统不可用'
+            })
+
+    except Exception as e:
+        print(f"生成库存报告错误: {e}")
+        return jsonify({
+            'success': False,
+            'error': '生成报告失败'
+        })
+
+
+@app.route('/api/admin/reports/feedback')
+def generate_feedback_report():
+    """生成反馈报告"""
+    try:
+        if not require_admin_auth():
+            return jsonify({'success': False, 'error': '未授权访问'})
+
+        if feedback_manager:
+            feedback_list = feedback_manager.get_all_feedback()
+            stats = feedback_manager.get_feedback_statistics()
+
+            report = data_exporter.generate_feedback_report(feedback_list, stats)
+
+            response = app.response_class(
+                report,
+                mimetype='text/plain',
+                headers={"Content-disposition": f"attachment; filename=feedback_report_{datetime.now().strftime('%Y%m%d_%H%M%S')}.md"}
+            )
+            return response
+        else:
+            return jsonify({
+                'success': False,
+                'error': '反馈管理系统不可用'
+            })
+
+    except Exception as e:
+        print(f"生成反馈报告错误: {e}")
+        return jsonify({
+            'success': False,
+            'error': '生成报告失败'
+        })
 
 
 @app.errorhandler(404)

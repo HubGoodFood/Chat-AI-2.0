@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>管理员控制台 - 果蔬客服AI系统</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/admin.css') }}">
+</head>
+<body class="admin-page">
+    <div class="admin-container">
+        <!-- 侧边栏 -->
+        <nav class="sidebar">
+            <div class="sidebar-header">
+                <h2>🍎🥬 管理后台</h2>
+                <p>欢迎，<span id="adminUsername">管理员</span></p>
+            </div>
+            
+            <ul class="sidebar-menu">
+                <li><a href="#dashboard" class="menu-item active" data-section="dashboard">📊 控制台</a></li>
+                <li><a href="#inventory" class="menu-item" data-section="inventory">📦 库存管理</a></li>
+                <li><a href="#feedback" class="menu-item" data-section="feedback">💬 反馈管理</a></li>
+                <li><a href="#logs" class="menu-item" data-section="logs">📋 操作日志</a></li>
+                <li><a href="#export" class="menu-item" data-section="export">📤 数据导出</a></li>
+                <li><a href="#settings" class="menu-item" data-section="settings">⚙️ 系统设置</a></li>
+            </ul>
+            
+            <div class="sidebar-footer">
+                <button id="logoutBtn" class="logout-btn">退出登录</button>
+                <p><a href="/" target="_blank">查看客服系统</a></p>
+            </div>
+        </nav>
+        
+        <!-- 主内容区 -->
+        <main class="main-content">
+            <!-- 控制台概览 -->
+            <section id="dashboardSection" class="content-section active">
+                <div class="section-header">
+                    <h1>📊 系统概览</h1>
+                    <p>果蔬客服AI系统管理控制台</p>
+                </div>
+                
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon">📦</div>
+                        <div class="stat-info">
+                            <h3 id="totalProducts">-</h3>
+                            <p>总产品数</p>
+                        </div>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <div class="stat-icon">⚠️</div>
+                        <div class="stat-info">
+                            <h3 id="lowStockCount">-</h3>
+                            <p>低库存产品</p>
+                        </div>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <div class="stat-icon">💬</div>
+                        <div class="stat-info">
+                            <h3 id="totalFeedback">-</h3>
+                            <p>总反馈数</p>
+                        </div>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <div class="stat-icon">⏳</div>
+                        <div class="stat-info">
+                            <h3 id="pendingFeedback">-</h3>
+                            <p>待处理反馈</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="dashboard-content">
+                    <div class="dashboard-row">
+                        <div class="dashboard-card">
+                            <h3>📈 库存状态</h3>
+                            <div id="inventoryStatus">
+                                <p>正在加载...</p>
+                            </div>
+                        </div>
+                        
+                        <div class="dashboard-card">
+                            <h3>📝 最新反馈</h3>
+                            <div id="recentFeedback">
+                                <p>正在加载...</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- 库存管理 -->
+            <section id="inventorySection" class="content-section">
+                <div class="section-header">
+                    <h1>📦 库存管理</h1>
+                    <button id="addProductBtn" class="primary-btn">+ 添加产品</button>
+                </div>
+                
+                <div class="inventory-controls">
+                    <div class="search-box">
+                        <input type="text" id="inventorySearch" placeholder="搜索产品...">
+                        <button id="searchInventoryBtn">🔍</button>
+                    </div>
+                    
+                    <div class="filter-controls">
+                        <select id="categoryFilter">
+                            <option value="">所有分类</option>
+                        </select>
+                        <select id="statusFilter">
+                            <option value="">所有状态</option>
+                            <option value="active">正常</option>
+                            <option value="inactive">停用</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="inventory-table-container">
+                    <table id="inventoryTable" class="data-table">
+                        <thead>
+                            <tr>
+                                <th>产品名称</th>
+                                <th>分类</th>
+                                <th>价格</th>
+                                <th>当前库存</th>
+                                <th>状态</th>
+                                <th>操作</th>
+                            </tr>
+                        </thead>
+                        <tbody id="inventoryTableBody">
+                            <tr>
+                                <td colspan="6" class="loading">正在加载库存数据...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+            
+            <!-- 反馈管理 -->
+            <section id="feedbackSection" class="content-section">
+                <div class="section-header">
+                    <h1>💬 客户反馈管理</h1>
+                    <button id="addFeedbackBtn" class="primary-btn">+ 添加反馈</button>
+                </div>
+                
+                <div class="feedback-controls">
+                    <div class="search-box">
+                        <input type="text" id="feedbackSearch" placeholder="搜索反馈...">
+                        <button id="searchFeedbackBtn">🔍</button>
+                    </div>
+                    
+                    <div class="filter-controls">
+                        <select id="feedbackTypeFilter">
+                            <option value="">所有类型</option>
+                            <option value="positive">正面反馈</option>
+                            <option value="negative">负面反馈</option>
+                        </select>
+                        <select id="feedbackStatusFilter">
+                            <option value="">所有状态</option>
+                            <option value="待处理">待处理</option>
+                            <option value="处理中">处理中</option>
+                            <option value="已解决">已解决</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="feedback-table-container">
+                    <table id="feedbackTable" class="data-table">
+                        <thead>
+                            <tr>
+                                <th>产品名称</th>
+                                <th>客户昵称</th>
+                                <th>反馈类型</th>
+                                <th>付款状态</th>
+                                <th>处理状态</th>
+                                <th>反馈时间</th>
+                                <th>操作</th>
+                            </tr>
+                        </thead>
+                        <tbody id="feedbackTableBody">
+                            <tr>
+                                <td colspan="7" class="loading">正在加载反馈数据...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+            
+            <!-- 操作日志 -->
+            <section id="logsSection" class="content-section">
+                <div class="section-header">
+                    <h1>📋 操作日志</h1>
+                    <button id="refreshLogsBtn" class="primary-btn">🔄 刷新</button>
+                </div>
+
+                <div class="logs-controls">
+                    <div class="filter-controls">
+                        <select id="logOperatorFilter">
+                            <option value="">所有操作员</option>
+                        </select>
+                        <select id="logOperationFilter">
+                            <option value="">所有操作</option>
+                            <option value="create">创建</option>
+                            <option value="update">更新</option>
+                            <option value="delete">删除</option>
+                            <option value="update_stock">库存调整</option>
+                            <option value="export">数据导出</option>
+                        </select>
+                        <select id="logTargetFilter">
+                            <option value="">所有目标</option>
+                            <option value="inventory">库存</option>
+                            <option value="feedback">反馈</option>
+                            <option value="admin">管理员</option>
+                        </select>
+                        <input type="number" id="logLimitInput" value="100" min="10" max="1000" placeholder="显示条数">
+                    </div>
+                </div>
+
+                <div class="logs-table-container">
+                    <table id="logsTable" class="data-table">
+                        <thead>
+                            <tr>
+                                <th>时间</th>
+                                <th>操作员</th>
+                                <th>操作类型</th>
+                                <th>目标类型</th>
+                                <th>目标ID</th>
+                                <th>结果</th>
+                                <th>详情</th>
+                            </tr>
+                        </thead>
+                        <tbody id="logsTableBody">
+                            <tr>
+                                <td colspan="7" class="loading">正在加载日志数据...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- 数据导出 -->
+            <section id="exportSection" class="content-section">
+                <div class="section-header">
+                    <h1>📤 数据导出</h1>
+                </div>
+
+                <div class="export-content">
+                    <div class="export-card">
+                        <h3>📦 库存数据导出</h3>
+                        <p>导出所有产品和库存信息</p>
+                        <div class="export-actions">
+                            <button class="primary-btn" onclick="admin.exportData('inventory', 'csv')">导出CSV</button>
+                            <button class="secondary-btn" onclick="admin.exportData('inventory', 'json')">导出JSON</button>
+                            <button class="secondary-btn" onclick="admin.generateReport('inventory')">生成报告</button>
+                        </div>
+                    </div>
+
+                    <div class="export-card">
+                        <h3>💬 反馈数据导出</h3>
+                        <p>导出所有客户反馈信息</p>
+                        <div class="export-actions">
+                            <button class="primary-btn" onclick="admin.exportData('feedback', 'csv')">导出CSV</button>
+                            <button class="secondary-btn" onclick="admin.exportData('feedback', 'json')">导出JSON</button>
+                            <button class="secondary-btn" onclick="admin.generateReport('feedback')">生成报告</button>
+                        </div>
+                    </div>
+
+                    <div class="export-card">
+                        <h3>📋 操作日志导出</h3>
+                        <p>导出系统操作日志</p>
+                        <div class="export-date-range">
+                            <label for="exportStartDate">开始日期:</label>
+                            <input type="date" id="exportStartDate">
+                            <label for="exportEndDate">结束日期:</label>
+                            <input type="date" id="exportEndDate">
+                        </div>
+                        <div class="export-actions">
+                            <button class="primary-btn" onclick="admin.exportLogs('csv')">导出CSV</button>
+                            <button class="secondary-btn" onclick="admin.exportLogs('json')">导出JSON</button>
+                        </div>
+                    </div>
+
+                    <div class="export-card">
+                        <h3>💾 完整数据备份</h3>
+                        <p>导出所有系统数据的完整备份</p>
+                        <div class="export-actions">
+                            <button class="primary-btn" onclick="admin.createBackup()">创建备份</button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 系统设置 -->
+            <section id="settingsSection" class="content-section">
+                <div class="section-header">
+                    <h1>⚙️ 系统设置</h1>
+                </div>
+
+                <div class="settings-content">
+                    <div class="settings-card">
+                        <h3>🔐 修改密码</h3>
+                        <form id="changePasswordForm">
+                            <div class="form-group">
+                                <label for="oldPassword">当前密码</label>
+                                <input type="password" id="oldPassword" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="newPassword">新密码</label>
+                                <input type="password" id="newPassword" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="confirmPassword">确认新密码</label>
+                                <input type="password" id="confirmPassword" required>
+                            </div>
+                            <button type="submit" class="primary-btn">修改密码</button>
+                        </form>
+                    </div>
+
+                    <div class="settings-card">
+                        <h3>📊 系统信息</h3>
+                        <div class="system-info">
+                            <p><strong>系统版本：</strong>2.0</p>
+                            <p><strong>最后更新：</strong><span id="lastUpdate">-</span></p>
+                            <p><strong>运行状态：</strong><span class="status-active">正常运行</span></p>
+                        </div>
+                    </div>
+
+                    <div class="settings-card">
+                        <h3>🧹 系统维护</h3>
+                        <div class="maintenance-actions">
+                            <button class="secondary-btn" onclick="admin.clearOldLogs()">清理旧日志</button>
+                            <button class="secondary-btn" onclick="admin.optimizeDatabase()">优化数据</button>
+                            <button class="danger-btn" onclick="admin.resetSystem()">重置系统</button>
+                        </div>
+                        <p class="maintenance-note">注意：系统维护操作可能影响系统性能，请在低峰期执行。</p>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+    
+    <!-- 模态框 -->
+    <div id="modal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <div id="modalBody"></div>
+        </div>
+    </div>
+
+    <!-- 模态框模板 -->
+    {% include 'admin/modals.html' %}
+
+    <script src="{{ url_for('static', filename='js/admin.js') }}"></script>
+</body>
+</html>
