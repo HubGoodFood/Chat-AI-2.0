@@ -3,14 +3,19 @@ LLM客户端模块 - 封装DeepSeek API调用
 """
 import requests
 import json
+import os
 from typing import List, Dict, Any, Optional
+from dotenv import load_dotenv
+
+# 加载环境变量
+load_dotenv()
 
 
 class LLMClient:
     def __init__(self):
-        self.api_url = "https://llm.chutes.ai/v1/chat/completions"
-        self.api_key = "cpk_134ee649c58945309caf13e806f1af56.3f5d497816945ae4b4b26adec2585889.EWbYjxQ81fAOMbytLCManifGstg6RGAZ"
-        self.model = "deepseek-ai/DeepSeek-V3-0324"
+        self.api_url = os.environ.get('LLM_API_URL', "https://llm.chutes.ai/v1/chat/completions")
+        self.api_key = os.environ.get('LLM_API_KEY', "cpk_134ee649c58945309caf13e806f1af56.3f5d497816945ae4b4b26adec2585889.EWbYjxQ81fAOMbytLCManifGstg6RGAZ")
+        self.model = os.environ.get('LLM_MODEL', "deepseek-ai/DeepSeek-V3-0324")
         
         # 系统提示词
         self.system_prompt = """你是一个专业的果蔬客服AI助手，专门为果蔬拼台社区提供客户服务。

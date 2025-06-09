@@ -3,13 +3,16 @@
 """
 from flask import Flask, render_template, request, jsonify, session
 import uuid
+import os
 from datetime import datetime
 from knowledge_retriever import KnowledgeRetriever
-import os
+from dotenv import load_dotenv
 
+# 加载环境变量
+load_dotenv()
 
 app = Flask(__name__)
-app.secret_key = 'fruit_vegetable_ai_service_2024'
+app.secret_key = os.environ.get('SECRET_KEY', 'fruit_vegetable_ai_service_2024')
 
 # 全局变量
 knowledge_retriever = None
@@ -204,10 +207,14 @@ def internal_error(error):
 
 if __name__ == '__main__':
     print("🚀 启动果蔬客服AI系统...")
-    
+
+    # 获取端口配置（Render会提供PORT环境变量）
+    port = int(os.environ.get('PORT', 5000))
+    debug_mode = os.environ.get('FLASK_ENV') != 'production'
+
     # 初始化系统
     if initialize_system():
-        print("🌐 启动Web服务器...")
-        app.run(debug=True, host='0.0.0.0', port=5000)
+        print(f"🌐 启动Web服务器... 端口: {port}")
+        app.run(debug=debug_mode, host='0.0.0.0', port=port)
     else:
         print("❌ 系统初始化失败，无法启动服务器")
