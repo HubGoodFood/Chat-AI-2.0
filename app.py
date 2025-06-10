@@ -39,6 +39,17 @@ def initialize_system():
     """初始化系统"""
     global knowledge_retriever, admin_auth, inventory_manager, inventory_count_manager, inventory_comparison_manager, feedback_manager
     try:
+        # 初始化存储系统（可选：如果需要使用NAS存储）
+        # 取消注释以下代码来启用NAS存储
+        # from src.storage.storage_manager import initialize_storage, StorageType
+        # nas_path = "Z:\\ChatAI_System\\data"  # Windows示例
+        # nas_path = "/mnt/nas/ChatAI_Data/ChatAI_System/data"  # Linux示例
+        # storage_success = initialize_storage(StorageType.NAS, nas_path=nas_path)
+        # if storage_success:
+        #     print("✅ NAS存储系统初始化成功")
+        # else:
+        #     print("⚠️ NAS存储初始化失败，使用本地存储")
+
         knowledge_retriever = KnowledgeRetriever()
         knowledge_retriever.initialize()
 

@@ -1,5 +1,5 @@
 {
-  "last_updated": "2025-06-10T01:18:47.987403",
+  "last_updated": "2025-06-10T02:07:45.227271",
   "products": {
     "1": {
       "product_name": "农场素食散养走地萨松母鸡    ",
@@ -2109,6 +2109,32 @@
           "quantity": 10,
           "timestamp": "2025-06-10T01:16:19.082826",
           "operator": "admin",
+          "note": "新增产品"
+        }
+      ]
+    },
+    "64": {
+      "product_name": "测试产品",
+      "category": "测试分类",
+      "specification": "1个",
+      "price": "10.0元",
+      "unit": "个",
+      "current_stock": 50,
+      "min_stock_warning": 5,
+      "description": "测试产品",
+      "image_url": "",
+      "barcode": "880000648508",
+      "barcode_image": "barcodes/测试产品_880000648508.png",
+      "storage_area": "T",
+      "status": "active",
+      "created_at": "2025-06-10T02:07:45.227271",
+      "updated_at": "2025-06-10T02:07:45.227271",
+      "stock_history": [
+        {
+          "action": "新增产品",
+          "quantity": 50,
+          "timestamp": "2025-06-10T02:07:45.227271",
+          "operator": "测试",
           "note": "新增产品"
         }
       ]

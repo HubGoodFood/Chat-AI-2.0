@@ -12,6 +12,7 @@ from barcode.writer import ImageWriter
 from PIL import Image
 import secrets
 from .storage_area_manager import StorageAreaManager
+from ..utils.encoding_utils import safe_barcode_filename, clean_product_data, safe_print
 
 
 class InventoryManager:
@@ -71,9 +72,8 @@ class InventoryManager:
             code128 = barcode.get_barcode_class('code128')
             barcode_instance = code128(barcode_number, writer=ImageWriter())
 
-            # 生成文件名（使用产品名称和条形码）
-            safe_name = "".join(c for c in product_name if c.isalnum() or c in (' ', '-', '_')).rstrip()
-            filename = f"{safe_name}_{barcode_number}"
+            # 生成安全的文件名
+            filename = safe_barcode_filename(product_name, barcode_number)
 
             # 保存条形码图片
             filepath = os.path.join(self.barcode_dir, filename)
@@ -83,7 +83,7 @@ class InventoryManager:
             return f"barcodes/{filename}.png"
 
         except Exception as e:
-            print(f"保存条形码图片失败: {e}")
+            safe_print(f"保存条形码图片失败: {e}")
             return ""
 
     def _ensure_inventory_file(self):
@@ -263,13 +263,16 @@ class InventoryManager:
     def add_product(self, product_data: Dict, operator: str) -> Optional[str]:
         """添加新产品（增强版：自动生成条形码）"""
         try:
+            # 清理产品数据中的编码问题
+            cleaned_data = clean_product_data(product_data)
+
             inventory_data = self._load_inventory()
 
             # 生成新的产品ID
             existing_ids = [int(pid) for pid in inventory_data["products"].keys() if pid.isdigit()]
             new_id = str(max(existing_ids) + 1) if existing_ids else "1"
 
-            product_name = product_data["product_name"]
+            product_name = cleaned_data["product_name"]
 
             # 生成条形码
             barcode_number = self._generate_barcode(new_id, product_name)
@@ -278,24 +281,24 @@ class InventoryManager:
             # 创建产品记录（包含新字段）
             inventory_data["products"][new_id] = {
                 "product_name": product_name,
-                "category": product_data["category"],
-                "specification": product_data.get("specification", ""),
-                "price": product_data["price"],
-                "unit": product_data["unit"],
-                "current_stock": product_data.get("initial_stock", 0),
-                "min_stock_warning": product_data.get("min_stock_warning", 10),
-                "description": product_data.get("description", ""),
-                "image_url": product_data.get("image_url", ""),
+                "category": cleaned_data["category"],
+                "specification": cleaned_data.get("specification", ""),
+                "price": cleaned_data["price"],
+                "unit": cleaned_data["unit"],
+                "current_stock": cleaned_data.get("initial_stock", 0),
+                "min_stock_warning": cleaned_data.get("min_stock_warning", 10),
+                "description": cleaned_data.get("description", ""),
+                "image_url": cleaned_data.get("image_url", ""),
                 "barcode": barcode_number,  # 新增：条形码
                 "barcode_image": barcode_image_path,  # 新增：条形码图片路径
-                "storage_area": product_data.get("storage_area", "A"),  # 新增：存储区域
+                "storage_area": cleaned_data.get("storage_area", "A"),  # 新增：存储区域
                 "status": "active",
                 "created_at": datetime.now().isoformat(),
                 "updated_at": datetime.now().isoformat(),
                 "stock_history": [
                     {
                         "action": "新增产品",
-                        "quantity": product_data.get("initial_stock", 0),
+                        "quantity": cleaned_data.get("initial_stock", 0),
                         "timestamp": datetime.now().isoformat(),
                         "operator": operator,
                         "note": "新增产品"
@@ -305,11 +308,11 @@ class InventoryManager:
 
             # 保存数据
             self._save_inventory(inventory_data)
-            print(f"✅ 产品添加成功，ID: {new_id}, 条形码: {barcode_number}")
+            safe_print(f"产品添加成功，ID: {new_id}, 条形码: {barcode_number}")
             return new_id
 
         except Exception as e:
-            print(f"添加产品失败: {e}")
+            safe_print(f"添加产品失败: {e}")
             return None
     
     def update_product(self, product_id: str, product_data: Dict, operator: str) -> bool:
