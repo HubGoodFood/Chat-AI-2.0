@@ -262,6 +262,23 @@ debug_*
 *.dump
 
 # ===== 项目特定忽略 =====
+# 库存管理数据文件（包含敏感业务数据）
+data/inventory.json
+data/inventory_counts.json
+data/inventory_comparisons.json
+
+# 条形码图片目录（自动生成的文件）
+static/barcodes/
+static/barcodes/*.png
+static/barcodes/*.jpg
+
+# 测试文件（开发过程中的临时文件）
+test_api.py
+test_frontend.html
+INVENTORY_*.md
+INVENTORY_FEATURE_MATRIX.md
+INVENTORY_SYSTEM_ANALYSIS_REPORT.md
+
 # 如果有本地测试数据文件
 # test_products.csv
 # test_policy.json
@@ -285,3 +302,46 @@ docker-compose.override.yml
 # 监控和分析
 .monitoring/
 analytics/
+
+# ===== 库存管理系统特定忽略 =====
+# 库存数据备份文件
+data/backup/
+data/inventory_backup_*.json
+data/counts_backup_*.json
+
+# 条形码生成临时文件
+*.barcode
+barcode_temp/
+
+# 盘点任务导出文件
+count_export_*.csv
+count_report_*.md
+comparison_report_*.md
+comparison_changes_*.csv
+
+# 库存分析报告
+inventory_analysis_*.pdf
+inventory_report_*.xlsx
+
+# 开发和测试相关
+test_inventory_data.json
+test_count_data.json
+dev_inventory.json
+debug_inventory.json
+
+# IDE特定文件
+.vscode/settings.json
+.idea/workspace.xml
+
+# 系统生成的缩略图
+static/thumbnails/
+static/temp/
+
+# 日志文件
+inventory.log
+count.log
+comparison.log
+
+# 性能分析文件
+profile_*.prof
+memory_*.dump

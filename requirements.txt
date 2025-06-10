@@ -8,3 +8,5 @@ python-levenshtein==0.21.1
 flask-limiter>=3.12
 flask-cors>=6.0.0
 flask-babel>=4.0.0
+python-barcode[images]>=0.15.1
+pillow>=10.0.0

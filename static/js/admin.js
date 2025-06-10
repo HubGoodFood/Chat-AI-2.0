@@ -102,6 +102,9 @@ class AdminDashboard {
                 this.closeModal();
             }
         });
+
+        // 新页面事件监听器
+        this.setupNewPagesEventListeners();
     }
 
     async checkAuthStatus() {
@@ -143,6 +146,15 @@ class AdminDashboard {
                 break;
             case 'inventory':
                 this.loadInventoryData();
+                break;
+            case 'inventory-add-product':
+                this.loadAddProductPage();
+                break;
+            case 'inventory-counts':
+                this.loadInventoryCountsPage();
+                break;
+            case 'inventory-analysis':
+                this.loadInventoryAnalysisPage();
                 break;
             case 'feedback':
                 this.loadFeedbackData();
@@ -1028,6 +1040,680 @@ class AdminDashboard {
             }
         } catch (error) {
             console.error('修改密码失败:', error);
+            this.showError('网络错误');
+        }
+    }
+
+    // ==================== 新页面方法 ====================
+
+    setupNewPagesEventListeners() {
+        // 产品入库页面事件
+        document.getElementById('addProductForm')?.addEventListener('submit', (e) => {
+            e.preventDefault();
+            this.saveNewProduct();
+        });
+
+        // 产品信息变化时实时生成条形码预览
+        ['productName', 'productCategory'].forEach(id => {
+            document.getElementById(id)?.addEventListener('input', () => {
+                this.updateBarcodePreview();
+            });
+        });
+
+        // 库存盘点页面事件
+        document.getElementById('createCountTaskBtn')?.addEventListener('click', () => {
+            this.createCountTask();
+        });
+
+        document.getElementById('refreshCountTasksBtn')?.addEventListener('click', () => {
+            this.loadCountTasks();
+        });
+
+        document.getElementById('countStatusFilter')?.addEventListener('change', () => {
+            this.filterCountTasks();
+        });
+
+        document.getElementById('addByBarcodeBtn')?.addEventListener('click', () => {
+            this.addCountItemByBarcode();
+        });
+
+        document.getElementById('searchProductBtn')?.addEventListener('click', () => {
+            this.searchProductsForCount();
+        });
+
+        document.getElementById('completeCountBtn')?.addEventListener('click', () => {
+            this.completeCurrentCount();
+        });
+
+        document.getElementById('cancelCountBtn')?.addEventListener('click', () => {
+            this.cancelCurrentCount();
+        });
+
+        // 数据对比分析页面事件
+        document.getElementById('createWeeklyAnalysisBtn')?.addEventListener('click', () => {
+            this.createWeeklyAnalysis();
+        });
+
+        document.getElementById('createManualAnalysisBtn')?.addEventListener('click', () => {
+            this.createManualAnalysis();
+        });
+
+        document.getElementById('downloadAnalysisReportBtn')?.addEventListener('click', () => {
+            this.downloadAnalysisReport();
+        });
+
+        document.getElementById('downloadChangesExcelBtn')?.addEventListener('click', () => {
+            this.downloadChangesExcel();
+        });
+
+        // 过滤器事件
+        document.getElementById('changeTypeFilter')?.addEventListener('change', () => {
+            this.filterAnalysisChanges();
+        });
+
+        document.getElementById('categoryAnalysisFilter')?.addEventListener('change', () => {
+            this.filterAnalysisChanges();
+        });
+    }
+
+    // ==================== 产品入库页面方法 ====================
+
+    loadAddProductPage() {
+        console.log('加载产品入库页面');
+        // 重置表单
+        document.getElementById('addProductForm')?.reset();
+        // 清空条形码预览
+        this.clearBarcodePreview();
+    }
+
+    updateBarcodePreview() {
+        const productName = document.getElementById('productName')?.value;
+        const category = document.getElementById('productCategory')?.value;
+
+        if (productName && category) {
+            // 模拟条形码生成（实际应该调用API）
+            const mockBarcode = `880000${Math.random().toString().substr(2, 6)}`;
+            const mockProductId = `P${Date.now().toString().substr(-6)}`;
+
+            document.getElementById('barcodePreview').innerHTML = `
+                <div class="barcode-image">
+                    <div style="font-family: monospace; font-size: 14px; text-align: center; padding: 20px; border: 1px solid #ddd;">
+                        <div style="margin-bottom: 10px;">||||| |||| ||||| |||| |||||</div>
+                        <div>${mockBarcode}</div>
+                    </div>
+                </div>
+            `;
+
+            document.getElementById('barcodeNumber').textContent = mockBarcode;
+            document.getElementById('productId').textContent = mockProductId;
+            document.getElementById('barcodeInfo').style.display = 'block';
+        } else {
+            this.clearBarcodePreview();
+        }
+    }
+
+    clearBarcodePreview() {
+        document.getElementById('barcodePreview').innerHTML = `
+            <div class="barcode-placeholder">
+                <p>📊</p>
+                <p>输入产品信息后将自动生成条形码</p>
+            </div>
+        `;
+        document.getElementById('barcodeInfo').style.display = 'none';
+    }
+
+    async saveNewProduct() {
+        try {
+            const formData = new FormData(document.getElementById('addProductForm'));
+            const productData = Object.fromEntries(formData.entries());
+
+            const response = await fetch('/api/admin/inventory', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(productData)
+            });
+
+            const result = await response.json();
+
+            if (result.success) {
+                this.showSuccess('产品添加成功！');
+                document.getElementById('addProductForm').reset();
+                this.clearBarcodePreview();
+
+                // 显示成功信息
+                this.showModal('产品添加成功', `
+                    <div class="success-info">
+                        <p><strong>产品ID：</strong>${result.product_id}</p>
+                        <p><strong>条形码：</strong>已自动生成</p>
+                        <p>产品已成功添加到库存系统中。</p>
+                    </div>
+                    <div style="text-align: center; margin-top: 20px;">
+                        <button class="primary-btn" onclick="admin.closeModal()">确定</button>
+                    </div>
+                `);
+            } else {
+                this.showError(result.error || '添加产品失败');
+            }
+        } catch (error) {
+            console.error('添加产品失败:', error);
+            this.showError('网络错误');
+        }
+    }
+
+    // ==================== 库存盘点页面方法 ====================
+
+    loadInventoryCountsPage() {
+        console.log('加载库存盘点页面');
+        this.loadCountTasks();
+        this.hideCurrentCountSection();
+    }
+
+    async loadCountTasks() {
+        try {
+            const response = await fetch('/api/admin/inventory/counts');
+            const result = await response.json();
+
+            if (result.success) {
+                this.renderCountTasksTable(result.data);
+            } else {
+                this.showError('加载盘点任务失败');
+            }
+        } catch (error) {
+            console.error('加载盘点任务失败:', error);
+            this.showError('网络错误');
+        }
+    }
+
+    renderCountTasksTable(tasks) {
+        const tbody = document.getElementById('countTasksTableBody');
+
+        if (tasks.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="6" class="no-data">暂无盘点任务</td></tr>';
+            return;
+        }
+
+        let html = '';
+        tasks.forEach(task => {
+            const statusClass = `status-${task.status.replace('_', '-')}`;
+            const statusText = {
+                'in_progress': '进行中',
+                'completed': '已完成',
+                'cancelled': '已取消'
+            }[task.status] || task.status;
+
+            html += `
+                <tr>
+                    <td>${task.count_id}</td>
+                    <td>${new Date(task.count_date).toLocaleString()}</td>
+                    <td>${task.operator}</td>
+                    <td><span class="${statusClass}">${statusText}</span></td>
+                    <td>${task.summary.total_items}</td>
+                    <td>
+                        <button class="secondary-btn" onclick="admin.viewCountTask('${task.count_id}')">查看</button>
+                        ${task.status === 'in_progress' ?
+                            `<button class="primary-btn" onclick="admin.continueCountTask('${task.count_id}')">继续</button>` :
+                            ''
+                        }
+                    </td>
+                </tr>
+            `;
+        });
+
+        tbody.innerHTML = html;
+    }
+
+    async createCountTask() {
+        try {
+            const note = prompt('请输入盘点备注（可选）:') || '';
+
+            const response = await fetch('/api/admin/inventory/counts', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ note })
+            });
+
+            const result = await response.json();
+
+            if (result.success) {
+                this.showSuccess('盘点任务创建成功！');
+                this.loadCountTasks();
+                this.continueCountTask(result.count_id);
+            } else {
+                this.showError(result.error || '创建盘点任务失败');
+            }
+        } catch (error) {
+            console.error('创建盘点任务失败:', error);
+            this.showError('网络错误');
+        }
+    }
+
+    async continueCountTask(countId) {
+        try {
+            const response = await fetch(`/api/admin/inventory/counts/${countId}`);
+            const result = await response.json();
+
+            if (result.success) {
+                this.currentCountTask = result.data;
+                this.showCurrentCountSection();
+                this.updateCurrentCountInfo();
+                this.renderCountItemsTable();
+            } else {
+                this.showError('加载盘点任务失败');
+            }
+        } catch (error) {
+            console.error('加载盘点任务失败:', error);
+            this.showError('网络错误');
+        }
+    }
+
+    showCurrentCountSection() {
+        document.getElementById('currentCountSection').style.display = 'block';
+    }
+
+    hideCurrentCountSection() {
+        document.getElementById('currentCountSection').style.display = 'none';
+        this.currentCountTask = null;
+    }
+
+    updateCurrentCountInfo() {
+        if (!this.currentCountTask) return;
+
+        document.getElementById('currentCountId').textContent = this.currentCountTask.count_id;
+        document.getElementById('currentCountDate').textContent = new Date(this.currentCountTask.count_date).toLocaleString();
+        document.getElementById('currentCountItemsCount').textContent = this.currentCountTask.items.length;
+    }
+
+    renderCountItemsTable() {
+        if (!this.currentCountTask) return;
+
+        const tbody = document.getElementById('countItemsTableBody');
+        const items = this.currentCountTask.items;
+
+        if (items.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="7" class="no-data">暂无盘点项目，请添加产品</td></tr>';
+            return;
+        }
+
+        let html = '';
+        items.forEach(item => {
+            const difference = item.actual_quantity !== null ?
+                (item.actual_quantity - item.expected_quantity) : null;
+
+            let differenceDisplay = '-';
+            let differenceClass = 'difference-zero';
+
+            if (difference !== null) {
+                if (difference > 0) {
+                    differenceDisplay = `+${difference}`;
+                    differenceClass = 'difference-positive';
+                } else if (difference < 0) {
+                    differenceDisplay = difference.toString();
+                    differenceClass = 'difference-negative';
+                } else {
+                    differenceDisplay = '0';
+                    differenceClass = 'difference-zero';
+                }
+            }
+
+            html += `
+                <tr>
+                    <td>${item.product_name}</td>
+                    <td>${item.barcode}</td>
+                    <td>${item.storage_area}</td>
+                    <td>${item.expected_quantity}</td>
+                    <td>
+                        <input type="number" class="quantity-input"
+                               value="${item.actual_quantity || ''}"
+                               min="0"
+                               onchange="admin.updateActualQuantity('${item.product_id}', this.value)"
+                               placeholder="输入实际数量">
+                    </td>
+                    <td><span class="${differenceClass}">${differenceDisplay}</span></td>
+                    <td>
+                        <button class="danger-btn" onclick="admin.removeCountItem('${item.product_id}')">移除</button>
+                    </td>
+                </tr>
+            `;
+        });
+
+        tbody.innerHTML = html;
+        this.updateCountSummary();
+    }
+
+    updateCountSummary() {
+        if (!this.currentCountTask) return;
+
+        const items = this.currentCountTask.items;
+        const totalItems = items.length;
+        const recordedItems = items.filter(item => item.actual_quantity !== null).length;
+        const differenceItems = items.filter(item =>
+            item.actual_quantity !== null && item.actual_quantity !== item.expected_quantity
+        ).length;
+
+        document.getElementById('totalCountItems').textContent = totalItems;
+        document.getElementById('recordedCountItems').textContent = recordedItems;
+        document.getElementById('differenceCountItems').textContent = differenceItems;
+
+        // 更新完成按钮状态
+        const completeBtn = document.getElementById('completeCountBtn');
+        if (completeBtn) {
+            completeBtn.disabled = recordedItems < totalItems;
+        }
+    }
+
+    async addCountItemByBarcode() {
+        const barcode = document.getElementById('barcodeInput')?.value.trim();
+        if (!barcode) {
+            this.showError('请输入条形码');
+            return;
+        }
+
+        if (!this.currentCountTask) {
+            this.showError('请先选择一个盘点任务');
+            return;
+        }
+
+        try {
+            const response = await fetch(`/api/admin/inventory/counts/${this.currentCountTask.count_id}/items`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ barcode })
+            });
+
+            const result = await response.json();
+
+            if (result.success) {
+                this.showSuccess('产品已添加到盘点列表');
+                document.getElementById('barcodeInput').value = '';
+                // 重新加载当前盘点任务
+                this.continueCountTask(this.currentCountTask.count_id);
+            } else {
+                this.showError(result.error || '添加产品失败');
+            }
+        } catch (error) {
+            console.error('添加产品失败:', error);
+            this.showError('网络错误');
+        }
+    }
+
+    async updateActualQuantity(productId, actualQuantity) {
+        if (!this.currentCountTask) return;
+
+        const quantity = parseInt(actualQuantity);
+        if (isNaN(quantity) || quantity < 0) {
+            this.showError('请输入有效的数量');
+            return;
+        }
+
+        try {
+            const response = await fetch(
+                `/api/admin/inventory/counts/${this.currentCountTask.count_id}/items/${productId}/quantity`,
+                {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ actual_quantity: quantity })
+                }
+            );
+
+            const result = await response.json();
+
+            if (result.success) {
+                // 更新本地数据
+                const item = this.currentCountTask.items.find(i => i.product_id === productId);
+                if (item) {
+                    item.actual_quantity = quantity;
+                    item.difference = quantity - item.expected_quantity;
+                }
+                this.renderCountItemsTable();
+            } else {
+                this.showError(result.error || '更新数量失败');
+            }
+        } catch (error) {
+            console.error('更新数量失败:', error);
+            this.showError('网络错误');
+        }
+    }
+
+    // ==================== 数据对比分析页面方法 ====================
+
+    loadInventoryAnalysisPage() {
+        console.log('加载数据对比分析页面');
+        this.loadCompletedCountTasks();
+        this.hideAnalysisResults();
+    }
+
+    async loadCompletedCountTasks() {
+        try {
+            const response = await fetch('/api/admin/inventory/counts?status=completed');
+            const result = await response.json();
+
+            if (result.success) {
+                this.populateCountSelects(result.data);
+            }
+        } catch (error) {
+            console.error('加载已完成盘点任务失败:', error);
+        }
+    }
+
+    populateCountSelects(tasks) {
+        const currentSelect = document.getElementById('currentCountSelect');
+        const previousSelect = document.getElementById('previousCountSelect');
+
+        if (currentSelect && previousSelect) {
+            const options = tasks.map(task =>
+                `<option value="${task.count_id}">${task.count_id} - ${new Date(task.count_date).toLocaleDateString()}</option>`
+            ).join('');
+
+            currentSelect.innerHTML = '<option value="">请选择盘点任务</option>' + options;
+            previousSelect.innerHTML = '<option value="">请选择盘点任务</option>' + options;
+        }
+    }
+
+    async createWeeklyAnalysis() {
+        try {
+            const response = await fetch('/api/admin/inventory/comparisons/weekly', {
+                method: 'POST'
+            });
+
+            const result = await response.json();
+
+            if (result.success) {
+                this.showAnalysisResults(result.data);
+            } else {
+                this.showError(result.error || '生成周对比分析失败');
+            }
+        } catch (error) {
+            console.error('生成周对比分析失败:', error);
+            this.showError('网络错误');
+        }
+    }
+
+    async createManualAnalysis() {
+        const currentCountId = document.getElementById('currentCountSelect')?.value;
+        const previousCountId = document.getElementById('previousCountSelect')?.value;
+
+        if (!currentCountId || !previousCountId) {
+            this.showError('请选择两个盘点任务进行对比');
+            return;
+        }
+
+        if (currentCountId === previousCountId) {
+            this.showError('请选择不同的盘点任务进行对比');
+            return;
+        }
+
+        try {
+            const response = await fetch('/api/admin/inventory/comparisons', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    current_count_id: currentCountId,
+                    previous_count_id: previousCountId,
+                    comparison_type: 'manual'
+                })
+            });
+
+            const result = await response.json();
+
+            if (result.success) {
+                this.showAnalysisResults(result.data);
+            } else {
+                this.showError(result.error || '生成对比分析失败');
+            }
+        } catch (error) {
+            console.error('生成对比分析失败:', error);
+            this.showError('网络错误');
+        }
+    }
+
+    showAnalysisResults(analysisData) {
+        document.getElementById('analysisResultsSection').style.display = 'block';
+
+        // 更新统计汇总
+        document.getElementById('totalProductsAnalyzed').textContent = analysisData.statistics.total_products;
+        document.getElementById('changedProductsCount').textContent = analysisData.statistics.changed_products;
+        document.getElementById('anomaliesCount').textContent = analysisData.anomalies.length;
+        document.getElementById('totalValueChange').textContent = `${analysisData.statistics.total_value_change || 0}元`;
+
+        // 渲染变化明细表格
+        this.renderChangesTable(analysisData.changes);
+
+        // 显示异常检测结果
+        this.renderAnomalies(analysisData.anomalies);
+
+        // 更新分析信息
+        document.getElementById('analysisDate').textContent = new Date(analysisData.comparison_date).toLocaleString();
+        document.getElementById('analysisRange').textContent = `${analysisData.previous_count.count_id} → ${analysisData.current_count.count_id}`;
+        document.getElementById('analysisType').textContent = analysisData.comparison_type === 'weekly' ? '周对比分析' : '手动对比分析';
+
+        this.currentAnalysisData = analysisData;
+    }
+
+    hideAnalysisResults() {
+        document.getElementById('analysisResultsSection').style.display = 'none';
+        this.currentAnalysisData = null;
+    }
+
+    renderChangesTable(changes) {
+        const tbody = document.getElementById('changesTableBody');
+
+        if (changes.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="8" class="no-data">暂无变化数据</td></tr>';
+            return;
+        }
+
+        let html = '';
+        changes.forEach(change => {
+            const changeClass = `change-${change.status}`;
+            const statusText = {
+                'increased': '库存增加',
+                'decreased': '库存减少',
+                'new': '新增产品',
+                'removed': '移除产品'
+            }[change.status] || change.status;
+
+            const changePercent = change.change_percentage ? `${change.change_percentage.toFixed(1)}%` : '-';
+
+            html += `
+                <tr>
+                    <td>${change.product_name}</td>
+                    <td>${change.category}</td>
+                    <td>${change.storage_area}</td>
+                    <td>${change.previous_quantity || '-'}</td>
+                    <td>${change.current_quantity || '-'}</td>
+                    <td class="${changeClass}">${change.quantity_change > 0 ? '+' : ''}${change.quantity_change}</td>
+                    <td class="${changeClass}">${changePercent}</td>
+                    <td><span class="${changeClass}">${statusText}</span></td>
+                </tr>
+            `;
+        });
+
+        tbody.innerHTML = html;
+    }
+
+    renderAnomalies(anomalies) {
+        const container = document.getElementById('anomaliesList');
+
+        if (anomalies.length === 0) {
+            container.innerHTML = '<div class="no-data">未检测到异常情况</div>';
+            return;
+        }
+
+        let html = '';
+        anomalies.forEach(anomaly => {
+            html += `
+                <div class="anomaly-item">
+                    <h5>${anomaly.type}</h5>
+                    <p>${anomaly.description}</p>
+                </div>
+            `;
+        });
+
+        container.innerHTML = html;
+    }
+
+    async downloadAnalysisReport() {
+        if (!this.currentAnalysisData) {
+            this.showError('请先生成分析报告');
+            return;
+        }
+
+        try {
+            const response = await fetch(`/api/admin/inventory/comparisons/${this.currentAnalysisData.comparison_id}/report`);
+
+            if (response.ok) {
+                const blob = await response.blob();
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `库存对比分析报告_${this.currentAnalysisData.comparison_id}.pdf`;
+                document.body.appendChild(a);
+                a.click();
+                window.URL.revokeObjectURL(url);
+                document.body.removeChild(a);
+            } else {
+                this.showError('下载报告失败');
+            }
+        } catch (error) {
+            console.error('下载报告失败:', error);
+            this.showError('网络错误');
+        }
+    }
+
+    async downloadChangesExcel() {
+        if (!this.currentAnalysisData) {
+            this.showError('请先生成分析数据');
+            return;
+        }
+
+        try {
+            const response = await fetch(`/api/admin/inventory/comparisons/${this.currentAnalysisData.comparison_id}/excel`);
+
+            if (response.ok) {
+                const blob = await response.blob();
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `库存变化明细_${this.currentAnalysisData.comparison_id}.xlsx`;
+                document.body.appendChild(a);
+                a.click();
+                window.URL.revokeObjectURL(url);
+                document.body.removeChild(a);
+            } else {
+                this.showError('导出Excel失败');
+            }
+        } catch (error) {
+            console.error('导出Excel失败:', error);
             this.showError('网络错误');
         }
     }

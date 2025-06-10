@@ -8,6 +8,8 @@ from datetime import datetime
 from src.models.knowledge_retriever import KnowledgeRetriever
 from src.models.admin_auth import AdminAuth
 from src.models.inventory_manager import InventoryManager
+from src.models.inventory_count_manager import InventoryCountManager
+from src.models.inventory_comparison_manager import InventoryComparisonManager
 from src.models.feedback_manager import FeedbackManager
 from src.models.operation_logger import operation_logger, log_admin_operation
 from src.models.data_exporter import data_exporter
@@ -28,12 +30,14 @@ knowledge_retriever = None
 conversation_sessions = {}
 admin_auth = None
 inventory_manager = None
+inventory_count_manager = None
+inventory_comparison_manager = None
 feedback_manager = None
 
 
 def initialize_system():
     """初始化系统"""
-    global knowledge_retriever, admin_auth, inventory_manager, feedback_manager
+    global knowledge_retriever, admin_auth, inventory_manager, inventory_count_manager, inventory_comparison_manager, feedback_manager
     try:
         knowledge_retriever = KnowledgeRetriever()
         knowledge_retriever.initialize()
@@ -41,12 +45,20 @@ def initialize_system():
         # 初始化管理员模块
         admin_auth = AdminAuth()
         inventory_manager = InventoryManager()
+        inventory_count_manager = InventoryCountManager()
+        inventory_comparison_manager = InventoryComparisonManager()
         feedback_manager = FeedbackManager()
 
-        print("✅ 果蔬客服AI系统初始化成功！")
+        try:
+            print("✅ 果蔬客服AI系统初始化成功！")
+        except UnicodeEncodeError:
+            print("AI Customer Service System initialized successfully!")
         return True
     except Exception as e:
-        print(f"❌ 系统初始化失败: {e}")
+        try:
+            print(f"❌ 系统初始化失败: {e}")
+        except UnicodeEncodeError:
+            print(f"System initialization failed: {e}")
         return False
 
 
@@ -649,6 +661,659 @@ def delete_product_api(product_id):
         return jsonify({
             'success': False,
             'error': '删除产品失败'
+        })
+
+
+# ==================== 库存盘点API ====================
+
+@app.route('/api/admin/inventory/counts')
+def get_count_tasks():
+    """获取库存盘点任务列表"""
+    try:
+        if not require_admin_auth():
+            return jsonify({'success': False, 'error': '未授权访问'})
+
+        status_filter = request.args.get('status')  # in_progress, completed, cancelled
+
+        if inventory_count_manager:
+            tasks = inventory_count_manager.get_all_count_tasks(status_filter)
+            return jsonify({
+                'success': True,
+                'data': tasks
+            })
+        else:
+            return jsonify({
+                'success': False,
+                'error': '库存盘点系统不可用'
+            })
+
+    except Exception as e:
+        print(f"获取盘点任务列表错误: {e}")
+        return jsonify({
+            'success': False,
+            'error': '获取盘点任务失败'
+        })
+
+
+@app.route('/api/admin/inventory/counts', methods=['POST'])
+def create_count_task():
+    """创建新的库存盘点任务"""
+    try:
+        if not require_admin_auth():
+            return jsonify({'success': False, 'error': '未授权访问'})
+
+        data = request.get_json()
+        note = data.get('note', '')
+
+        # 获取操作员信息
+        operator = get_current_operator()
+
+        if inventory_count_manager:
+            count_id = inventory_count_manager.create_count_task(operator, note)
+            if count_id:
+                return jsonify({
+                    'success': True,
+                    'message': '盘点任务创建成功',
+                    'count_id': count_id
+                })
+            else:
+                return jsonify({
+                    'success': False,
+                    'error': '创建盘点任务失败'
+                })
+        else:
+            return jsonify({
+                'success': False,
+                'error': '库存盘点系统不可用'
+            })
+
+    except Exception as e:
+        print(f"创建盘点任务错误: {e}")
+        return jsonify({
+            'success': False,
+            'error': '创建盘点任务失败'
+        })
+
+
+@app.route('/api/admin/inventory/counts/<count_id>')
+def get_count_task_detail(count_id):
+    """获取盘点任务详情"""
+    try:
+        if not require_admin_auth():
+            return jsonify({'success': False, 'error': '未授权访问'})
+
+        if inventory_count_manager:
+            task = inventory_count_manager.get_count_task(count_id)
+            if task:
+                return jsonify({
+                    'success': True,
+                    'data': task
+                })
+            else:
+                return jsonify({
+                    'success': False,
+                    'error': '盘点任务不存在'
+                })
+        else:
+            return jsonify({
+                'success': False,
+                'error': '库存盘点系统不可用'
+            })
+
+    except Exception as e:
+        print(f"获取盘点任务详情错误: {e}")
+        return jsonify({
+            'success': False,
+            'error': '获取盘点任务详情失败'
+        })
+
+
+@app.route('/api/admin/inventory/counts/<count_id>/items', methods=['POST'])
+def add_count_item():
+    """添加盘点项目（支持条形码和产品ID）"""
+    try:
+        if not require_admin_auth():
+            return jsonify({'success': False, 'error': '未授权访问'})
+
+        data = request.get_json()
+        count_id = request.view_args['count_id']
+        barcode = data.get('barcode', '').strip()
+        product_id = data.get('product_id', '').strip()
+
+        if not barcode and not product_id:
+            return jsonify({
+                'success': False,
+                'error': '请提供条形码或产品ID'
+            })
+
+        if inventory_count_manager:
+            # 优先使用条形码
+            if barcode:
+                success = inventory_count_manager.add_count_item_by_barcode(count_id, barcode)
+            else:
+                success = inventory_count_manager.add_count_item_by_product_id(count_id, product_id)
+
+            if success:
+                return jsonify({
+                    'success': True,
+                    'message': '产品已添加到盘点列表'
+                })
+            else:
+                return jsonify({
+                    'success': False,
+                    'error': '添加盘点项目失败'
+                })
+        else:
+            return jsonify({
+                'success': False,
+                'error': '库存盘点系统不可用'
+            })
+
+    except Exception as e:
+        print(f"添加盘点项目错误: {e}")
+        return jsonify({
+            'success': False,
+            'error': '添加盘点项目失败'
+        })
+
+
+@app.route('/api/admin/inventory/counts/<count_id>/items/<product_id>/quantity', methods=['POST'])
+def record_actual_quantity():
+    """记录产品的实际盘点数量"""
+    try:
+        if not require_admin_auth():
+            return jsonify({'success': False, 'error': '未授权访问'})
+
+        data = request.get_json()
+        count_id = request.view_args['count_id']
+        product_id = request.view_args['product_id']
+        actual_quantity = data.get('actual_quantity')
+        note = data.get('note', '')
+
+        if actual_quantity is None or actual_quantity < 0:
+            return jsonify({
+                'success': False,
+                'error': '请输入有效的实际数量'
+            })
+
+        if inventory_count_manager:
+            success = inventory_count_manager.record_actual_quantity(
+                count_id, product_id, actual_quantity, note
+            )
+            if success:
+                return jsonify({
+                    'success': True,
+                    'message': '实际数量记录成功'
+                })
+            else:
+                return jsonify({
+                    'success': False,
+                    'error': '记录实际数量失败'
+                })
+        else:
+            return jsonify({
+                'success': False,
+                'error': '库存盘点系统不可用'
+            })
+
+    except Exception as e:
+        print(f"记录实际数量错误: {e}")
+        return jsonify({
+            'success': False,
+            'error': '记录实际数量失败'
+        })
+
+
+@app.route('/api/admin/inventory/counts/<count_id>/complete', methods=['POST'])
+def complete_count_task():
+    """完成盘点任务"""
+    try:
+        if not require_admin_auth():
+            return jsonify({'success': False, 'error': '未授权访问'})
+
+        count_id = request.view_args['count_id']
+
+        if inventory_count_manager:
+            success = inventory_count_manager.complete_count_task(count_id)
+            if success:
+                return jsonify({
+                    'success': True,
+                    'message': '盘点任务已完成'
+                })
+            else:
+                return jsonify({
+                    'success': False,
+                    'error': '完成盘点任务失败'
+                })
+        else:
+            return jsonify({
+                'success': False,
+                'error': '库存盘点系统不可用'
+            })
+
+    except Exception as e:
+        print(f"完成盘点任务错误: {e}")
+        return jsonify({
+            'success': False,
+            'error': '完成盘点任务失败'
+        })
+
+
+# ==================== 库存对比分析API ====================
+
+@app.route('/api/admin/inventory/comparisons')
+def get_comparisons():
+    """获取库存对比分析列表"""
+    try:
+        if not require_admin_auth():
+            return jsonify({'success': False, 'error': '未授权访问'})
+
+        comparison_type = request.args.get('type')  # weekly, manual, auto
+
+        if inventory_comparison_manager:
+            comparisons = inventory_comparison_manager.get_all_comparisons(comparison_type)
+            return jsonify({
+                'success': True,
+                'data': comparisons
+            })
+        else:
+            return jsonify({
+                'success': False,
+                'error': '库存对比分析系统不可用'
+            })
+
+    except Exception as e:
+        print(f"获取对比分析列表错误: {e}")
+        return jsonify({
+            'success': False,
+            'error': '获取对比分析列表失败'
+        })
+
+
+@app.route('/api/admin/inventory/comparisons', methods=['POST'])
+def create_comparison():
+    """创建库存对比分析"""
+    try:
+        if not require_admin_auth():
+            return jsonify({'success': False, 'error': '未授权访问'})
+
+        data = request.get_json()
+        current_count_id = data.get('current_count_id')
+        previous_count_id = data.get('previous_count_id')
+        comparison_type = data.get('comparison_type', 'manual')
+
+        if not current_count_id or not previous_count_id:
+            return jsonify({
+                'success': False,
+                'error': '请提供当前和之前的盘点任务ID'
+            })
+
+        # 获取操作员信息
+        operator = get_current_operator()
+
+        if inventory_comparison_manager:
+            comparison_id = inventory_comparison_manager.create_comparison(
+                current_count_id, previous_count_id, comparison_type, operator
+            )
+            if comparison_id:
+                return jsonify({
+                    'success': True,
+                    'message': '对比分析创建成功',
+                    'comparison_id': comparison_id
+                })
+            else:
+                return jsonify({
+                    'success': False,
+                    'error': '创建对比分析失败'
+                })
+        else:
+            return jsonify({
+                'success': False,
+                'error': '库存对比分析系统不可用'
+            })
+
+    except Exception as e:
+        print(f"创建对比分析错误: {e}")
+        return jsonify({
+            'success': False,
+            'error': '创建对比分析失败'
+        })
+
+
+@app.route('/api/admin/inventory/comparisons/weekly', methods=['POST'])
+def create_weekly_comparison():
+    """创建周对比分析"""
+    try:
+        if not require_admin_auth():
+            return jsonify({'success': False, 'error': '未授权访问'})
+
+        # 获取操作员信息
+        operator = get_current_operator()
+
+        if inventory_comparison_manager:
+            comparison_id = inventory_comparison_manager.create_weekly_comparison(operator)
+            if comparison_id:
+                return jsonify({
+                    'success': True,
+                    'message': '周对比分析创建成功',
+                    'comparison_id': comparison_id
+                })
+            else:
+                return jsonify({
+                    'success': False,
+                    'error': '创建周对比分析失败，可能没有足够的盘点数据'
+                })
+        else:
+            return jsonify({
+                'success': False,
+                'error': '库存对比分析系统不可用'
+            })
+
+    except Exception as e:
+        print(f"创建周对比分析错误: {e}")
+        return jsonify({
+            'success': False,
+            'error': '创建周对比分析失败'
+        })
+
+
+@app.route('/api/admin/inventory/comparisons/<comparison_id>')
+def get_comparison_detail(comparison_id):
+    """获取对比分析详情"""
+    try:
+        if not require_admin_auth():
+            return jsonify({'success': False, 'error': '未授权访问'})
+
+        if inventory_comparison_manager:
+            comparison = inventory_comparison_manager.get_comparison(comparison_id)
+            if comparison:
+                return jsonify({
+                    'success': True,
+                    'data': comparison
+                })
+            else:
+                return jsonify({
+                    'success': False,
+                    'error': '对比分析不存在'
+                })
+        else:
+            return jsonify({
+                'success': False,
+                'error': '库存对比分析系统不可用'
+            })
+
+    except Exception as e:
+        print(f"获取对比分析详情错误: {e}")
+        return jsonify({
+            'success': False,
+            'error': '获取对比分析详情失败'
+        })
+
+
+@app.route('/api/admin/inventory/reports/weekly')
+def get_weekly_report():
+    """获取周报表"""
+    try:
+        if not require_admin_auth():
+            return jsonify({'success': False, 'error': '未授权访问'})
+
+        comparison_id = request.args.get('comparison_id')
+
+        if inventory_comparison_manager:
+            report = inventory_comparison_manager.generate_weekly_report(comparison_id)
+            if 'error' not in report:
+                return jsonify({
+                    'success': True,
+                    'data': report
+                })
+            else:
+                return jsonify({
+                    'success': False,
+                    'error': report['error']
+                })
+        else:
+            return jsonify({
+                'success': False,
+                'error': '库存对比分析系统不可用'
+            })
+
+    except Exception as e:
+        print(f"获取周报表错误: {e}")
+        return jsonify({
+            'success': False,
+            'error': '获取周报表失败'
+        })
+
+
+@app.route('/api/admin/inventory/products/<product_id>/trend')
+def get_product_trend(product_id):
+    """获取产品趋势分析"""
+    try:
+        if not require_admin_auth():
+            return jsonify({'success': False, 'error': '未授权访问'})
+
+        limit = int(request.args.get('limit', 5))
+
+        if inventory_comparison_manager:
+            trend_data = inventory_comparison_manager.get_product_trend_analysis(product_id, limit)
+            if 'error' not in trend_data:
+                return jsonify({
+                    'success': True,
+                    'data': trend_data
+                })
+            else:
+                return jsonify({
+                    'success': False,
+                    'error': trend_data['error']
+                })
+        else:
+            return jsonify({
+                'success': False,
+                'error': '库存对比分析系统不可用'
+            })
+
+    except Exception as e:
+        print(f"获取产品趋势分析错误: {e}")
+        return jsonify({
+            'success': False,
+            'error': '获取产品趋势分析失败'
+        })
+
+
+# ==================== 产品搜索API ====================
+
+@app.route('/api/admin/inventory/search')
+def search_products():
+    """搜索产品"""
+    try:
+        if not require_admin_auth():
+            return jsonify({'success': False, 'error': '未授权访问'})
+
+        keyword = request.args.get('keyword', '').strip()
+        if not keyword:
+            return jsonify({
+                'success': False,
+                'error': '请提供搜索关键词'
+            })
+
+        if inventory_manager:
+            products = inventory_manager.search_products(keyword)
+            return jsonify({
+                'success': True,
+                'data': products
+            })
+        else:
+            return jsonify({
+                'success': False,
+                'error': '库存管理系统不可用'
+            })
+
+    except Exception as e:
+        print(f"搜索产品错误: {e}")
+        return jsonify({
+            'success': False,
+            'error': '搜索产品失败'
+        })
+
+
+@app.route('/api/admin/inventory/comparisons/<comparison_id>/report')
+def download_comparison_report(comparison_id):
+    """下载对比分析报告"""
+    try:
+        if not require_admin_auth():
+            return jsonify({'success': False, 'error': '未授权访问'})
+
+        if inventory_comparison_manager:
+            comparison = inventory_comparison_manager.get_comparison_by_id(comparison_id)
+            if not comparison:
+                return jsonify({
+                    'success': False,
+                    'error': '对比分析不存在'
+                })
+
+            # 生成报告内容
+            report_content = inventory_comparison_manager.generate_comparison_report(comparison)
+
+            response = app.response_class(
+                report_content,
+                mimetype='text/plain',
+                headers={
+                    "Content-disposition": f"attachment; filename=comparison_report_{comparison_id}.md"
+                }
+            )
+            return response
+        else:
+            return jsonify({
+                'success': False,
+                'error': '库存对比分析系统不可用'
+            })
+
+    except Exception as e:
+        print(f"下载对比分析报告错误: {e}")
+        return jsonify({
+            'success': False,
+            'error': '下载报告失败'
+        })
+
+
+@app.route('/api/admin/inventory/comparisons/<comparison_id>/excel')
+def download_comparison_excel(comparison_id):
+    """下载对比分析Excel"""
+    try:
+        if not require_admin_auth():
+            return jsonify({'success': False, 'error': '未授权访问'})
+
+        if inventory_comparison_manager:
+            comparison = inventory_comparison_manager.get_comparison_by_id(comparison_id)
+            if not comparison:
+                return jsonify({
+                    'success': False,
+                    'error': '对比分析不存在'
+                })
+
+            # 生成Excel内容（这里简化为CSV格式）
+            excel_content = inventory_comparison_manager.generate_comparison_excel(comparison)
+
+            response = app.response_class(
+                excel_content,
+                mimetype='text/csv',
+                headers={
+                    "Content-disposition": f"attachment; filename=comparison_changes_{comparison_id}.csv"
+                }
+            )
+            return response
+        else:
+            return jsonify({
+                'success': False,
+                'error': '库存对比分析系统不可用'
+            })
+
+    except Exception as e:
+        print(f"下载对比分析Excel错误: {e}")
+        return jsonify({
+            'success': False,
+            'error': '下载Excel失败'
+        })
+
+
+# ==================== 存储区域管理API ====================
+
+@app.route('/api/admin/inventory/storage-areas')
+def get_storage_areas():
+    """获取存储区域列表"""
+    try:
+        if not require_admin_auth():
+            return jsonify({'success': False, 'error': '未授权访问'})
+
+        include_inactive = request.args.get('include_inactive', 'false').lower() == 'true'
+
+        if inventory_manager:
+            areas = inventory_manager.get_all_storage_areas(include_inactive)
+            return jsonify({
+                'success': True,
+                'data': areas
+            })
+        else:
+            return jsonify({
+                'success': False,
+                'error': '库存管理系统不可用'
+            })
+
+    except Exception as e:
+        print(f"获取存储区域列表错误: {e}")
+        return jsonify({
+            'success': False,
+            'error': '获取存储区域列表失败'
+        })
+
+
+@app.route('/api/admin/inventory/storage-areas', methods=['POST'])
+def add_storage_area():
+    """添加新的存储区域"""
+    try:
+        if not require_admin_auth():
+            return jsonify({'success': False, 'error': '未授权访问'})
+
+        data = request.get_json()
+        area_id = data.get('area_id', '').strip().upper()
+        area_name = data.get('area_name', '').strip()
+        description = data.get('description', '').strip()
+        capacity = data.get('capacity', 1000)
+
+        if not area_id or not area_name:
+            return jsonify({
+                'success': False,
+                'error': '请提供区域ID和区域名称'
+            })
+
+        # 获取操作员信息
+        operator = get_current_operator()
+
+        if inventory_manager:
+            success = inventory_manager.add_storage_area(
+                area_id, area_name, description, capacity, operator
+            )
+            if success:
+                return jsonify({
+                    'success': True,
+                    'message': '存储区域添加成功'
+                })
+            else:
+                return jsonify({
+                    'success': False,
+                    'error': '添加存储区域失败'
+                })
+        else:
+            return jsonify({
+                'success': False,
+                'error': '库存管理系统不可用'
+            })
+
+    except Exception as e:
+        print(f"添加存储区域错误: {e}")
+        return jsonify({
+            'success': False,
+            'error': '添加存储区域失败'
         })
 
 
@@ -1268,7 +1933,10 @@ def internal_error(error):
 
 
 if __name__ == '__main__':
-    print("🚀 启动果蔬客服AI系统...")
+    try:
+        print("启动果蔬客服AI系统...")
+    except UnicodeEncodeError:
+        print("Starting AI Customer Service System...")
 
     # 获取端口配置（Render会提供PORT环境变量）
     port = int(os.environ.get('PORT', 5000))
@@ -1276,7 +1944,13 @@ if __name__ == '__main__':
 
     # 初始化系统
     if initialize_system():
-        print(f"🌐 启动Web服务器... 端口: {port}")
+        try:
+            print(f"启动Web服务器... 端口: {port}")
+        except UnicodeEncodeError:
+            print(f"Starting Web Server... Port: {port}")
         app.run(debug=debug_mode, host='0.0.0.0', port=port)
     else:
-        print("❌ 系统初始化失败，无法启动服务器")
+        try:
+            print("系统初始化失败，无法启动服务器")
+        except UnicodeEncodeError:
+            print("System initialization failed, cannot start server")

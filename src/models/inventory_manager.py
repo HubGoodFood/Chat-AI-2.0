@@ -1,19 +1,91 @@
 """
-库存管理模块
+库存管理模块 - 增强版
+支持条形码生成、存储区域管理等功能
 """
 import json
 import os
 import pandas as pd
 from datetime import datetime
 from typing import List, Dict, Optional, Any
+import barcode
+from barcode.writer import ImageWriter
+from PIL import Image
+import secrets
+from .storage_area_manager import StorageAreaManager
 
 
 class InventoryManager:
     def __init__(self):
         self.inventory_file = 'data/inventory.json'
         self.products_file = 'data/products.csv'
+        self.barcode_dir = 'static/barcodes'  # 条形码图片存储目录
+        self.storage_area_manager = StorageAreaManager()  # 存储区域管理器
+        self._ensure_directories()
         self._ensure_inventory_file()
-    
+
+    def _ensure_directories(self):
+        """确保必要的目录存在"""
+        os.makedirs(os.path.dirname(self.inventory_file), exist_ok=True)
+        os.makedirs(self.barcode_dir, exist_ok=True)
+
+    def _generate_barcode(self, product_id: str, product_name: str) -> str:
+        """
+        为产品生成唯一的条形码
+
+        Args:
+            product_id: 产品ID
+            product_name: 产品名称
+
+        Returns:
+            str: 生成的条形码字符串
+        """
+        try:
+            # 生成基于产品ID的条形码（确保唯一性）
+            # 格式：前缀(2位) + 产品ID(6位，不足补0) + 随机数(4位)
+            prefix = "88"  # 自定义前缀，避免与标准商品条码冲突
+            padded_id = str(product_id).zfill(6)  # 产品ID补零到6位
+            random_suffix = str(secrets.randbelow(10000)).zfill(4)  # 4位随机数
+
+            barcode_number = f"{prefix}{padded_id}{random_suffix}"
+            return barcode_number
+
+        except Exception as e:
+            print(f"生成条形码失败: {e}")
+            # 如果生成失败，返回基于时间戳的备用条形码
+            timestamp = str(int(datetime.now().timestamp()))[-8:]
+            return f"88{timestamp}0000"
+
+    def _save_barcode_image(self, barcode_number: str, product_name: str) -> str:
+        """
+        保存条形码图片到文件
+
+        Args:
+            barcode_number: 条形码数字
+            product_name: 产品名称（用于文件命名）
+
+        Returns:
+            str: 条形码图片的相对路径
+        """
+        try:
+            # 使用Code128格式生成条形码
+            code128 = barcode.get_barcode_class('code128')
+            barcode_instance = code128(barcode_number, writer=ImageWriter())
+
+            # 生成文件名（使用产品名称和条形码）
+            safe_name = "".join(c for c in product_name if c.isalnum() or c in (' ', '-', '_')).rstrip()
+            filename = f"{safe_name}_{barcode_number}"
+
+            # 保存条形码图片
+            filepath = os.path.join(self.barcode_dir, filename)
+            barcode_instance.save(filepath)
+
+            # 返回相对路径（用于Web访问）
+            return f"barcodes/{filename}.png"
+
+        except Exception as e:
+            print(f"保存条形码图片失败: {e}")
+            return ""
+
     def _ensure_inventory_file(self):
         """确保库存文件存在，如果不存在则从产品文件初始化"""
         if not os.path.exists(self.inventory_file):
@@ -34,8 +106,18 @@ class InventoryManager:
             # 为每个产品创建库存记录
             for idx, row in products_df.iterrows():
                 product_id = str(idx + 1)
+                product_name = row['ProductName']
+
+                # 生成条形码
+                barcode_number = self._generate_barcode(product_id, product_name)
+                barcode_image_path = self._save_barcode_image(barcode_number, product_name)
+
+                # 随机分配存储区域（实际使用中应该由管理员指定）
+                available_areas = self.storage_area_manager.get_area_ids()
+                storage_area = available_areas[idx % len(available_areas)] if available_areas else "A"
+
                 inventory_data["products"][product_id] = {
-                    "product_name": row['ProductName'],
+                    "product_name": product_name,
                     "category": row['Category'],
                     "specification": row['Specification'],
                     "price": row['Price'],
@@ -44,6 +126,9 @@ class InventoryManager:
                     "min_stock_warning": 10,  # 最小库存警告
                     "description": row.get('Keywords', ''),
                     "image_url": "",  # 商品图片URL
+                    "barcode": barcode_number,  # 新增：条形码
+                    "barcode_image": barcode_image_path,  # 新增：条形码图片路径
+                    "storage_area": storage_area,  # 新增：存储区域
                     "status": "active",  # active, inactive
                     "created_at": datetime.now().isoformat(),
                     "updated_at": datetime.now().isoformat(),
@@ -103,7 +188,30 @@ class InventoryManager:
             products.append(product_info)
         
         return products
-    
+
+    def search_products(self, keyword: str) -> List[Dict]:
+        """搜索产品"""
+        inventory_data = self._load_inventory()
+        products = []
+        keyword = keyword.lower()
+
+        for product_id, product_info in inventory_data["products"].items():
+            if product_info["status"] == "active":
+                # 在产品名称、分类、描述、条形码中搜索
+                search_fields = [
+                    product_info.get("product_name", ""),
+                    product_info.get("category", ""),
+                    product_info.get("description", ""),
+                    product_info.get("barcode", ""),
+                    product_info.get("specification", "")
+                ]
+
+                if any(keyword in str(field).lower() for field in search_fields):
+                    product_info["product_id"] = product_id
+                    products.append(product_info)
+
+        return products
+
     def get_product_by_id(self, product_id: str) -> Optional[Dict]:
         """根据ID获取产品信息"""
         inventory_data = self._load_inventory()
@@ -153,17 +261,23 @@ class InventoryManager:
             return False
     
     def add_product(self, product_data: Dict, operator: str) -> Optional[str]:
-        """添加新产品"""
+        """添加新产品（增强版：自动生成条形码）"""
         try:
             inventory_data = self._load_inventory()
-            
+
             # 生成新的产品ID
             existing_ids = [int(pid) for pid in inventory_data["products"].keys() if pid.isdigit()]
             new_id = str(max(existing_ids) + 1) if existing_ids else "1"
-            
-            # 创建产品记录
+
+            product_name = product_data["product_name"]
+
+            # 生成条形码
+            barcode_number = self._generate_barcode(new_id, product_name)
+            barcode_image_path = self._save_barcode_image(barcode_number, product_name)
+
+            # 创建产品记录（包含新字段）
             inventory_data["products"][new_id] = {
-                "product_name": product_data["product_name"],
+                "product_name": product_name,
                 "category": product_data["category"],
                 "specification": product_data.get("specification", ""),
                 "price": product_data["price"],
@@ -172,6 +286,9 @@ class InventoryManager:
                 "min_stock_warning": product_data.get("min_stock_warning", 10),
                 "description": product_data.get("description", ""),
                 "image_url": product_data.get("image_url", ""),
+                "barcode": barcode_number,  # 新增：条形码
+                "barcode_image": barcode_image_path,  # 新增：条形码图片路径
+                "storage_area": product_data.get("storage_area", "A"),  # 新增：存储区域
                 "status": "active",
                 "created_at": datetime.now().isoformat(),
                 "updated_at": datetime.now().isoformat(),
@@ -185,11 +302,12 @@ class InventoryManager:
                     }
                 ]
             }
-            
+
             # 保存数据
             self._save_inventory(inventory_data)
+            print(f"✅ 产品添加成功，ID: {new_id}, 条形码: {barcode_number}")
             return new_id
-            
+
         except Exception as e:
             print(f"添加产品失败: {e}")
             return None
@@ -295,3 +413,184 @@ class InventoryManager:
             "total_value": round(total_value, 2),
             "last_updated": inventory_data["last_updated"]
         }
+
+    # ==================== 新增：条形码相关方法 ====================
+
+    def get_product_by_barcode(self, barcode: str) -> Optional[Dict]:
+        """
+        根据条形码获取产品信息
+
+        Args:
+            barcode: 条形码字符串
+
+        Returns:
+            Dict: 产品信息，如果未找到返回None
+        """
+        inventory_data = self._load_inventory()
+
+        for product_id, product in inventory_data["products"].items():
+            if product.get("barcode") == barcode and product["status"] == "active":
+                product["product_id"] = product_id
+                return product
+
+        return None
+
+    def get_products_by_storage_area(self, storage_area: str) -> List[Dict]:
+        """
+        根据存储区域获取产品列表
+
+        Args:
+            storage_area: 存储区域 (A, B, C, D)
+
+        Returns:
+            List[Dict]: 该区域的产品列表
+        """
+        inventory_data = self._load_inventory()
+        products = []
+
+        for product_id, product in inventory_data["products"].items():
+            if (product.get("storage_area") == storage_area and
+                product["status"] == "active"):
+                product["product_id"] = product_id
+                products.append(product)
+
+        return products
+
+    def get_available_storage_areas(self) -> List[str]:
+        """
+        获取可用的存储区域列表
+
+        Returns:
+            List[str]: 存储区域列表
+        """
+        return self.storage_area_manager.get_area_ids()
+
+    def regenerate_barcode(self, product_id: str, operator: str) -> bool:
+        """
+        为产品重新生成条形码
+
+        Args:
+            product_id: 产品ID
+            operator: 操作员
+
+        Returns:
+            bool: 操作是否成功
+        """
+        try:
+            inventory_data = self._load_inventory()
+
+            if product_id not in inventory_data["products"]:
+                return False
+
+            product = inventory_data["products"][product_id]
+            product_name = product["product_name"]
+
+            # 生成新的条形码
+            new_barcode = self._generate_barcode(product_id, product_name)
+            new_barcode_image = self._save_barcode_image(new_barcode, product_name)
+
+            # 更新产品信息
+            product["barcode"] = new_barcode
+            product["barcode_image"] = new_barcode_image
+            product["updated_at"] = datetime.now().isoformat()
+
+            # 记录操作历史
+            product["stock_history"].append({
+                "action": "重新生成条形码",
+                "quantity": 0,
+                "timestamp": datetime.now().isoformat(),
+                "operator": operator,
+                "note": f"新条形码: {new_barcode}"
+            })
+
+            # 保存数据
+            self._save_inventory(inventory_data)
+            print(f"✅ 条形码重新生成成功: {new_barcode}")
+            return True
+
+        except Exception as e:
+            print(f"重新生成条形码失败: {e}")
+            return False
+
+    # ==================== 存储区域管理方法 ====================
+
+    def add_storage_area(self, area_id: str, area_name: str, description: str = "",
+                        capacity: int = 1000, operator: str = "system") -> bool:
+        """
+        添加新的存储区域
+
+        Args:
+            area_id: 区域ID（如E、F等）
+            area_name: 区域名称
+            description: 区域描述
+            capacity: 容量
+            operator: 操作员
+
+        Returns:
+            bool: 是否添加成功
+        """
+        return self.storage_area_manager.add_area(area_id, area_name, description, capacity, operator)
+
+    def update_storage_area(self, area_id: str, area_name: str = None,
+                           description: str = None, capacity: int = None,
+                           operator: str = "system") -> bool:
+        """
+        更新存储区域信息
+
+        Args:
+            area_id: 区域ID
+            area_name: 新的区域名称（可选）
+            description: 新的描述（可选）
+            capacity: 新的容量（可选）
+            operator: 操作员
+
+        Returns:
+            bool: 是否更新成功
+        """
+        return self.storage_area_manager.update_area(area_id, area_name, description, capacity, operator)
+
+    def deactivate_storage_area(self, area_id: str, operator: str = "system") -> bool:
+        """
+        停用存储区域
+
+        Args:
+            area_id: 区域ID
+            operator: 操作员
+
+        Returns:
+            bool: 是否停用成功
+        """
+        return self.storage_area_manager.deactivate_area(area_id, operator)
+
+    def get_all_storage_areas(self, include_inactive: bool = False) -> List[Dict]:
+        """
+        获取所有存储区域详细信息
+
+        Args:
+            include_inactive: 是否包含非活跃区域
+
+        Returns:
+            List[Dict]: 存储区域详细信息列表
+        """
+        return self.storage_area_manager.get_all_areas(include_inactive)
+
+    def is_valid_storage_area(self, area_id: str) -> bool:
+        """
+        验证存储区域是否有效
+
+        Args:
+            area_id: 区域ID
+
+        Returns:
+            bool: 是否有效
+        """
+        return self.storage_area_manager.is_valid_area(area_id)
+
+    def get_storage_area_statistics(self) -> Dict:
+        """
+        获取存储区域统计信息
+
+        Returns:
+            Dict: 统计信息
+        """
+        return self.storage_area_manager.get_area_statistics()

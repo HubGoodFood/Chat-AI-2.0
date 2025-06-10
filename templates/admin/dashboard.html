@@ -18,6 +18,11 @@
             <ul class="sidebar-menu">
                 <li><a href="#dashboard" class="menu-item active" data-section="dashboard">📊 控制台</a></li>
                 <li><a href="#inventory" class="menu-item" data-section="inventory">📦 库存管理</a></li>
+                <li class="menu-submenu">
+                    <a href="#inventory-add-product" class="menu-item" data-section="inventory-add-product">📦 产品入库</a>
+                    <a href="#inventory-counts" class="menu-item" data-section="inventory-counts">📊 库存盘点</a>
+                    <a href="#inventory-analysis" class="menu-item" data-section="inventory-analysis">📈 数据对比分析</a>
+                </li>
                 <li><a href="#feedback" class="menu-item" data-section="feedback">💬 反馈管理</a></li>
                 <li><a href="#logs" class="menu-item" data-section="logs">📋 操作日志</a></li>
                 <li><a href="#export" class="menu-item" data-section="export">📤 数据导出</a></li>
@@ -335,6 +340,414 @@
                             <button class="danger-btn" onclick="admin.resetSystem()">重置系统</button>
                         </div>
                         <p class="maintenance-note">注意：系统维护操作可能影响系统性能，请在低峰期执行。</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 产品入库页面 -->
+            <section id="inventory-add-productSection" class="content-section">
+                <div class="section-header">
+                    <div>
+                        <h1>📦 产品入库</h1>
+                        <p>添加新产品到库存系统，自动生成条形码</p>
+                    </div>
+                </div>
+
+                <div class="add-product-container">
+                    <div class="add-product-form-section">
+                        <div class="form-card">
+                            <h3>产品信息</h3>
+                            <form id="addProductForm" class="product-form">
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label for="productName">产品名称 *</label>
+                                        <input type="text" id="productName" name="product_name" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="productCategory">产品分类 *</label>
+                                        <select id="productCategory" name="category" required>
+                                            <option value="">请选择分类</option>
+                                            <option value="水果">水果</option>
+                                            <option value="蔬菜">蔬菜</option>
+                                            <option value="肉类">肉类</option>
+                                            <option value="海鲜">海鲜</option>
+                                            <option value="熟食">熟食</option>
+                                            <option value="其他">其他</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label for="productPrice">价格 *</label>
+                                        <input type="text" id="productPrice" name="price" placeholder="例：15元/斤" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="productUnit">单位 *</label>
+                                        <select id="productUnit" name="unit" required>
+                                            <option value="">请选择单位</option>
+                                            <option value="斤">斤</option>
+                                            <option value="个">个</option>
+                                            <option value="包">包</option>
+                                            <option value="盒">盒</option>
+                                            <option value="袋">袋</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label for="productSpecification">规格</label>
+                                        <input type="text" id="productSpecification" name="specification" placeholder="例：500g/包">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="storageArea">存储区域 *</label>
+                                        <select id="storageArea" name="storage_area" required>
+                                            <option value="">请选择存储区域</option>
+                                            <option value="A">A区 - 水果区</option>
+                                            <option value="B">B区 - 蔬菜区</option>
+                                            <option value="C">C区 - 肉类区</option>
+                                            <option value="D">D区 - 海鲜区</option>
+                                            <option value="E">E区 - 熟食区</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label for="initialStock">初始库存</label>
+                                        <input type="number" id="initialStock" name="initial_stock" min="0" value="0">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="minStockWarning">最小库存警告</label>
+                                        <input type="number" id="minStockWarning" name="min_stock_warning" min="0" value="10">
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="productDescription">产品描述</label>
+                                    <textarea id="productDescription" name="description" rows="3" placeholder="产品特点、产地、保存方法等"></textarea>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="productImageUrl">产品图片URL</label>
+                                    <input type="url" id="productImageUrl" name="image_url" placeholder="https://example.com/image.jpg">
+                                </div>
+
+                                <div class="form-actions">
+                                    <button type="submit" class="primary-btn">保存产品</button>
+                                    <button type="reset" class="secondary-btn">重置表单</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+
+                    <div class="add-product-preview-section">
+                        <div class="preview-card">
+                            <h3>条形码预览</h3>
+                            <div id="barcodePreview" class="barcode-preview">
+                                <div class="barcode-placeholder">
+                                    <p>📊</p>
+                                    <p>输入产品信息后将自动生成条形码</p>
+                                </div>
+                            </div>
+                            <div id="barcodeInfo" class="barcode-info" style="display: none;">
+                                <p><strong>条形码：</strong><span id="barcodeNumber">-</span></p>
+                                <p><strong>产品ID：</strong><span id="productId">-</span></p>
+                            </div>
+                        </div>
+
+                        <div class="storage-info-card">
+                            <h3>存储区域信息</h3>
+                            <div id="storageAreaInfo" class="storage-area-info">
+                                <div class="area-item">
+                                    <span class="area-label">A区</span>
+                                    <span class="area-desc">水果类产品</span>
+                                </div>
+                                <div class="area-item">
+                                    <span class="area-label">B区</span>
+                                    <span class="area-desc">蔬菜类产品</span>
+                                </div>
+                                <div class="area-item">
+                                    <span class="area-label">C区</span>
+                                    <span class="area-desc">肉类产品</span>
+                                </div>
+                                <div class="area-item">
+                                    <span class="area-label">D区</span>
+                                    <span class="area-desc">海鲜类产品</span>
+                                </div>
+                                <div class="area-item">
+                                    <span class="area-label">E区</span>
+                                    <span class="area-desc">熟食类产品</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 库存盘点页面 -->
+            <section id="inventory-countsSection" class="content-section">
+                <div class="section-header">
+                    <div>
+                        <h1>📊 库存盘点</h1>
+                        <p>创建和管理库存盘点任务，支持条形码扫描和手动录入</p>
+                    </div>
+                    <button id="createCountTaskBtn" class="primary-btn">+ 创建新盘点</button>
+                </div>
+
+                <!-- 盘点任务管理区域 -->
+                <div class="count-tasks-section">
+                    <div class="tasks-card">
+                        <h3>盘点任务列表</h3>
+                        <div class="tasks-controls">
+                            <div class="filter-controls">
+                                <select id="countStatusFilter">
+                                    <option value="">所有状态</option>
+                                    <option value="in_progress">进行中</option>
+                                    <option value="completed">已完成</option>
+                                    <option value="cancelled">已取消</option>
+                                </select>
+                                <button id="refreshCountTasksBtn" class="secondary-btn">刷新</button>
+                            </div>
+                        </div>
+                        <div class="count-tasks-table-container">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>任务ID</th>
+                                        <th>创建时间</th>
+                                        <th>操作员</th>
+                                        <th>状态</th>
+                                        <th>产品数量</th>
+                                        <th>操作</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="countTasksTableBody">
+                                    <tr><td colspan="6" class="loading">加载中...</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 当前盘点操作区域 -->
+                <div id="currentCountSection" class="current-count-section" style="display: none;">
+                    <div class="count-operation-container">
+                        <div class="count-input-section">
+                            <div class="input-card">
+                                <h3>添加盘点产品</h3>
+                                <div class="input-methods">
+                                    <div class="input-method">
+                                        <label for="barcodeInput">条形码扫描/输入</label>
+                                        <div class="barcode-input-group">
+                                            <input type="text" id="barcodeInput" placeholder="扫描或输入条形码">
+                                            <button id="addByBarcodeBtn" class="primary-btn">添加</button>
+                                        </div>
+                                    </div>
+                                    <div class="input-divider">或</div>
+                                    <div class="input-method">
+                                        <label for="productSearchInput">产品搜索</label>
+                                        <div class="product-search-group">
+                                            <input type="text" id="productSearchInput" placeholder="搜索产品名称">
+                                            <button id="searchProductBtn" class="secondary-btn">搜索</button>
+                                        </div>
+                                        <div id="productSearchResults" class="search-results" style="display: none;"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="count-list-section">
+                            <div class="list-card">
+                                <h3>当前盘点项目</h3>
+                                <div id="currentCountInfo" class="count-info">
+                                    <span>任务ID: <strong id="currentCountId">-</strong></span>
+                                    <span>创建时间: <strong id="currentCountDate">-</strong></span>
+                                    <span>项目数量: <strong id="currentCountItemsCount">0</strong></span>
+                                </div>
+                                <div class="count-items-table-container">
+                                    <table class="data-table">
+                                        <thead>
+                                            <tr>
+                                                <th>产品名称</th>
+                                                <th>条形码</th>
+                                                <th>存储区域</th>
+                                                <th>账面数量</th>
+                                                <th>实际数量</th>
+                                                <th>差异</th>
+                                                <th>操作</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="countItemsTableBody">
+                                            <tr><td colspan="7" class="no-data">暂无盘点项目</td></tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <div class="count-summary">
+                                    <div class="summary-stats">
+                                        <span>总项目: <strong id="totalCountItems">0</strong></span>
+                                        <span>已录入: <strong id="recordedCountItems">0</strong></span>
+                                        <span>有差异: <strong id="differenceCountItems">0</strong></span>
+                                    </div>
+                                    <div class="count-actions">
+                                        <button id="completeCountBtn" class="primary-btn" disabled>完成盘点</button>
+                                        <button id="cancelCountBtn" class="danger-btn">取消盘点</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 数据对比分析页面 -->
+            <section id="inventory-analysisSection" class="content-section">
+                <div class="section-header">
+                    <div>
+                        <h1>📈 数据对比分析</h1>
+                        <p>对比不同时期的库存数据，分析变化趋势和异常情况</p>
+                    </div>
+                </div>
+
+                <!-- 对比分析创建区域 -->
+                <div class="analysis-creation-section">
+                    <div class="creation-card">
+                        <h3>创建对比分析</h3>
+                        <div class="creation-methods">
+                            <div class="method-group">
+                                <div class="method-item">
+                                    <h4>周对比分析</h4>
+                                    <p>自动对比最近一周的盘点数据</p>
+                                    <button id="createWeeklyAnalysisBtn" class="primary-btn">生成周对比</button>
+                                </div>
+                                <div class="method-item">
+                                    <h4>手动对比选择</h4>
+                                    <p>选择两个盘点任务进行对比</p>
+                                    <div class="manual-comparison">
+                                        <div class="comparison-selects">
+                                            <div class="select-group">
+                                                <label>当前盘点:</label>
+                                                <select id="currentCountSelect">
+                                                    <option value="">请选择盘点任务</option>
+                                                </select>
+                                            </div>
+                                            <div class="select-group">
+                                                <label>对比盘点:</label>
+                                                <select id="previousCountSelect">
+                                                    <option value="">请选择盘点任务</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <button id="createManualAnalysisBtn" class="primary-btn">开始对比</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 分析结果展示区域 -->
+                <div id="analysisResultsSection" class="analysis-results-section" style="display: none;">
+                    <!-- 统计汇总卡片 -->
+                    <div class="analysis-summary">
+                        <div class="summary-cards">
+                            <div class="summary-card">
+                                <div class="card-icon">📦</div>
+                                <div class="card-info">
+                                    <h4 id="totalProductsAnalyzed">0</h4>
+                                    <p>总产品数</p>
+                                </div>
+                            </div>
+                            <div class="summary-card">
+                                <div class="card-icon">📊</div>
+                                <div class="card-info">
+                                    <h4 id="changedProductsCount">0</h4>
+                                    <p>变化产品数</p>
+                                </div>
+                            </div>
+                            <div class="summary-card">
+                                <div class="card-icon">⚠️</div>
+                                <div class="card-info">
+                                    <h4 id="anomaliesCount">0</h4>
+                                    <p>异常项目数</p>
+                                </div>
+                            </div>
+                            <div class="summary-card">
+                                <div class="card-icon">💰</div>
+                                <div class="card-info">
+                                    <h4 id="totalValueChange">0</h4>
+                                    <p>总价值变化</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 变化明细表格 -->
+                    <div class="changes-detail-section">
+                        <div class="detail-card">
+                            <h3>变化明细</h3>
+                            <div class="detail-controls">
+                                <div class="filter-controls">
+                                    <select id="changeTypeFilter">
+                                        <option value="">所有变化</option>
+                                        <option value="increased">库存增加</option>
+                                        <option value="decreased">库存减少</option>
+                                        <option value="new">新增产品</option>
+                                        <option value="removed">移除产品</option>
+                                    </select>
+                                    <select id="categoryAnalysisFilter">
+                                        <option value="">所有分类</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="changes-table-container">
+                                <table class="data-table">
+                                    <thead>
+                                        <tr>
+                                            <th>产品名称</th>
+                                            <th>分类</th>
+                                            <th>存储区域</th>
+                                            <th>之前数量</th>
+                                            <th>当前数量</th>
+                                            <th>变化量</th>
+                                            <th>变化百分比</th>
+                                            <th>状态</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="changesTableBody">
+                                        <tr><td colspan="8" class="no-data">暂无变化数据</td></tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 异常检测结果 -->
+                    <div class="anomalies-section">
+                        <div class="anomalies-card">
+                            <h3>异常检测结果</h3>
+                            <div id="anomaliesList" class="anomalies-list">
+                                <div class="no-data">暂无异常检测结果</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 报表生成功能 -->
+                    <div class="reports-section">
+                        <div class="reports-card">
+                            <h3>报表生成</h3>
+                            <div class="report-actions">
+                                <button id="downloadAnalysisReportBtn" class="primary-btn">📄 下载分析报告</button>
+                                <button id="downloadChangesExcelBtn" class="secondary-btn">📊 导出Excel</button>
+                                <button id="generateTrendChartBtn" class="secondary-btn">📈 生成趋势图</button>
+                            </div>
+                            <div id="analysisInfo" class="analysis-info">
+                                <p><strong>分析时间：</strong><span id="analysisDate">-</span></p>
+                                <p><strong>对比范围：</strong><span id="analysisRange">-</span></p>
+                                <p><strong>分析类型：</strong><span id="analysisType">-</span></p>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </section>

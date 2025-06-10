@@ -36,13 +36,21 @@ class LLMClient:
         api_key = os.environ.get('LLM_API_KEY')
 
         if not api_key:
-            print("❌ 错误：未设置LLM_API_KEY环境变量")
-            print("请按照以下步骤配置API密钥：")
-            print("1. 复制 .env.example 文件为 .env")
-            print("2. 在 .env 文件中设置您的API密钥：")
-            print("   LLM_API_KEY=your_actual_api_key_here")
-            print("3. 重新启动应用程序")
-            print("\n注意：请确保不要将真实的API密钥提交到代码仓库中！")
+            try:
+                print("❌ 错误：未设置LLM_API_KEY环境变量")
+                print("请按照以下步骤配置API密钥：")
+                print("1. 复制 .env.example 文件为 .env")
+                print("2. 在 .env 文件中设置您的API密钥：")
+                print("   LLM_API_KEY=your_actual_api_key_here")
+                print("3. 重新启动应用程序")
+                print("\n注意：请确保不要将真实的API密钥提交到代码仓库中！")
+            except UnicodeEncodeError:
+                print("Error: LLM_API_KEY environment variable not set")
+                print("Please configure API key following these steps:")
+                print("1. Copy .env.example to .env")
+                print("2. Set your API key in .env file:")
+                print("   LLM_API_KEY=your_actual_api_key_here")
+                print("3. Restart the application")
             sys.exit(1)
 
         return api_key
@@ -52,10 +60,17 @@ class LLMClient:
         验证API密钥格式
         """
         if not self.api_key or len(self.api_key.strip()) < 10:
-            print("⚠️  警告：API密钥格式可能不正确，请检查配置")
-            print(f"当前密钥长度：{len(self.api_key) if self.api_key else 0}")
+            try:
+                print("⚠️  警告：API密钥格式可能不正确，请检查配置")
+                print(f"当前密钥长度：{len(self.api_key) if self.api_key else 0}")
+            except UnicodeEncodeError:
+                print("Warning: API key format may be incorrect")
+                print(f"Current key length: {len(self.api_key) if self.api_key else 0}")
         else:
-            print("✅ API密钥配置成功")
+            try:
+                print("✅ API密钥配置成功")
+            except UnicodeEncodeError:
+                print("API key configured successfully")
 
     def _init_system_prompt(self):
         """初始化系统提示词"""

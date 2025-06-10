@@ -1,5 +1,5 @@
 {
-  "last_updated": "2025-06-09T02:46:00.427786",
+  "last_updated": "2025-06-10T01:18:47.987403",
   "products": {
     "1": {
       "product_name": "农场素食散养走地萨松母鸡    ",
@@ -13,7 +13,7 @@
       "image_url": "",
       "status": "active",
       "created_at": "2025-06-09T02:34:23.516461",
-      "updated_at": "2025-06-09T02:46:00.427786",
+      "updated_at": "2025-06-10T00:20:38.680134",
       "stock_history": [
         {
           "action": "初始化",
@@ -75,8 +75,18 @@
           "timestamp": "2025-06-09T02:46:00.427786",
           "operator": "测试员",
           "note": "恢复原始库存"
+        },
+        {
+          "action": "生成条形码",
+          "quantity": 0,
+          "timestamp": "2025-06-10T00:20:38.680134",
+          "operator": "system",
+          "note": "自动生成条形码: 880000019687"
         }
-      ]
+      ],
+      "barcode": "880000019687",
+      "barcode_image": "barcodes/农场素食散养走地萨松母鸡_880000019687.png",
+      "storage_area": "B"
     },
     "2": {
       "product_name": "农场新鲜童子公鸡            ",
@@ -90,7 +100,7 @@
       "image_url": "",
       "status": "active",
       "created_at": "2025-06-09T02:34:23.517458",
-      "updated_at": "2025-06-09T02:34:23.517458",
+      "updated_at": "2025-06-10T00:27:54.123690",
       "stock_history": [
         {
           "action": "初始化",
@@ -98,8 +108,18 @@
           "timestamp": "2025-06-09T02:34:23.517458",
           "operator": "system",
           "note": "系统初始化库存"
+        },
+        {
+          "action": "生成条形码",
+          "quantity": 0,
+          "timestamp": "2025-06-10T00:27:54.123690",
+          "operator": "system",
+          "note": "自动生成条形码: 880000020572"
         }
-      ]
+      ],
+      "barcode": "880000020572",
+      "barcode_image": "barcodes/农场新鲜童子公鸡_880000020572.png",
+      "storage_area": "C"
     },
     "3": {
       "product_name": "端午特价农场土鸡蛋          ",
@@ -113,7 +133,7 @@
       "image_url": "",
       "status": "active",
       "created_at": "2025-06-09T02:34:23.517458",
-      "updated_at": "2025-06-09T02:34:23.517458",
+      "updated_at": "2025-06-10T00:27:54.131691",
       "stock_history": [
         {
           "action": "初始化",
@@ -121,8 +141,18 @@
           "timestamp": "2025-06-09T02:34:23.517458",
           "operator": "system",
           "note": "系统初始化库存"
+        },
+        {
+          "action": "生成条形码",
+          "quantity": 0,
+          "timestamp": "2025-06-10T00:27:54.131691",
+          "operator": "system",
+          "note": "自动生成条形码: 880000038705"
         }
-      ]
+      ],
+      "barcode": "880000038705",
+      "barcode_image": "barcodes/端午特价农场土鸡蛋_880000038705.png",
+      "storage_area": "D"
     },
     "4": {
       "product_name": "大师傅新鲜做好吃的：谭头水饺",
@@ -136,7 +166,7 @@
       "image_url": "",
       "status": "active",
       "created_at": "2025-06-09T02:34:23.517458",
-      "updated_at": "2025-06-09T02:34:23.517458",
+      "updated_at": "2025-06-10T00:27:54.137790",
       "stock_history": [
         {
           "action": "初始化",
@@ -144,8 +174,18 @@
           "timestamp": "2025-06-09T02:34:23.517458",
           "operator": "system",
           "note": "系统初始化库存"
+        },
+        {
+          "action": "生成条形码",
+          "quantity": 0,
+          "timestamp": "2025-06-10T00:27:54.137790",
+          "operator": "system",
+          "note": "自动生成条形码: 880000041207"
         }
-      ]
+      ],
+      "barcode": "880000041207",
+      "barcode_image": "barcodes/大师傅新鲜做好吃的谭头水饺_880000041207.png",
+      "storage_area": "A"
     },
     "5": {
       "product_name": "新鲜做红糟肉笋饼            ",
@@ -159,7 +199,7 @@
       "image_url": "",
       "status": "active",
       "created_at": "2025-06-09T02:34:23.517458",
-      "updated_at": "2025-06-09T02:34:23.517458",
+      "updated_at": "2025-06-10T00:27:54.145090",
       "stock_history": [
         {
           "action": "初始化",
@@ -167,8 +207,18 @@
           "timestamp": "2025-06-09T02:34:23.517458",
           "operator": "system",
           "note": "系统初始化库存"
+        },
+        {
+          "action": "生成条形码",
+          "quantity": 0,
+          "timestamp": "2025-06-10T00:27:54.145090",
+          "operator": "system",
+          "note": "自动生成条形码: 880000052546"
         }
-      ]
+      ],
+      "barcode": "880000052546",
+      "barcode_image": "barcodes/新鲜做红糟肉笋饼_880000052546.png",
+      "storage_area": "B"
     },
     "6": {
       "product_name": "新鲜做柠檬泡椒风爪          ",
@@ -182,7 +232,7 @@
       "image_url": "",
       "status": "active",
       "created_at": "2025-06-09T02:34:23.517458",
-      "updated_at": "2025-06-09T02:34:23.517458",
+      "updated_at": "2025-06-10T00:27:54.153414",
       "stock_history": [
         {
           "action": "初始化",
@@ -190,8 +240,18 @@
           "timestamp": "2025-06-09T02:34:23.517458",
           "operator": "system",
           "note": "系统初始化库存"
+        },
+        {
+          "action": "生成条形码",
+          "quantity": 0,
+          "timestamp": "2025-06-10T00:27:54.153414",
+          "operator": "system",
+          "note": "自动生成条形码: 880000064603"
         }
-      ]
+      ],
+      "barcode": "880000064603",
+      "barcode_image": "barcodes/新鲜做柠檬泡椒风爪_880000064603.png",
+      "storage_area": "C"
     },
     "7": {
       "product_name": "香糟肉光饼                  ",
@@ -205,7 +265,7 @@
       "image_url": "",
       "status": "active",
       "created_at": "2025-06-09T02:34:23.517458",
-      "updated_at": "2025-06-09T02:34:23.517458",
+      "updated_at": "2025-06-10T00:27:54.159722",
       "stock_history": [
         {
           "action": "初始化",
@@ -213,8 +273,18 @@
           "timestamp": "2025-06-09T02:34:23.517458",
           "operator": "system",
           "note": "系统初始化库存"
+        },
+        {
+          "action": "生成条形码",
+          "quantity": 0,
+          "timestamp": "2025-06-10T00:27:54.159722",
+          "operator": "system",
+          "note": "自动生成条形码: 880000073708"
         }
-      ]
+      ],
+      "barcode": "880000073708",
+      "barcode_image": "barcodes/香糟肉光饼_880000073708.png",
+      "storage_area": "D"
     },
     "8": {
       "product_name": "爆汁小籠包子                ",
@@ -228,7 +298,7 @@
       "image_url": "",
       "status": "active",
       "created_at": "2025-06-09T02:34:23.517458",
-      "updated_at": "2025-06-09T02:34:23.517458",
+      "updated_at": "2025-06-10T00:27:54.167919",
       "stock_history": [
         {
           "action": "初始化",
@@ -236,8 +306,18 @@
           "timestamp": "2025-06-09T02:34:23.517458",
           "operator": "system",
           "note": "系统初始化库存"
+        },
+        {
+          "action": "生成条形码",
+          "quantity": 0,
+          "timestamp": "2025-06-10T00:27:54.167919",
+          "operator": "system",
+          "note": "自动生成条形码: 880000082681"
         }
-      ]
+      ],
+      "barcode": "880000082681",
+      "barcode_image": "barcodes/爆汁小籠包子_880000082681.png",
+      "storage_area": "A"
     },
     "9": {
       "product_name": "手工花卷                    ",
@@ -251,7 +331,7 @@
       "image_url": "",
       "status": "active",
       "created_at": "2025-06-09T02:34:23.517458",
-      "updated_at": "2025-06-09T02:34:23.517458",
+      "updated_at": "2025-06-10T00:27:54.175425",
       "stock_history": [
         {
           "action": "初始化",
@@ -259,8 +339,18 @@
           "timestamp": "2025-06-09T02:34:23.517458",
           "operator": "system",
           "note": "系统初始化库存"
+        },
+        {
+          "action": "生成条形码",
+          "quantity": 0,
+          "timestamp": "2025-06-10T00:27:54.175425",
+          "operator": "system",
+          "note": "自动生成条形码: 880000097086"
         }
-      ]
+      ],
+      "barcode": "880000097086",
+      "barcode_image": "barcodes/手工花卷_880000097086.png",
+      "storage_area": "B"
     },
     "10": {
       "product_name": "拇指生煎包                  ",
@@ -274,7 +364,7 @@
       "image_url": "",
       "status": "active",
       "created_at": "2025-06-09T02:34:23.517458",
-      "updated_at": "2025-06-09T02:34:23.517458",
+      "updated_at": "2025-06-10T00:27:54.182441",
       "stock_history": [
         {
           "action": "初始化",
@@ -282,8 +372,18 @@
           "timestamp": "2025-06-09T02:34:23.517458",
           "operator": "system",
           "note": "系统初始化库存"
+        },
+        {
+          "action": "生成条形码",
+          "quantity": 0,
+          "timestamp": "2025-06-10T00:27:54.182441",
+          "operator": "system",
+          "note": "自动生成条形码: 880000108150"
         }
-      ]
+      ],
+      "barcode": "880000108150",
+      "barcode_image": "barcodes/拇指生煎包_880000108150.png",
+      "storage_area": "C"
     },
     "11": {
       "product_name": "手包肉打皮燕丸              ",
@@ -295,9 +395,9 @@
       "min_stock_warning": 10,
       "description": "            ",
       "image_url": "",
-      "status": "active",
+      "status": "inactive",
       "created_at": "2025-06-09T02:34:23.517458",
-      "updated_at": "2025-06-09T02:34:23.517458",
+      "updated_at": "2025-06-10T01:18:47.987403",
       "stock_history": [
         {
           "action": "初始化",
@@ -305,8 +405,18 @@
           "timestamp": "2025-06-09T02:34:23.517458",
           "operator": "system",
           "note": "系统初始化库存"
+        },
+        {
+          "action": "生成条形码",
+          "quantity": 0,
+          "timestamp": "2025-06-10T00:27:54.190107",
+          "operator": "system",
+          "note": "自动生成条形码: 880000119173"
         }
-      ]
+      ],
+      "barcode": "880000119173",
+      "barcode_image": "barcodes/手包肉打皮燕丸_880000119173.png",
+      "storage_area": "D"
     },
     "12": {
       "product_name": "北京口味咸火燒              ",
@@ -320,7 +430,7 @@
       "image_url": "",
       "status": "active",
       "created_at": "2025-06-09T02:34:23.517458",
-      "updated_at": "2025-06-09T02:34:23.517458",
+      "updated_at": "2025-06-10T00:27:54.197133",
       "stock_history": [
         {
           "action": "初始化",
@@ -328,8 +438,18 @@
           "timestamp": "2025-06-09T02:34:23.517458",
           "operator": "system",
           "note": "系统初始化库存"
+        },
+        {
+          "action": "生成条形码",
+          "quantity": 0,
+          "timestamp": "2025-06-10T00:27:54.197133",
+          "operator": "system",
+          "note": "自动生成条形码: 880000127899"
         }
-      ]
+      ],
+      "barcode": "880000127899",
+      "barcode_image": "barcodes/北京口味咸火燒_880000127899.png",
+      "storage_area": "A"
     },
     "13": {
       "product_name": "北京口味甜火烧              ",
@@ -343,7 +463,7 @@
       "image_url": "",
       "status": "active",
       "created_at": "2025-06-09T02:34:23.517458",
-      "updated_at": "2025-06-09T02:34:23.517458",
+      "updated_at": "2025-06-10T00:27:54.204508",
       "stock_history": [
         {
           "action": "初始化",
@@ -351,8 +471,18 @@
           "timestamp": "2025-06-09T02:34:23.517458",
           "operator": "system",
           "note": "系统初始化库存"
+        },
+        {
+          "action": "生成条形码",
+          "quantity": 0,
+          "timestamp": "2025-06-10T00:27:54.204508",
+          "operator": "system",
+          "note": "自动生成条形码: 880000133273"
         }
-      ]
+      ],
+      "barcode": "880000133273",
+      "barcode_image": "barcodes/北京口味甜火烧_880000133273.png",
+      "storage_area": "B"
     },
     "14": {
       "product_name": "手工皮蛋鲜肉馄炖            ",
@@ -366,7 +496,7 @@
       "image_url": "",
       "status": "active",
       "created_at": "2025-06-09T02:34:23.517458",
-      "updated_at": "2025-06-09T02:34:23.517458",
+      "updated_at": "2025-06-10T00:27:54.211542",
       "stock_history": [
         {
           "action": "初始化",
@@ -374,8 +504,18 @@
           "timestamp": "2025-06-09T02:34:23.517458",
           "operator": "system",
           "note": "系统初始化库存"
+        },
+        {
+          "action": "生成条形码",
+          "quantity": 0,
+          "timestamp": "2025-06-10T00:27:54.211542",
+          "operator": "system",
+          "note": "自动生成条形码: 880000147650"
         }
-      ]
+      ],
+      "barcode": "880000147650",
+      "barcode_image": "barcodes/手工皮蛋鲜肉馄炖_880000147650.png",
+      "storage_area": "C"
     },
     "15": {
       "product_name": "手工鲜肉馄炖                ",
@@ -389,7 +529,7 @@
       "image_url": "",
       "status": "active",
       "created_at": "2025-06-09T02:34:23.517458",
-      "updated_at": "2025-06-09T02:34:23.517458",
+      "updated_at": "2025-06-10T00:27:54.219618",
       "stock_history": [
         {
           "action": "初始化",
@@ -397,8 +537,18 @@
           "timestamp": "2025-06-09T02:34:23.517458",
           "operator": "system",
           "note": "系统初始化库存"
+        },
+        {
+          "action": "生成条形码",
+          "quantity": 0,
+          "timestamp": "2025-06-10T00:27:54.219618",
+          "operator": "system",
+          "note": "自动生成条形码: 880000150163"
         }
-      ]
+      ],
+      "barcode": "880000150163",
+      "barcode_image": "barcodes/手工鲜肉馄炖_880000150163.png",
+      "storage_area": "D"
     },
     "16": {
       "product_name": "新鮮做筋道意大利面          ",
@@ -412,7 +562,7 @@
       "image_url": "",
       "status": "active",
       "created_at": "2025-06-09T02:34:23.517458",
-      "updated_at": "2025-06-09T02:34:23.517458",
+      "updated_at": "2025-06-10T00:27:54.227126",
       "stock_history": [
         {
           "action": "初始化",
@@ -420,8 +570,18 @@
           "timestamp": "2025-06-09T02:34:23.517458",
           "operator": "system",
           "note": "系统初始化库存"
+        },
+        {
+          "action": "生成条形码",
+          "quantity": 0,
+          "timestamp": "2025-06-10T00:27:54.227126",
+          "operator": "system",
+          "note": "自动生成条形码: 880000168425"
         }
-      ]
+      ],
+      "barcode": "880000168425",
+      "barcode_image": "barcodes/新鮮做筋道意大利面_880000168425.png",
+      "storage_area": "A"
     },
     "17": {
       "product_name": "新鲜插蛏                    ",
@@ -435,7 +595,7 @@
       "image_url": "",
       "status": "active",
       "created_at": "2025-06-09T02:34:23.517458",
-      "updated_at": "2025-06-09T02:34:23.517458",
+      "updated_at": "2025-06-10T00:27:54.234636",
       "stock_history": [
         {
           "action": "初始化",
@@ -443,8 +603,18 @@
           "timestamp": "2025-06-09T02:34:23.517458",
           "operator": "system",
           "note": "系统初始化库存"
+        },
+        {
+          "action": "生成条形码",
+          "quantity": 0,
+          "timestamp": "2025-06-10T00:27:54.234636",
+          "operator": "system",
+          "note": "自动生成条形码: 880000174649"
         }
-      ]
+      ],
+      "barcode": "880000174649",
+      "barcode_image": "barcodes/新鲜插蛏_880000174649.png",
+      "storage_area": "B"
     },
     "18": {
       "product_name": "好鸭爽鸭血                  ",
@@ -458,7 +628,7 @@
       "image_url": "",
       "status": "active",
       "created_at": "2025-06-09T02:34:23.517458",
-      "updated_at": "2025-06-09T02:34:23.517458",
+      "updated_at": "2025-06-10T00:27:54.242665",
       "stock_history": [
         {
           "action": "初始化",
@@ -466,8 +636,18 @@
           "timestamp": "2025-06-09T02:34:23.517458",
           "operator": "system",
           "note": "系统初始化库存"
+        },
+        {
+          "action": "生成条形码",
+          "quantity": 0,
+          "timestamp": "2025-06-10T00:27:54.242665",
+          "operator": "system",
+          "note": "自动生成条形码: 880000181557"
         }
-      ]
+      ],
+      "barcode": "880000181557",
+      "barcode_image": "barcodes/好鸭爽鸭血_880000181557.png",
+      "storage_area": "C"
     },
     "19": {
       "product_name": "深海螺片                    ",
@@ -481,7 +661,7 @@
       "image_url": "",
       "status": "active",
       "created_at": "2025-06-09T02:34:23.517458",
-      "updated_at": "2025-06-09T02:34:23.517458",
+      "updated_at": "2025-06-10T00:27:54.249541",
       "stock_history": [
         {
           "action": "初始化",
@@ -489,8 +669,18 @@
           "timestamp": "2025-06-09T02:34:23.517458",
           "operator": "system",
           "note": "系统初始化库存"
+        },
+        {
+          "action": "生成条形码",
+          "quantity": 0,
+          "timestamp": "2025-06-10T00:27:54.249541",
+          "operator": "system",
+          "note": "自动生成条形码: 880000192210"
         }
-      ]
+      ],
+      "barcode": "880000192210",
+      "barcode_image": "barcodes/深海螺片_880000192210.png",
+      "storage_area": "D"
     },
     "20": {
       "product_name": "鸦片鱼头                    ",
@@ -504,7 +694,7 @@
       "image_url": "",
       "status": "active",
       "created_at": "2025-06-09T02:34:23.517458",
-      "updated_at": "2025-06-09T02:34:23.517458",
+      "updated_at": "2025-06-10T00:27:54.257683",
       "stock_history": [
         {
           "action": "初始化",
@@ -512,8 +702,18 @@
           "timestamp": "2025-06-09T02:34:23.517458",
           "operator": "system",
           "note": "系统初始化库存"
+        },
+        {
+          "action": "生成条形码",
+          "quantity": 0,
+          "timestamp": "2025-06-10T00:27:54.257683",
+          "operator": "system",
+          "note": "自动生成条形码: 880000207844"
         }
-      ]
+      ],
+      "barcode": "880000207844",
+      "barcode_image": "barcodes/鸦片鱼头_880000207844.png",
+      "storage_area": "A"
     },
     "21": {
       "product_name": "台湾香肠                    ",
@@ -527,7 +727,7 @@
       "image_url": "",
       "status": "active",
       "created_at": "2025-06-09T02:34:23.517458",
-      "updated_at": "2025-06-09T02:34:23.517458",
+      "updated_at": "2025-06-10T00:27:54.264840",
       "stock_history": [
         {
           "action": "初始化",
@@ -535,8 +735,18 @@
           "timestamp": "2025-06-09T02:34:23.517458",
           "operator": "system",
           "note": "系统初始化库存"
+        },
+        {
+          "action": "生成条形码",
+          "quantity": 0,
+          "timestamp": "2025-06-10T00:27:54.264840",
+          "operator": "system",
+          "note": "自动生成条形码: 880000218498"
         }
-      ]
+      ],
+      "barcode": "880000218498",
+      "barcode_image": "barcodes/台湾香肠_880000218498.png",
+      "storage_area": "B"
     },
     "22": {
       "product_name": "锁鲜炖文蛤                  ",
@@ -550,7 +760,7 @@
       "image_url": "",
       "status": "active",
       "created_at": "2025-06-09T02:34:23.517458",
-      "updated_at": "2025-06-09T02:34:23.517458",
+      "updated_at": "2025-06-10T00:27:54.273035",
       "stock_history": [
         {
           "action": "初始化",
@@ -558,8 +768,18 @@
           "timestamp": "2025-06-09T02:34:23.517458",
           "operator": "system",
           "note": "系统初始化库存"
+        },
+        {
+          "action": "生成条形码",
+          "quantity": 0,
+          "timestamp": "2025-06-10T00:27:54.273035",
+          "operator": "system",
+          "note": "自动生成条形码: 880000228769"
         }
-      ]
+      ],
+      "barcode": "880000228769",
+      "barcode_image": "barcodes/锁鲜炖文蛤_880000228769.png",
+      "storage_area": "C"
     },
     "23": {
       "product_name": "好吃咸晒鲜黄花鱼片          ",
@@ -573,7 +793,7 @@
       "image_url": "",
       "status": "active",
       "created_at": "2025-06-09T02:34:23.518463",
-      "updated_at": "2025-06-09T02:34:23.518463",
+      "updated_at": "2025-06-10T00:27:54.281398",
       "stock_history": [
         {
           "action": "初始化",
@@ -581,8 +801,18 @@
           "timestamp": "2025-06-09T02:34:23.518463",
           "operator": "system",
           "note": "系统初始化库存"
+        },
+        {
+          "action": "生成条形码",
+          "quantity": 0,
+          "timestamp": "2025-06-10T00:27:54.281398",
+          "operator": "system",
+          "note": "自动生成条形码: 880000238984"
         }
-      ]
+      ],
+      "barcode": "880000238984",
+      "barcode_image": "barcodes/好吃咸晒鲜黄花鱼片_880000238984.png",
+      "storage_area": "D"
     },
     "24": {
       "product_name": "水晶蝦餃                    ",
@@ -596,7 +826,7 @@
       "image_url": "",
       "status": "active",
       "created_at": "2025-06-09T02:34:23.518463",
-      "updated_at": "2025-06-09T02:34:23.518463",
+      "updated_at": "2025-06-10T00:27:54.288209",
       "stock_history": [
         {
           "action": "初始化",
@@ -604,8 +834,18 @@
           "timestamp": "2025-06-09T02:34:23.518463",
           "operator": "system",
           "note": "系统初始化库存"
+        },
+        {
+          "action": "生成条形码",
+          "quantity": 0,
+          "timestamp": "2025-06-10T00:27:54.288209",
+          "operator": "system",
+          "note": "自动生成条形码: 880000247671"
         }
-      ]
+      ],
+      "barcode": "880000247671",
+      "barcode_image": "barcodes/水晶蝦餃_880000247671.png",
+      "storage_area": "A"
     },
     "25": {
       "product_name": "农场青江菜                  ",
@@ -619,7 +859,7 @@
       "image_url": "",
       "status": "active",
       "created_at": "2025-06-09T02:34:23.518463",
-      "updated_at": "2025-06-09T02:34:23.518463",
+      "updated_at": "2025-06-10T00:27:54.295896",
       "stock_history": [
         {
           "action": "初始化",
@@ -627,8 +867,18 @@
           "timestamp": "2025-06-09T02:34:23.518463",
           "operator": "system",
           "note": "系统初始化库存"
+        },
+        {
+          "action": "生成条形码",
+          "quantity": 0,
+          "timestamp": "2025-06-10T00:27:54.295896",
+          "operator": "system",
+          "note": "自动生成条形码: 880000251018"
         }
-      ]
+      ],
+      "barcode": "880000251018",
+      "barcode_image": "barcodes/农场青江菜_880000251018.png",
+      "storage_area": "B"
     },
     "26": {
       "product_name": "农场嫩西兰花苔Broccolini    ",
@@ -642,7 +892,7 @@
       "image_url": "",
       "status": "active",
       "created_at": "2025-06-09T02:34:23.518463",
-      "updated_at": "2025-06-09T02:34:23.518463",
+      "updated_at": "2025-06-10T00:27:54.303138",
       "stock_history": [
         {
           "action": "初始化",
@@ -650,8 +900,18 @@
           "timestamp": "2025-06-09T02:34:23.518463",
           "operator": "system",
           "note": "系统初始化库存"
+        },
+        {
+          "action": "生成条形码",
+          "quantity": 0,
+          "timestamp": "2025-06-10T00:27:54.303138",
+          "operator": "system",
+          "note": "自动生成条形码: 880000262182"
         }
-      ]
+      ],
+      "barcode": "880000262182",
+      "barcode_image": "barcodes/农场嫩西兰花苔Broccolini_880000262182.png",
+      "storage_area": "C"
     },
     "27": {
       "product_name": "农场新鲜平菇                ",
@@ -665,7 +925,7 @@
       "image_url": "",
       "status": "active",
       "created_at": "2025-06-09T02:34:23.518463",
-      "updated_at": "2025-06-09T02:34:23.518463",
+      "updated_at": "2025-06-10T00:27:54.310138",
       "stock_history": [
         {
           "action": "初始化",
@@ -673,8 +933,18 @@
           "timestamp": "2025-06-09T02:34:23.518463",
           "operator": "system",
           "note": "系统初始化库存"
+        },
+        {
+          "action": "生成条形码",
+          "quantity": 0,
+          "timestamp": "2025-06-10T00:27:54.310138",
+          "operator": "system",
+          "note": "自动生成条形码: 880000272997"
         }
-      ]
+      ],
+      "barcode": "880000272997",
+      "barcode_image": "barcodes/农场新鲜平菇_880000272997.png",
+      "storage_area": "D"
     },
     "28": {
       "product_name": "日本贝贝南瓜                ",
@@ -688,7 +958,7 @@
       "image_url": "",
       "status": "active",
       "created_at": "2025-06-09T02:34:23.518463",
-      "updated_at": "2025-06-09T02:34:23.518463",
+      "updated_at": "2025-06-10T00:27:54.318678",
       "stock_history": [
         {
           "action": "初始化",
@@ -696,8 +966,18 @@
           "timestamp": "2025-06-09T02:34:23.518463",
           "operator": "system",
           "note": "系统初始化库存"
+        },
+        {
+          "action": "生成条形码",
+          "quantity": 0,
+          "timestamp": "2025-06-10T00:27:54.318678",
+          "operator": "system",
+          "note": "自动生成条形码: 880000286400"
         }
-      ]
+      ],
+      "barcode": "880000286400",
+      "barcode_image": "barcodes/日本贝贝南瓜_880000286400.png",
+      "storage_area": "A"
     },
     "29": {
       "product_name": "巴西姜                      ",
@@ -711,7 +991,7 @@
       "image_url": "",
       "status": "active",
       "created_at": "2025-06-09T02:34:23.518463",
-      "updated_at": "2025-06-09T02:34:23.518463",
+      "updated_at": "2025-06-10T00:27:54.327091",
       "stock_history": [
         {
           "action": "初始化",
@@ -719,8 +999,18 @@
           "timestamp": "2025-06-09T02:34:23.518463",
           "operator": "system",
           "note": "系统初始化库存"
+        },
+        {
+          "action": "生成条形码",
+          "quantity": 0,
+          "timestamp": "2025-06-10T00:27:54.327091",
+          "operator": "system",
+          "note": "自动生成条形码: 880000291395"
         }
-      ]
+      ],
+      "barcode": "880000291395",
+      "barcode_image": "barcodes/巴西姜_880000291395.png",
+      "storage_area": "B"
     },
     "30": {
       "product_name": "茭白                        ",
@@ -734,7 +1024,7 @@
       "image_url": "",
       "status": "active",
       "created_at": "2025-06-09T02:34:23.518463",
-      "updated_at": "2025-06-09T02:34:23.518463",
+      "updated_at": "2025-06-10T00:27:54.334333",
       "stock_history": [
         {
           "action": "初始化",
@@ -742,8 +1032,18 @@
           "timestamp": "2025-06-09T02:34:23.518463",
           "operator": "system",
           "note": "系统初始化库存"
+        },
+        {
+          "action": "生成条形码",
+          "quantity": 0,
+          "timestamp": "2025-06-10T00:27:54.334333",
+          "operator": "system",
+          "note": "自动生成条形码: 880000304160"
         }
-      ]
+      ],
+      "barcode": "880000304160",
+      "barcode_image": "barcodes/茭白_880000304160.png",
+      "storage_area": "C"
     },
     "31": {
       "product_name": "新鲜花生                    ",
@@ -757,7 +1057,7 @@
       "image_url": "",
       "status": "active",
       "created_at": "2025-06-09T02:34:23.518463",
-      "updated_at": "2025-06-09T02:34:23.518463",
+      "updated_at": "2025-06-10T00:27:54.342606",
       "stock_history": [
         {
           "action": "初始化",
@@ -765,8 +1065,18 @@
           "timestamp": "2025-06-09T02:34:23.518463",
           "operator": "system",
           "note": "系统初始化库存"
+        },
+        {
+          "action": "生成条形码",
+          "quantity": 0,
+          "timestamp": "2025-06-10T00:27:54.342606",
+          "operator": "system",
+          "note": "自动生成条形码: 880000313341"
         }
-      ]
+      ],
+      "barcode": "880000313341",
+      "barcode_image": "barcodes/新鲜花生_880000313341.png",
+      "storage_area": "D"
     },
     "32": {
       "product_name": "新鲜农场玉米                ",
@@ -780,7 +1090,7 @@
       "image_url": "",
       "status": "active",
       "created_at": "2025-06-09T02:34:23.518463",
-      "updated_at": "2025-06-09T02:34:23.518463",
+      "updated_at": "2025-06-10T00:27:54.349877",
       "stock_history": [
         {
           "action": "初始化",
@@ -788,8 +1098,18 @@
           "timestamp": "2025-06-09T02:34:23.518463",
           "operator": "system",
           "note": "系统初始化库存"
+        },
+        {
+          "action": "生成条形码",
+          "quantity": 0,
+          "timestamp": "2025-06-10T00:27:54.349877",
+          "operator": "system",
+          "note": "自动生成条形码: 880000321681"
         }
-      ]
+      ],
+      "barcode": "880000321681",
+      "barcode_image": "barcodes/新鲜农场玉米_880000321681.png",
+      "storage_area": "A"
     },
     "33": {
       "product_name": "Olivia 农场有机嫩菠菜叶     ",
@@ -803,7 +1123,7 @@
       "image_url": "",
       "status": "active",
       "created_at": "2025-06-09T02:34:23.518463",
-      "updated_at": "2025-06-09T02:34:23.518463",
+      "updated_at": "2025-06-10T00:27:54.357587",
       "stock_history": [
         {
           "action": "初始化",
@@ -811,8 +1131,18 @@
           "timestamp": "2025-06-09T02:34:23.518463",
           "operator": "system",
           "note": "系统初始化库存"
+        },
+        {
+          "action": "生成条形码",
+          "quantity": 0,
+          "timestamp": "2025-06-10T00:27:54.357587",
+          "operator": "system",
+          "note": "自动生成条形码: 880000336524"
         }
-      ]
+      ],
+      "barcode": "880000336524",
+      "barcode_image": "barcodes/Olivia 农场有机嫩菠菜叶_880000336524.png",
+      "storage_area": "B"
     },
     "34": {
       "product_name": "台灣香瓜                    ",
@@ -826,7 +1156,7 @@
       "image_url": "",
       "status": "active",
       "created_at": "2025-06-09T02:34:23.518463",
-      "updated_at": "2025-06-09T02:34:23.518463",
+      "updated_at": "2025-06-10T00:27:54.365639",
       "stock_history": [
         {
           "action": "初始化",
@@ -834,8 +1164,18 @@
           "timestamp": "2025-06-09T02:34:23.518463",
           "operator": "system",
           "note": "系统初始化库存"
+        },
+        {
+          "action": "生成条形码",
+          "quantity": 0,
+          "timestamp": "2025-06-10T00:27:54.365639",
+          "operator": "system",
+          "note": "自动生成条形码: 880000340693"
         }
-      ]
+      ],
+      "barcode": "880000340693",
+      "barcode_image": "barcodes/台灣香瓜_880000340693.png",
+      "storage_area": "C"
     },
     "35": {
       "product_name": "新鲜山楂                    ",
@@ -849,7 +1189,7 @@
       "image_url": "",
       "status": "active",
       "created_at": "2025-06-09T02:34:23.518463",
-      "updated_at": "2025-06-09T02:34:23.518463",
+      "updated_at": "2025-06-10T00:27:54.374147",
       "stock_history": [
         {
           "action": "初始化",
@@ -857,8 +1197,18 @@
           "timestamp": "2025-06-09T02:34:23.518463",
           "operator": "system",
           "note": "系统初始化库存"
+        },
+        {
+          "action": "生成条形码",
+          "quantity": 0,
+          "timestamp": "2025-06-10T00:27:54.374147",
+          "operator": "system",
+          "note": "自动生成条形码: 880000358120"
         }
-      ]
+      ],
+      "barcode": "880000358120",
+      "barcode_image": "barcodes/新鲜山楂_880000358120.png",
+      "storage_area": "D"
     },
     "36": {
       "product_name": "红心芭乐                    ",
@@ -872,7 +1222,7 @@
       "image_url": "",
       "status": "active",
       "created_at": "2025-06-09T02:34:23.518463",
-      "updated_at": "2025-06-09T02:34:23.518463",
+      "updated_at": "2025-06-10T00:27:54.381653",
       "stock_history": [
         {
           "action": "初始化",
@@ -880,8 +1230,18 @@
           "timestamp": "2025-06-09T02:34:23.518463",
           "operator": "system",
           "note": "系统初始化库存"
+        },
+        {
+          "action": "生成条形码",
+          "quantity": 0,
+          "timestamp": "2025-06-10T00:27:54.381653",
+          "operator": "system",
+          "note": "自动生成条形码: 880000364180"
         }
-      ]
+      ],
+      "barcode": "880000364180",
+      "barcode_image": "barcodes/红心芭乐_880000364180.png",
+      "storage_area": "A"
     },
     "37": {
       "product_name": "甜大红石榴                  ",
@@ -895,7 +1255,7 @@
       "image_url": "",
       "status": "active",
       "created_at": "2025-06-09T02:34:23.518463",
-      "updated_at": "2025-06-09T02:34:23.518463",
+      "updated_at": "2025-06-10T00:27:54.389789",
       "stock_history": [
         {
           "action": "初始化",
@@ -903,8 +1263,18 @@
           "timestamp": "2025-06-09T02:34:23.518463",
           "operator": "system",
           "note": "系统初始化库存"
+        },
+        {
+          "action": "生成条形码",
+          "quantity": 0,
+          "timestamp": "2025-06-10T00:27:54.389789",
+          "operator": "system",
+          "note": "自动生成条形码: 880000372586"
         }
-      ]
+      ],
+      "barcode": "880000372586",
+      "barcode_image": "barcodes/甜大红石榴_880000372586.png",
+      "storage_area": "B"
     },
     "38": {
       "product_name": "彩色金丝芒                  ",
@@ -918,7 +1288,7 @@
       "image_url": "",
       "status": "active",
       "created_at": "2025-06-09T02:34:23.518463",
-      "updated_at": "2025-06-09T02:34:23.518463",
+      "updated_at": "2025-06-10T00:27:54.397848",
       "stock_history": [
         {
           "action": "初始化",
@@ -926,8 +1296,18 @@
           "timestamp": "2025-06-09T02:34:23.518463",
           "operator": "system",
           "note": "系统初始化库存"
+        },
+        {
+          "action": "生成条形码",
+          "quantity": 0,
+          "timestamp": "2025-06-10T00:27:54.397848",
+          "operator": "system",
+          "note": "自动生成条形码: 880000380101"
         }
-      ]
+      ],
+      "barcode": "880000380101",
+      "barcode_image": "barcodes/彩色金丝芒_880000380101.png",
+      "storage_area": "C"
     },
     "39": {
       "product_name": "越南龙眼                    ",
@@ -941,7 +1321,7 @@
       "image_url": "",
       "status": "active",
       "created_at": "2025-06-09T02:34:23.518463",
-      "updated_at": "2025-06-09T02:34:23.518463",
+      "updated_at": "2025-06-10T00:27:54.405544",
       "stock_history": [
         {
           "action": "初始化",
@@ -949,8 +1329,18 @@
           "timestamp": "2025-06-09T02:34:23.518463",
           "operator": "system",
           "note": "系统初始化库存"
+        },
+        {
+          "action": "生成条形码",
+          "quantity": 0,
+          "timestamp": "2025-06-10T00:27:54.405544",
+          "operator": "system",
+          "note": "自动生成条形码: 880000391896"
         }
-      ]
+      ],
+      "barcode": "880000391896",
+      "barcode_image": "barcodes/越南龙眼_880000391896.png",
+      "storage_area": "D"
     },
     "40": {
       "product_name": "甜哈密瓜                    ",
@@ -964,7 +1354,7 @@
       "image_url": "",
       "status": "active",
       "created_at": "2025-06-09T02:34:23.518463",
-      "updated_at": "2025-06-09T02:34:23.518463",
+      "updated_at": "2025-06-10T00:27:54.413010",
       "stock_history": [
         {
           "action": "初始化",
@@ -972,8 +1362,18 @@
           "timestamp": "2025-06-09T02:34:23.518463",
           "operator": "system",
           "note": "系统初始化库存"
+        },
+        {
+          "action": "生成条形码",
+          "quantity": 0,
+          "timestamp": "2025-06-10T00:27:54.413010",
+          "operator": "system",
+          "note": "自动生成条形码: 880000403963"
         }
-      ]
+      ],
+      "barcode": "880000403963",
+      "barcode_image": "barcodes/甜哈密瓜_880000403963.png",
+      "storage_area": "A"
     },
     "41": {
       "product_name": "韩国香瓜                    ",
@@ -987,7 +1387,7 @@
       "image_url": "",
       "status": "active",
       "created_at": "2025-06-09T02:34:23.518463",
-      "updated_at": "2025-06-09T02:34:23.518463",
+      "updated_at": "2025-06-10T00:27:54.421226",
       "stock_history": [
         {
           "action": "初始化",
@@ -995,8 +1395,18 @@
           "timestamp": "2025-06-09T02:34:23.518463",
           "operator": "system",
           "note": "系统初始化库存"
+        },
+        {
+          "action": "生成条形码",
+          "quantity": 0,
+          "timestamp": "2025-06-10T00:27:54.421226",
+          "operator": "system",
+          "note": "自动生成条形码: 880000411836"
         }
-      ]
+      ],
+      "barcode": "880000411836",
+      "barcode_image": "barcodes/韩国香瓜_880000411836.png",
+      "storage_area": "B"
     },
     "42": {
       "product_name": "天花板金色奇异果            ",
@@ -1010,7 +1420,7 @@
       "image_url": "",
       "status": "active",
       "created_at": "2025-06-09T02:34:23.518463",
-      "updated_at": "2025-06-09T02:34:23.518463",
+      "updated_at": "2025-06-10T00:27:54.429324",
       "stock_history": [
         {
           "action": "初始化",
@@ -1018,8 +1428,18 @@
           "timestamp": "2025-06-09T02:34:23.518463",
           "operator": "system",
           "note": "系统初始化库存"
+        },
+        {
+          "action": "生成条形码",
+          "quantity": 0,
+          "timestamp": "2025-06-10T00:27:54.429324",
+          "operator": "system",
+          "note": "自动生成条形码: 880000429382"
         }
-      ]
+      ],
+      "barcode": "880000429382",
+      "barcode_image": "barcodes/天花板金色奇异果_880000429382.png",
+      "storage_area": "C"
     },
     "43": {
       "product_name": "新鲜墨西哥山竹              ",
@@ -1033,7 +1453,7 @@
       "image_url": "",
       "status": "active",
       "created_at": "2025-06-09T02:34:23.518463",
-      "updated_at": "2025-06-09T02:34:23.518463",
+      "updated_at": "2025-06-10T00:27:54.436832",
       "stock_history": [
         {
           "action": "初始化",
@@ -1041,8 +1461,18 @@
           "timestamp": "2025-06-09T02:34:23.518463",
           "operator": "system",
           "note": "系统初始化库存"
+        },
+        {
+          "action": "生成条形码",
+          "quantity": 0,
+          "timestamp": "2025-06-10T00:27:54.436832",
+          "operator": "system",
+          "note": "自动生成条形码: 880000436839"
         }
-      ]
+      ],
+      "barcode": "880000436839",
+      "barcode_image": "barcodes/新鲜墨西哥山竹_880000436839.png",
+      "storage_area": "D"
     },
     "44": {
       "product_name": "以色列甜orri 柑             ",
@@ -1056,7 +1486,7 @@
       "image_url": "",
       "status": "active",
       "created_at": "2025-06-09T02:34:23.518463",
-      "updated_at": "2025-06-09T02:34:23.518463",
+      "updated_at": "2025-06-10T00:27:54.444906",
       "stock_history": [
         {
           "action": "初始化",
@@ -1064,8 +1494,18 @@
           "timestamp": "2025-06-09T02:34:23.518463",
           "operator": "system",
           "note": "系统初始化库存"
+        },
+        {
+          "action": "生成条形码",
+          "quantity": 0,
+          "timestamp": "2025-06-10T00:27:54.444906",
+          "operator": "system",
+          "note": "自动生成条形码: 880000447901"
         }
-      ]
+      ],
+      "barcode": "880000447901",
+      "barcode_image": "barcodes/以色列甜orri 柑_880000447901.png",
+      "storage_area": "A"
     },
     "45": {
       "product_name": "爱妃苹果                    ",
@@ -1079,7 +1519,7 @@
       "image_url": "",
       "status": "active",
       "created_at": "2025-06-09T02:34:23.519459",
-      "updated_at": "2025-06-09T02:34:23.519459",
+      "updated_at": "2025-06-10T00:27:54.452934",
       "stock_history": [
         {
           "action": "初始化",
@@ -1087,8 +1527,18 @@
           "timestamp": "2025-06-09T02:34:23.519459",
           "operator": "system",
           "note": "系统初始化库存"
+        },
+        {
+          "action": "生成条形码",
+          "quantity": 0,
+          "timestamp": "2025-06-10T00:27:54.452934",
+          "operator": "system",
+          "note": "自动生成条形码: 880000459242"
         }
-      ]
+      ],
+      "barcode": "880000459242",
+      "barcode_image": "barcodes/爱妃苹果_880000459242.png",
+      "storage_area": "B"
     },
     "46": {
       "product_name": "白玉桃                      ",
@@ -1102,7 +1552,7 @@
       "image_url": "",
       "status": "active",
       "created_at": "2025-06-09T02:34:23.519459",
-      "updated_at": "2025-06-09T02:34:23.519459",
+      "updated_at": "2025-06-10T00:27:54.461648",
       "stock_history": [
         {
           "action": "初始化",
@@ -1110,8 +1560,18 @@
           "timestamp": "2025-06-09T02:34:23.519459",
           "operator": "system",
           "note": "系统初始化库存"
+        },
+        {
+          "action": "生成条形码",
+          "quantity": 0,
+          "timestamp": "2025-06-10T00:27:54.461648",
+          "operator": "system",
+          "note": "自动生成条形码: 880000469397"
         }
-      ]
+      ],
+      "barcode": "880000469397",
+      "barcode_image": "barcodes/白玉桃_880000469397.png",
+      "storage_area": "C"
     },
     "47": {
       "product_name": "Sunkist 浓味甜橙            ",
@@ -1125,7 +1585,7 @@
       "image_url": "",
       "status": "active",
       "created_at": "2025-06-09T02:34:23.519459",
-      "updated_at": "2025-06-09T02:34:23.519459",
+      "updated_at": "2025-06-10T00:27:54.469063",
       "stock_history": [
         {
           "action": "初始化",
@@ -1133,8 +1593,18 @@
           "timestamp": "2025-06-09T02:34:23.519459",
           "operator": "system",
           "note": "系统初始化库存"
+        },
+        {
+          "action": "生成条形码",
+          "quantity": 0,
+          "timestamp": "2025-06-10T00:27:54.469063",
+          "operator": "system",
+          "note": "自动生成条形码: 880000478833"
         }
-      ]
+      ],
+      "barcode": "880000478833",
+      "barcode_image": "barcodes/Sunkist 浓味甜橙_880000478833.png",
+      "storage_area": "D"
     },
     "48": {
       "product_name": "红毛丹                      ",
@@ -1148,7 +1618,7 @@
       "image_url": "",
       "status": "active",
       "created_at": "2025-06-09T02:34:23.519459",
-      "updated_at": "2025-06-09T02:34:23.519459",
+      "updated_at": "2025-06-10T00:27:54.477181",
       "stock_history": [
         {
           "action": "初始化",
@@ -1156,8 +1626,18 @@
           "timestamp": "2025-06-09T02:34:23.519459",
           "operator": "system",
           "note": "系统初始化库存"
+        },
+        {
+          "action": "生成条形码",
+          "quantity": 0,
+          "timestamp": "2025-06-10T00:27:54.477181",
+          "operator": "system",
+          "note": "自动生成条形码: 880000483143"
         }
-      ]
+      ],
+      "barcode": "880000483143",
+      "barcode_image": "barcodes/红毛丹_880000483143.png",
+      "storage_area": "A"
     },
     "49": {
       "product_name": "天花板草莓                  ",
@@ -1171,7 +1651,7 @@
       "image_url": "",
       "status": "active",
       "created_at": "2025-06-09T02:34:23.519459",
-      "updated_at": "2025-06-09T02:34:23.519459",
+      "updated_at": "2025-06-10T00:27:54.485547",
       "stock_history": [
         {
           "action": "初始化",
@@ -1179,8 +1659,18 @@
           "timestamp": "2025-06-09T02:34:23.519459",
           "operator": "system",
           "note": "系统初始化库存"
+        },
+        {
+          "action": "生成条形码",
+          "quantity": 0,
+          "timestamp": "2025-06-10T00:27:54.485547",
+          "operator": "system",
+          "note": "自动生成条形码: 880000492729"
         }
-      ]
+      ],
+      "barcode": "880000492729",
+      "barcode_image": "barcodes/天花板草莓_880000492729.png",
+      "storage_area": "B"
     },
     "50": {
       "product_name": "糯米荔枝                    ",
@@ -1194,7 +1684,7 @@
       "image_url": "",
       "status": "active",
       "created_at": "2025-06-09T02:34:23.519459",
-      "updated_at": "2025-06-09T02:34:23.519459",
+      "updated_at": "2025-06-10T00:27:54.493187",
       "stock_history": [
         {
           "action": "初始化",
@@ -1202,8 +1692,18 @@
           "timestamp": "2025-06-09T02:34:23.519459",
           "operator": "system",
           "note": "系统初始化库存"
+        },
+        {
+          "action": "生成条形码",
+          "quantity": 0,
+          "timestamp": "2025-06-10T00:27:54.493187",
+          "operator": "system",
+          "note": "自动生成条形码: 880000504962"
         }
-      ]
+      ],
+      "barcode": "880000504962",
+      "barcode_image": "barcodes/糯米荔枝_880000504962.png",
+      "storage_area": "C"
     },
     "51": {
       "product_name": "天花板凤梨                  ",
@@ -1217,7 +1717,7 @@
       "image_url": "",
       "status": "active",
       "created_at": "2025-06-09T02:34:23.519459",
-      "updated_at": "2025-06-09T02:34:23.519459",
+      "updated_at": "2025-06-10T00:27:54.501630",
       "stock_history": [
         {
           "action": "初始化",
@@ -1225,8 +1725,18 @@
           "timestamp": "2025-06-09T02:34:23.519459",
           "operator": "system",
           "note": "系统初始化库存"
+        },
+        {
+          "action": "生成条形码",
+          "quantity": 0,
+          "timestamp": "2025-06-10T00:27:54.501630",
+          "operator": "system",
+          "note": "自动生成条形码: 880000515938"
         }
-      ]
+      ],
+      "barcode": "880000515938",
+      "barcode_image": "barcodes/天花板凤梨_880000515938.png",
+      "storage_area": "D"
     },
     "52": {
       "product_name": "甜cotton candy 葡萄         ",
@@ -1240,7 +1750,7 @@
       "image_url": "",
       "status": "active",
       "created_at": "2025-06-09T02:34:23.519459",
-      "updated_at": "2025-06-09T02:34:23.519459",
+      "updated_at": "2025-06-10T00:27:54.509871",
       "stock_history": [
         {
           "action": "初始化",
@@ -1248,8 +1758,18 @@
           "timestamp": "2025-06-09T02:34:23.519459",
           "operator": "system",
           "note": "系统初始化库存"
+        },
+        {
+          "action": "生成条形码",
+          "quantity": 0,
+          "timestamp": "2025-06-10T00:27:54.509871",
+          "operator": "system",
+          "note": "自动生成条形码: 880000521296"
         }
-      ]
+      ],
+      "barcode": "880000521296",
+      "barcode_image": "barcodes/甜cotton candy 葡萄_880000521296.png",
+      "storage_area": "A"
     },
     "53": {
       "product_name": "大王中王                    ",
@@ -1263,7 +1783,7 @@
       "image_url": "",
       "status": "active",
       "created_at": "2025-06-09T02:34:23.519459",
-      "updated_at": "2025-06-09T02:34:23.519459",
+      "updated_at": "2025-06-10T00:27:54.518437",
       "stock_history": [
         {
           "action": "初始化",
@@ -1271,8 +1791,18 @@
           "timestamp": "2025-06-09T02:34:23.519459",
           "operator": "system",
           "note": "系统初始化库存"
+        },
+        {
+          "action": "生成条形码",
+          "quantity": 0,
+          "timestamp": "2025-06-10T00:27:54.518437",
+          "operator": "system",
+          "note": "自动生成条形码: 880000533104"
         }
-      ]
+      ],
+      "barcode": "880000533104",
+      "barcode_image": "barcodes/大王中王_880000533104.png",
+      "storage_area": "B"
     },
     "54": {
       "product_name": "甘蔗马蹄饮                  ",
@@ -1286,7 +1816,7 @@
       "image_url": "",
       "status": "active",
       "created_at": "2025-06-09T02:34:23.519459",
-      "updated_at": "2025-06-09T02:34:23.519459",
+      "updated_at": "2025-06-10T00:27:54.526987",
       "stock_history": [
         {
           "action": "初始化",
@@ -1294,8 +1824,18 @@
           "timestamp": "2025-06-09T02:34:23.519459",
           "operator": "system",
           "note": "系统初始化库存"
+        },
+        {
+          "action": "生成条形码",
+          "quantity": 0,
+          "timestamp": "2025-06-10T00:27:54.526987",
+          "operator": "system",
+          "note": "自动生成条形码: 880000541479"
         }
-      ]
+      ],
+      "barcode": "880000541479",
+      "barcode_image": "barcodes/甘蔗马蹄饮_880000541479.png",
+      "storage_area": "C"
     },
     "55": {
       "product_name": "傻小胖糯玉米                ",
@@ -1309,7 +1849,7 @@
       "image_url": "",
       "status": "active",
       "created_at": "2025-06-09T02:34:23.519459",
-      "updated_at": "2025-06-09T02:34:23.519459",
+      "updated_at": "2025-06-10T00:27:54.535659",
       "stock_history": [
         {
           "action": "初始化",
@@ -1317,8 +1857,18 @@
           "timestamp": "2025-06-09T02:34:23.519459",
           "operator": "system",
           "note": "系统初始化库存"
+        },
+        {
+          "action": "生成条形码",
+          "quantity": 0,
+          "timestamp": "2025-06-10T00:27:54.535659",
+          "operator": "system",
+          "note": "自动生成条形码: 880000554695"
         }
-      ]
+      ],
+      "barcode": "880000554695",
+      "barcode_image": "barcodes/傻小胖糯玉米_880000554695.png",
+      "storage_area": "D"
     },
     "56": {
       "product_name": "双黄海鸭蛋                  ",
@@ -1332,7 +1882,7 @@
       "image_url": "",
       "status": "active",
       "created_at": "2025-06-09T02:34:23.519459",
-      "updated_at": "2025-06-09T02:34:23.519459",
+      "updated_at": "2025-06-10T00:27:54.543942",
       "stock_history": [
         {
           "action": "初始化",
@@ -1340,8 +1890,18 @@
           "timestamp": "2025-06-09T02:34:23.519459",
           "operator": "system",
           "note": "系统初始化库存"
+        },
+        {
+          "action": "生成条形码",
+          "quantity": 0,
+          "timestamp": "2025-06-10T00:27:54.543942",
+          "operator": "system",
+          "note": "自动生成条形码: 880000563330"
         }
-      ]
+      ],
+      "barcode": "880000563330",
+      "barcode_image": "barcodes/双黄海鸭蛋_880000563330.png",
+      "storage_area": "A"
     },
     "57": {
       "product_name": "七彩菌菇包                  ",
@@ -1355,7 +1915,7 @@
       "image_url": "",
       "status": "active",
       "created_at": "2025-06-09T02:34:23.519459",
-      "updated_at": "2025-06-09T02:34:23.519459",
+      "updated_at": "2025-06-10T00:27:54.551945",
       "stock_history": [
         {
           "action": "初始化",
@@ -1363,8 +1923,18 @@
           "timestamp": "2025-06-09T02:34:23.519459",
           "operator": "system",
           "note": "系统初始化库存"
+        },
+        {
+          "action": "生成条形码",
+          "quantity": 0,
+          "timestamp": "2025-06-10T00:27:54.551945",
+          "operator": "system",
+          "note": "自动生成条形码: 880000572575"
         }
-      ]
+      ],
+      "barcode": "880000572575",
+      "barcode_image": "barcodes/七彩菌菇包_880000572575.png",
+      "storage_area": "B"
     },
     "58": {
       "product_name": "威州5年参须                 ",
@@ -1378,7 +1948,7 @@
       "image_url": "",
       "status": "active",
       "created_at": "2025-06-09T02:34:23.519459",
-      "updated_at": "2025-06-09T02:34:23.519459",
+      "updated_at": "2025-06-10T00:27:54.560457",
       "stock_history": [
         {
           "action": "初始化",
@@ -1386,8 +1956,18 @@
           "timestamp": "2025-06-09T02:34:23.519459",
           "operator": "system",
           "note": "系统初始化库存"
+        },
+        {
+          "action": "生成条形码",
+          "quantity": 0,
+          "timestamp": "2025-06-10T00:27:54.560457",
+          "operator": "system",
+          "note": "自动生成条形码: 880000581832"
         }
-      ]
+      ],
+      "barcode": "880000581832",
+      "barcode_image": "barcodes/威州5年参须_880000581832.png",
+      "storage_area": "C"
     },
     "59": {
       "product_name": "纸皮核桃                    ",
@@ -1401,7 +1981,7 @@
       "image_url": "",
       "status": "active",
       "created_at": "2025-06-09T02:34:23.519459",
-      "updated_at": "2025-06-09T02:34:23.519459",
+      "updated_at": "2025-06-10T00:27:54.568971",
       "stock_history": [
         {
           "action": "初始化",
@@ -1409,8 +1989,18 @@
           "timestamp": "2025-06-09T02:34:23.519459",
           "operator": "system",
           "note": "系统初始化库存"
+        },
+        {
+          "action": "生成条形码",
+          "quantity": 0,
+          "timestamp": "2025-06-10T00:27:54.568971",
+          "operator": "system",
+          "note": "自动生成条形码: 880000590933"
         }
-      ]
+      ],
+      "barcode": "880000590933",
+      "barcode_image": "barcodes/纸皮核桃_880000590933.png",
+      "storage_area": "D"
     },
     "60": {
       "product_name": "农家黑笋丝                  ",
@@ -1424,7 +2014,7 @@
       "image_url": "",
       "status": "active",
       "created_at": "2025-06-09T02:34:23.519459",
-      "updated_at": "2025-06-09T02:34:23.519459",
+      "updated_at": "2025-06-10T00:27:54.576481",
       "stock_history": [
         {
           "action": "初始化",
@@ -1432,6 +2022,94 @@
           "timestamp": "2025-06-09T02:34:23.519459",
           "operator": "system",
           "note": "系统初始化库存"
+        },
+        {
+          "action": "生成条形码",
+          "quantity": 0,
+          "timestamp": "2025-06-10T00:27:54.576481",
+          "operator": "system",
+          "note": "自动生成条形码: 880000607867"
+        }
+      ],
+      "barcode": "880000607867",
+      "barcode_image": "barcodes/农家黑笋丝_880000607867.png",
+      "storage_area": "A"
+    },
+    "61": {
+      "product_name": "测试苹果",
+      "category": "水果",
+      "specification": "500g/袋",
+      "price": "15.8元/袋",
+      "unit": "袋",
+      "current_stock": 50,
+      "min_stock_warning": 5,
+      "description": "新鲜红富士苹果",
+      "image_url": "",
+      "barcode": "880000614337",
+      "barcode_image": "barcodes/测试苹果_880000614337.png",
+      "storage_area": "A",
+      "status": "active",
+      "created_at": "2025-06-10T00:20:38.680134",
+      "updated_at": "2025-06-10T00:20:38.680134",
+      "stock_history": [
+        {
+          "action": "新增产品",
+          "quantity": 50,
+          "timestamp": "2025-06-10T00:20:38.680134",
+          "operator": "test_user",
+          "note": "新增产品"
+        }
+      ]
+    },
+    "62": {
+      "product_name": "测试冷冻食品",
+      "category": "冷冻食品",
+      "specification": "1kg/包",
+      "price": "25.8元/包",
+      "unit": "包",
+      "current_stock": 30,
+      "min_stock_warning": 5,
+      "description": "测试冷冻产品",
+      "image_url": "",
+      "barcode": "880000625443",
+      "barcode_image": "barcodes/测试冷冻食品_880000625443.png",
+      "storage_area": "F",
+      "status": "active",
+      "created_at": "2025-06-10T00:43:07.293709",
+      "updated_at": "2025-06-10T00:43:07.293709",
+      "stock_history": [
+        {
+          "action": "新增产品",
+          "quantity": 30,
+          "timestamp": "2025-06-10T00:43:07.293709",
+          "operator": "测试员",
+          "note": "新增产品"
+        }
+      ]
+    },
+    "63": {
+      "product_name": "测试苹果",
+      "category": "水果",
+      "specification": "500g/个",
+      "price": "15元/斤",
+      "unit": "斤",
+      "current_stock": 10,
+      "min_stock_warning": 5,
+      "description": "这是一个测试产品",
+      "image_url": "",
+      "barcode": "880000635783",
+      "barcode_image": "barcodes/测试苹果_880000635783.png",
+      "storage_area": "A",
+      "status": "active",
+      "created_at": "2025-06-10T01:16:19.082826",
+      "updated_at": "2025-06-10T01:16:19.082826",
+      "stock_history": [
+        {
+          "action": "新增产品",
+          "quantity": 10,
+          "timestamp": "2025-06-10T01:16:19.082826",
+          "operator": "admin",
+          "note": "新增产品"
         }
       ]
     }

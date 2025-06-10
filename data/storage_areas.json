@@ -1,0 +1,73 @@
+{
+  "last_updated": "2025-06-10T00:43:07.299948",
+  "areas": {
+    "A": {
+      "area_id": "A",
+      "area_name": "A区",
+      "description": "主要存储区域A",
+      "capacity": 1000,
+      "status": "active",
+      "created_at": "2025-06-10T00:43:07.271064",
+      "updated_at": "2025-06-10T00:43:07.271064"
+    },
+    "B": {
+      "area_id": "B",
+      "area_name": "B区",
+      "description": "主要存储区域B",
+      "capacity": 1000,
+      "status": "active",
+      "created_at": "2025-06-10T00:43:07.271064",
+      "updated_at": "2025-06-10T00:43:07.271064"
+    },
+    "C": {
+      "area_id": "C",
+      "area_name": "C区",
+      "description": "主要存储区域C",
+      "capacity": 1000,
+      "status": "active",
+      "created_at": "2025-06-10T00:43:07.271064",
+      "updated_at": "2025-06-10T00:43:07.271064"
+    },
+    "D": {
+      "area_id": "D",
+      "area_name": "D区",
+      "description": "主要存储区域D",
+      "capacity": 1000,
+      "status": "active",
+      "created_at": "2025-06-10T00:43:07.271064",
+      "updated_at": "2025-06-10T00:43:07.271064"
+    },
+    "E": {
+      "area_id": "E",
+      "area_name": "E区",
+      "description": "新增冷藏存储区域",
+      "capacity": 500,
+      "status": "active",
+      "created_at": "2025-06-10T00:43:07.273067",
+      "updated_at": "2025-06-10T00:43:07.273067",
+      "created_by": "测试员"
+    },
+    "F": {
+      "area_id": "F",
+      "area_name": "F区",
+      "description": "新增冷冻存储区域",
+      "capacity": 300,
+      "status": "active",
+      "created_at": "2025-06-10T00:43:07.274067",
+      "updated_at": "2025-06-10T00:43:07.274067",
+      "created_by": "测试员"
+    },
+    "G": {
+      "area_id": "G",
+      "area_name": "G区-升级版",
+      "description": "升级后的临时存储区域，增加了温控功能",
+      "capacity": 400,
+      "status": "inactive",
+      "created_at": "2025-06-10T00:43:07.274067",
+      "updated_at": "2025-06-10T00:43:07.299948",
+      "created_by": "测试员",
+      "updated_by": "测试员",
+      "deactivated_by": "测试员"
+    }
+  }
+}
