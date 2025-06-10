@@ -11,6 +11,7 @@ from src.models.inventory_manager import InventoryManager
 from src.models.feedback_manager import FeedbackManager
 from src.models.operation_logger import operation_logger, log_admin_operation
 from src.models.data_exporter import data_exporter
+from src.utils.i18n_config import i18n_config, _, SystemMessages, UITexts
 from dotenv import load_dotenv
 
 # 加载环境变量
@@ -18,6 +19,9 @@ load_dotenv()
 
 app = Flask(__name__)
 app.secret_key = os.environ.get('SECRET_KEY', 'fruit_vegetable_ai_service_2024')
+
+# 初始化国际化配置
+i18n_config.init_app(app)
 
 # 全局变量
 knowledge_retriever = None
@@ -207,6 +211,42 @@ def health_check():
         'system_ready': knowledge_retriever is not None,
         'timestamp': datetime.now().isoformat()
     })
+
+
+# ==================== 国际化路由 ====================
+
+@app.route('/api/language', methods=['GET'])
+def get_language_info():
+    """获取语言信息"""
+    return jsonify({
+        'success': True,
+        'current_language': i18n_config.get_current_language(),
+        'available_languages': i18n_config.get_available_languages()
+    })
+
+
+@app.route('/api/language/<language_code>', methods=['POST'])
+def set_language(language_code):
+    """设置语言"""
+    try:
+        success = i18n_config.set_language(language_code)
+        if success:
+            return jsonify({
+                'success': True,
+                'message': _('语言设置成功'),
+                'current_language': i18n_config.get_current_language()
+            })
+        else:
+            return jsonify({
+                'success': False,
+                'error': _('不支持的语言')
+            })
+    except Exception as e:
+        print(f"设置语言错误: {e}")
+        return jsonify({
+            'success': False,
+            'error': _('设置语言失败')
+        })
 
 
 # ==================== 管理员路由 ====================

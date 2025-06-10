@@ -40,6 +40,33 @@
             position: relative;
         }
 
+        .language-selector {
+            position: absolute;
+            top: 15px;
+            left: 20px;
+            z-index: 100;
+        }
+
+        .language-dropdown {
+            background: rgba(255, 255, 255, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 8px;
+            color: white;
+            padding: 5px 10px;
+            font-size: 12px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .language-dropdown:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .language-dropdown option {
+            background: #4CAF50;
+            color: white;
+        }
+
         .chat-header h1 {
             font-size: 24px;
             margin-bottom: 5px;
@@ -261,9 +288,16 @@
 <body>
     <div class="chat-container">
         <div class="chat-header">
+            <div class="language-selector">
+                <select class="language-dropdown" id="languageSelector" onchange="changeLanguage()">
+                    <option value="zh">🇨🇳 简体中文</option>
+                    <option value="en">🇺🇸 English</option>
+                    <option value="zh_TW">🇹🇼 繁體中文</option>
+                </select>
+            </div>
             <div class="status-indicator"></div>
-            <h1>🍎🥬 果蔬拼台客服</h1>
-            <p>AI智能助手为您服务</p>
+            <h1 id="headerTitle">🍎🥬 果蔬拼台客服</h1>
+            <p id="headerSubtitle">AI智能助手为您服务</p>
         </div>
 
         <div class="chat-messages" id="chatMessages">
@@ -312,6 +346,165 @@
 
     <script>
         let isLoading = false;
+        let currentLanguage = 'zh';
+
+        // 语言文本配置
+        const languageTexts = {
+            zh: {
+                headerTitle: '🍎🥬 果蔬拼台客服',
+                headerSubtitle: 'AI智能助手为您服务',
+                welcomeTitle: '欢迎来到果蔬拼台！',
+                welcomeText: '我是您的专属AI客服助手，可以帮您：',
+                services: [
+                    '• 查询产品信息（价格、产地、营养等）',
+                    '• 了解配送和付款政策',
+                    '• 解答售后和取货问题',
+                    '• 提供其他平台服务咨询'
+                ],
+                welcomeEnd: '请告诉我您想了解什么，我会尽力为您解答！😊',
+                placeholder: '请输入您的问题...',
+                typing: 'AI正在思考中...',
+                quickButtons: ['配送时间', '付款方式', '取货地点', '水果类', '蔬菜类', '售后服务'],
+                errorMessage: '抱歉，处理您的请求时出现错误：',
+                networkError: '抱歉，网络连接出现问题，请稍后再试。'
+            },
+            en: {
+                headerTitle: '🍎🥬 Fruit & Vegetable Service',
+                headerSubtitle: 'AI Assistant at Your Service',
+                welcomeTitle: 'Welcome to Fruit & Vegetable Platform!',
+                welcomeText: 'I am your dedicated AI customer service assistant, I can help you with:',
+                services: [
+                    '• Product information (price, origin, nutrition, etc.)',
+                    '• Delivery and payment policies',
+                    '• After-sales and pickup questions',
+                    '• Other platform service inquiries'
+                ],
+                welcomeEnd: 'Please tell me what you would like to know, I will do my best to help you! 😊',
+                placeholder: 'Please enter your question...',
+                typing: 'AI is thinking...',
+                quickButtons: ['Delivery Time', 'Payment', 'Pickup Location', 'Fruits', 'Vegetables', 'After-sales'],
+                errorMessage: 'Sorry, an error occurred while processing your request: ',
+                networkError: 'Sorry, there is a network connection problem, please try again later.'
+            },
+            zh_TW: {
+                headerTitle: '🍎🥬 果蔬拼台客服',
+                headerSubtitle: 'AI智能助手為您服務',
+                welcomeTitle: '歡迎來到果蔬拼台！',
+                welcomeText: '我是您的專屬AI客服助手，可以幫您：',
+                services: [
+                    '• 查詢產品資訊（價格、產地、營養等）',
+                    '• 了解配送和付款政策',
+                    '• 解答售後和取貨問題',
+                    '• 提供其他平台服務諮詢'
+                ],
+                welcomeEnd: '請告訴我您想了解什麼，我會盡力為您解答！😊',
+                placeholder: '請輸入您的問題...',
+                typing: 'AI正在思考中...',
+                quickButtons: ['配送時間', '付款方式', '取貨地點', '水果類', '蔬菜類', '售後服務'],
+                errorMessage: '抱歉，處理您的請求時出現錯誤：',
+                networkError: '抱歉，網路連接出現問題，請稍後再試。'
+            }
+        };
+
+        // 语言切换功能
+        async function changeLanguage() {
+            const selector = document.getElementById('languageSelector');
+            const newLanguage = selector.value;
+
+            try {
+                const response = await fetch(`/api/language/${newLanguage}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    }
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    currentLanguage = newLanguage;
+                    updatePageLanguage(newLanguage);
+                } else {
+                    console.error('语言设置失败:', data.error);
+                    // 恢复原来的选择
+                    selector.value = currentLanguage;
+                }
+            } catch (error) {
+                console.error('语言切换失败:', error);
+                // 恢复原来的选择
+                selector.value = currentLanguage;
+            }
+        }
+
+        // 更新页面语言
+        function updatePageLanguage(language) {
+            const texts = languageTexts[language];
+
+            // 更新标题
+            document.getElementById('headerTitle').textContent = texts.headerTitle;
+            document.getElementById('headerSubtitle').textContent = texts.headerSubtitle;
+
+            // 更新输入框占位符
+            document.getElementById('messageInput').placeholder = texts.placeholder;
+
+            // 更新打字指示器
+            document.getElementById('typingIndicator').textContent = texts.typing;
+
+            // 更新快速按钮
+            updateQuickButtons(texts.quickButtons);
+
+            // 如果还有欢迎消息，更新它
+            updateWelcomeMessage(texts);
+        }
+
+        // 更新快速按钮
+        function updateQuickButtons(buttonTexts) {
+            const quickButtons = document.getElementById('quickButtons');
+            const buttons = quickButtons.querySelectorAll('.quick-btn');
+
+            buttons.forEach((button, index) => {
+                if (index < buttonTexts.length) {
+                    button.textContent = buttonTexts[index];
+                    // 更新点击事件，使用对应的查询
+                    const queries = {
+                        zh: ['配送时间', '付款方式', '取货地点', '有什么水果', '有什么蔬菜', '质量问题怎么办'],
+                        en: ['delivery time', 'payment methods', 'pickup location', 'what fruits available', 'what vegetables available', 'quality issues'],
+                        zh_TW: ['配送時間', '付款方式', '取貨地點', '有什麼水果', '有什麼蔬菜', '質量問題怎麼辦']
+                    };
+                    button.onclick = () => sendQuickMessage(queries[currentLanguage][index]);
+                }
+            });
+        }
+
+        // 更新欢迎消息
+        function updateWelcomeMessage(texts) {
+            const welcomeMessage = document.querySelector('.welcome-message');
+            if (welcomeMessage) {
+                welcomeMessage.innerHTML = `
+                    <h3>${texts.welcomeTitle}</h3>
+                    <p>${texts.welcomeText}</p>
+                    ${texts.services.map(service => `<p>${service}</p>`).join('')}
+                    <br>
+                    <p>${texts.welcomeEnd}</p>
+                `;
+            }
+        }
+
+        // 页面加载时获取当前语言
+        async function initializeLanguage() {
+            try {
+                const response = await fetch('/api/language');
+                const data = await response.json();
+
+                if (data.success) {
+                    currentLanguage = data.current_language.code;
+                    document.getElementById('languageSelector').value = currentLanguage;
+                    updatePageLanguage(currentLanguage);
+                }
+            } catch (error) {
+                console.error('获取语言信息失败:', error);
+            }
+        }
 
         // 自动调整输入框高度
         const messageInput = document.getElementById('messageInput');
@@ -355,11 +548,13 @@
                 if (data.success) {
                     addMessage(data.response, 'ai', data.timestamp);
                 } else {
-                    addMessage('抱歉，处理您的请求时出现错误：' + (data.error || '未知错误'), 'ai');
+                    const texts = languageTexts[currentLanguage];
+                    addMessage(texts.errorMessage + (data.error || '未知错误'), 'ai');
                 }
             } catch (error) {
                 console.error('发送消息失败:', error);
-                addMessage('抱歉，网络连接出现问题，请稍后再试。', 'ai');
+                const texts = languageTexts[currentLanguage];
+                addMessage(texts.networkError, 'ai');
             } finally {
                 setLoading(false);
             }
@@ -449,9 +644,10 @@
             }
         }
 
-        // 页面加载完成后聚焦输入框
+        // 页面加载完成后聚焦输入框和初始化语言
         window.addEventListener('load', function() {
             messageInput.focus();
+            initializeLanguage();
         });
     </script>
 </body>

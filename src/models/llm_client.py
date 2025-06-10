@@ -2,9 +2,9 @@
 LLM客户端模块 - 封装DeepSeek API调用
 """
 import requests
-import json
 import os
-from typing import List, Dict, Any, Optional
+import sys
+from typing import List, Dict
 from dotenv import load_dotenv
 
 # 加载环境变量
@@ -14,10 +14,51 @@ load_dotenv()
 class LLMClient:
     def __init__(self):
         self.api_url = os.environ.get('LLM_API_URL', "https://llm.chutes.ai/v1/chat/completions")
-        self.api_key = os.environ.get('LLM_API_KEY', "cpk_134ee649c58945309caf13e806f1af56.3f5d497816945ae4b4b26adec2585889.EWbYjxQ81fAOMbytLCManifGstg6RGAZ")
+        self.api_key = self._get_api_key()
         self.model = os.environ.get('LLM_MODEL', "deepseek-ai/DeepSeek-V3-0324")
-        
-        # 系统提示词
+
+        # 验证API密钥
+        self._validate_api_key()
+
+        # 初始化系统提示词
+        self._init_system_prompt()
+
+    def _get_api_key(self) -> str:
+        """
+        安全地获取API密钥，只从环境变量读取
+
+        Returns:
+            str: API密钥
+
+        Raises:
+            SystemExit: 如果未设置API密钥环境变量
+        """
+        api_key = os.environ.get('LLM_API_KEY')
+
+        if not api_key:
+            print("❌ 错误：未设置LLM_API_KEY环境变量")
+            print("请按照以下步骤配置API密钥：")
+            print("1. 复制 .env.example 文件为 .env")
+            print("2. 在 .env 文件中设置您的API密钥：")
+            print("   LLM_API_KEY=your_actual_api_key_here")
+            print("3. 重新启动应用程序")
+            print("\n注意：请确保不要将真实的API密钥提交到代码仓库中！")
+            sys.exit(1)
+
+        return api_key
+
+    def _validate_api_key(self):
+        """
+        验证API密钥格式
+        """
+        if not self.api_key or len(self.api_key.strip()) < 10:
+            print("⚠️  警告：API密钥格式可能不正确，请检查配置")
+            print(f"当前密钥长度：{len(self.api_key) if self.api_key else 0}")
+        else:
+            print("✅ API密钥配置成功")
+
+    def _init_system_prompt(self):
+        """初始化系统提示词"""
         self.system_prompt = """你是一个专业的果蔬客服AI助手，专门为果蔬拼台社区提供客户服务。
 
 你的职责：
