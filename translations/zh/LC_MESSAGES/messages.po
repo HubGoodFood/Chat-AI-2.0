@@ -20,205 +20,703 @@ msgstr ""
 
 #: app.py:236
 msgid "语言设置成功"
-msgstr ""
+msgstr "语言设置成功"
 
 #: app.py:242
 msgid "不支持的语言"
-msgstr ""
+msgstr "不支持的语言"
 
 #: app.py:248
 msgid "设置语言失败"
-msgstr ""
+msgstr "设置语言失败"
 
 #: src/utils/i18n_config.py:167
 msgid "操作成功"
-msgstr ""
+msgstr "操作成功"
 
 #: src/utils/i18n_config.py:168
 msgid "操作失败"
-msgstr ""
+msgstr "操作失败"
 
 #: src/utils/i18n_config.py:169
 msgid "加载中..."
-msgstr ""
+msgstr "加载中..."
 
 #: src/utils/i18n_config.py:170
 msgid "保存中..."
-msgstr ""
+msgstr "保存中..."
 
 #: src/utils/i18n_config.py:173
 msgid "登录成功"
-msgstr ""
+msgstr "登录成功"
 
 #: src/utils/i18n_config.py:174
 msgid "登录失败"
-msgstr ""
+msgstr "登录失败"
 
 #: src/utils/i18n_config.py:175
 msgid "已退出登录"
-msgstr ""
+msgstr "已退出登录"
 
 #: src/utils/i18n_config.py:176
 msgid "未授权访问"
-msgstr ""
+msgstr "未授权访问"
 
 #: src/utils/i18n_config.py:179
 msgid "此字段为必填项"
-msgstr ""
+msgstr "此字段为必填项"
 
 #: src/utils/i18n_config.py:180
 msgid "格式不正确"
-msgstr ""
+msgstr "格式不正确"
 
 #: src/utils/i18n_config.py:181
 msgid "内容过长"
-msgstr ""
+msgstr "内容过长"
 
 #: src/utils/i18n_config.py:182
 msgid "内容过短"
-msgstr ""
+msgstr "内容过短"
 
 #: src/utils/i18n_config.py:185
 msgid "网络连接错误"
-msgstr ""
+msgstr "网络连接错误"
 
 #: src/utils/i18n_config.py:186
 msgid "服务器错误"
-msgstr ""
+msgstr "服务器错误"
 
 #: src/utils/i18n_config.py:187
 msgid "请求超时"
-msgstr ""
+msgstr "请求超时"
 
 #: src/utils/i18n_config.py:190
 msgid "库存更新成功"
-msgstr ""
+msgstr "库存更新成功"
 
 #: src/utils/i18n_config.py:191
 msgid "反馈添加成功"
-msgstr ""
+msgstr "反馈添加成功"
 
 #: src/utils/i18n_config.py:192
 msgid "数据导出成功"
-msgstr ""
+msgstr "数据导出成功"
 
 #: src/utils/i18n_config.py:200
 msgid "首页"
-msgstr ""
+msgstr "首页"
 
 #: src/utils/i18n_config.py:201
 msgid "管理后台"
-msgstr ""
+msgstr "管理后台"
 
 #: src/utils/i18n_config.py:202
 msgid "库存管理"
-msgstr ""
+msgstr "库存管理"
 
 #: src/utils/i18n_config.py:203
 msgid "客户反馈"
-msgstr ""
+msgstr "客户反馈"
 
 #: src/utils/i18n_config.py:204
 msgid "报告"
-msgstr ""
+msgstr "报告"
 
 #: src/utils/i18n_config.py:205
 msgid "设置"
-msgstr ""
+msgstr "设置"
 
 #: src/utils/i18n_config.py:208
 msgid "登录"
-msgstr ""
+msgstr "登录"
 
 #: src/utils/i18n_config.py:209
 msgid "退出"
-msgstr ""
+msgstr "退出"
 
 #: src/utils/i18n_config.py:210
 msgid "保存"
-msgstr ""
+msgstr "保存"
 
 #: src/utils/i18n_config.py:211
 msgid "取消"
-msgstr ""
+msgstr "取消"
 
 #: src/utils/i18n_config.py:212
 msgid "删除"
-msgstr ""
+msgstr "删除"
 
 #: src/utils/i18n_config.py:213
 msgid "编辑"
-msgstr ""
+msgstr "编辑"
 
 #: src/utils/i18n_config.py:214
 msgid "添加"
-msgstr ""
+msgstr "添加"
 
 #: src/utils/i18n_config.py:215
 msgid "搜索"
-msgstr ""
+msgstr "搜索"
 
 #: src/utils/i18n_config.py:216
 msgid "导出"
-msgstr ""
+msgstr "导出"
 
 #: src/utils/i18n_config.py:219
 msgid "用户名"
-msgstr ""
+msgstr "用户名"
 
 #: src/utils/i18n_config.py:220
 msgid "密码"
-msgstr ""
+msgstr "密码"
 
 #: src/utils/i18n_config.py:221
 msgid "邮箱"
-msgstr ""
+msgstr "邮箱"
 
 #: src/utils/i18n_config.py:222
 msgid "电话"
-msgstr ""
+msgstr "电话"
 
 #: src/utils/i18n_config.py:223
 msgid "姓名"
-msgstr ""
+msgstr "姓名"
 
 #: src/utils/i18n_config.py:224
 msgid "描述"
-msgstr ""
+msgstr "描述"
 
 #: src/utils/i18n_config.py:227
 msgid "活跃"
-msgstr ""
+msgstr "活跃"
 
 #: src/utils/i18n_config.py:228
 msgid "非活跃"
-msgstr ""
+msgstr "非活跃"
 
 #: src/utils/i18n_config.py:229
 msgid "待处理"
-msgstr ""
+msgstr "待处理"
 
 #: src/utils/i18n_config.py:230
 msgid "处理中"
-msgstr ""
+msgstr "处理中"
 
 #: src/utils/i18n_config.py:231
 msgid "已完成"
-msgstr ""
+msgstr "已完成"
 
 #: src/utils/i18n_config.py:234
 msgid "请输入您的问题..."
-msgstr ""
+msgstr "请输入您的问题..."
 
 #: src/utils/i18n_config.py:235
 msgid "发送"
-msgstr ""
+msgstr "发送"
 
 #: src/utils/i18n_config.py:236
 msgid "清除对话"
-msgstr ""
+msgstr "清除对话"
 
 #: src/utils/i18n_config.py:237
 msgid "欢迎使用果蔬客服AI助手！"
-msgstr ""
+msgstr "欢迎使用果蔬客服AI助手！"
+
+# 管理后台专用文本
+msgid "管理后台"
+msgstr "管理后台"
+
+msgid "管理员登录"
+msgstr "管理员登录"
+
+msgid "控制台"
+msgstr "控制台"
+
+msgid "欢迎，管理员"
+msgstr "欢迎，管理员"
+
+# 页面标题
+msgid "管理员登录 - 果蔬客服AI系统"
+msgstr "管理员登录 - 果蔬客服AI系统"
+
+msgid "管理员控制台 - 果蔬客服AI系统"
+msgstr "管理员控制台 - 果蔬客服AI系统"
+
+msgid "果蔬客服AI系统后台管理"
+msgstr "果蔬客服AI系统后台管理"
+
+# 菜单项
+msgid "产品入库"
+msgstr "产品入库"
+
+msgid "库存盘点"
+msgstr "库存盘点"
+
+msgid "数据对比分析"
+msgstr "数据对比分析"
+
+msgid "反馈管理"
+msgstr "反馈管理"
+
+msgid "操作日志"
+msgstr "操作日志"
+
+msgid "数据导出"
+msgstr "数据导出"
+
+msgid "系统设置"
+msgstr "系统设置"
+
+# 表单标签
+msgid "产品名称"
+msgstr "产品名称"
+
+msgid "分类"
+msgstr "分类"
+
+msgid "价格"
+msgstr "价格"
+
+msgid "单位"
+msgstr "单位"
+
+msgid "数量"
+msgstr "数量"
+
+msgid "存储区域"
+msgstr "存储区域"
+
+# 按钮文本
+msgid "退出登录"
+msgstr "退出登录"
+
+msgid "刷新"
+msgstr "刷新"
+
+msgid "提交"
+msgstr "提交"
+
+msgid "重置"
+msgstr "重置"
+
+# 状态文本
+msgid "正在加载..."
+msgstr "正在加载..."
+
+msgid "正在保存..."
+msgstr "正在保存..."
+
+msgid "启用"
+msgstr "启用"
+
+msgid "停用"
+msgstr "停用"
+
+# 错误消息
+msgid "用户名或密码错误"
+msgstr "用户名或密码错误"
+
+msgid "网络错误，请稍后再试"
+msgstr "网络错误，请稍后再试"
+
+# 成功消息
+msgid "已退出登录"
+msgstr "已退出登录"
+
+msgid "保存成功"
+msgstr "保存成功"
+
+msgid "删除成功"
+msgstr "删除成功"
+
+msgid "更新成功"
+msgstr "更新成功"
+
+# 确认消息
+msgid "确定要删除吗？"
+msgstr "确定要删除吗？"
+
+msgid "确定要退出登录吗？"
+msgstr "确定要退出登录吗？"
+
+# 默认文本
+msgid "默认账户：admin / admin123"
+msgstr "默认账户：admin / admin123"
+
+msgid "返回客服系统"
+msgstr "返回客服系统"
+
+# 语言切换
+msgid "语言"
+msgstr "语言"
+
+msgid "简体中文"
+msgstr "简体中文"
+
+msgid "English"
+msgstr "English"
+
+# 新增的API消息
+msgid "请输入用户名和密码"
+msgstr "请输入用户名和密码"
+
+msgid "系统暂时不可用"
+msgstr "系统暂时不可用"
+
+msgid "登录失败，请稍后再试"
+msgstr "登录失败，请稍后再试"
+
+# 新增的界面文本
+msgid "系统概览"
+msgstr "系统概览"
+
+msgid "果蔬客服AI系统管理控制台"
+msgstr "果蔬客服AI系统管理控制台"
+
+msgid "总产品数"
+msgstr "总产品数"
+
+msgid "低库存产品"
+msgstr "低库存产品"
+
+msgid "总反馈数"
+msgstr "总反馈数"
+
+msgid "待处理反馈"
+msgstr "待处理反馈"
+
+msgid "查看客服系统"
+msgstr "查看客服系统"
+
+# 新增的界面文本 - 第二批
+msgid "库存状态"
+msgstr "库存状态"
+
+msgid "最新反馈"
+msgstr "最新反馈"
+
+msgid "正在加载库存数据..."
+msgstr "正在加载库存数据..."
+
+msgid "正在加载反馈数据..."
+msgstr "正在加载反馈数据..."
+
+msgid "正在加载日志数据..."
+msgstr "正在加载日志数据..."
+
+msgid "添加产品"
+msgstr "添加产品"
+
+msgid "搜索产品..."
+msgstr "搜索产品..."
+
+msgid "所有分类"
+msgstr "所有分类"
+
+msgid "所有状态"
+msgstr "所有状态"
+
+msgid "正常"
+msgstr "正常"
+
+msgid "停用"
+msgstr "停用"
+
+msgid "当前库存"
+msgstr "当前库存"
+
+msgid "操作"
+msgstr "操作"
+
+msgid "客户反馈管理"
+msgstr "客户反馈管理"
+
+msgid "添加反馈"
+msgstr "添加反馈"
+
+msgid "搜索反馈..."
+msgstr "搜索反馈..."
+
+msgid "所有类型"
+msgstr "所有类型"
+
+msgid "正面反馈"
+msgstr "正面反馈"
+
+msgid "负面反馈"
+msgstr "负面反馈"
+
+msgid "已解决"
+msgstr "已解决"
+
+msgid "客户昵称"
+msgstr "客户昵称"
+
+msgid "反馈类型"
+msgstr "反馈类型"
+
+msgid "付款状态"
+msgstr "付款状态"
+
+msgid "处理状态"
+msgstr "处理状态"
+
+msgid "反馈时间"
+msgstr "反馈时间"
+
+msgid "所有操作员"
+msgstr "所有操作员"
+
+msgid "所有操作"
+msgstr "所有操作"
+
+msgid "创建"
+msgstr "创建"
+
+msgid "更新"
+msgstr "更新"
+
+msgid "库存调整"
+msgstr "库存调整"
+
+msgid "所有目标"
+msgstr "所有目标"
+
+msgid "库存"
+msgstr "库存"
+
+msgid "反馈"
+msgstr "反馈"
+
+msgid "管理员"
+msgstr "管理员"
+
+msgid "显示条数"
+msgstr "显示条数"
+
+msgid "时间"
+msgstr "时间"
+
+msgid "操作员"
+msgstr "操作员"
+
+msgid "操作类型"
+msgstr "操作类型"
+
+msgid "目标类型"
+msgstr "目标类型"
+
+msgid "目标ID"
+msgstr "目标ID"
+
+msgid "结果"
+msgstr "结果"
+
+msgid "详情"
+msgstr "详情"
+
+msgid "库存数据导出"
+msgstr "库存数据导出"
+
+msgid "导出所有产品和库存信息"
+msgstr "导出所有产品和库存信息"
+
+msgid "导出CSV"
+msgstr "导出CSV"
+
+msgid "导出JSON"
+msgstr "导出JSON"
+
+msgid "生成报告"
+msgstr "生成报告"
+
+msgid "反馈数据导出"
+msgstr "反馈数据导出"
+
+msgid "导出所有客户反馈信息"
+msgstr "导出所有客户反馈信息"
+
+msgid "操作日志导出"
+msgstr "操作日志导出"
+
+msgid "导出系统操作日志"
+msgstr "导出系统操作日志"
+
+msgid "开始日期"
+msgstr "开始日期"
+
+msgid "结束日期"
+msgstr "结束日期"
+
+msgid "完整数据备份"
+msgstr "完整数据备份"
+
+msgid "导出所有系统数据的完整备份"
+msgstr "导出所有系统数据的完整备份"
+
+msgid "创建备份"
+msgstr "创建备份"
+
+msgid "修改密码"
+msgstr "修改密码"
+
+msgid "当前密码"
+msgstr "当前密码"
+
+msgid "新密码"
+msgstr "新密码"
+
+msgid "确认新密码"
+msgstr "确认新密码"
+
+msgid "系统信息"
+msgstr "系统信息"
+
+msgid "系统版本"
+msgstr "系统版本"
+
+msgid "最后更新"
+msgstr "最后更新"
+
+msgid "运行状态"
+msgstr "运行状态"
+
+msgid "正常运行"
+msgstr "正常运行"
+
+msgid "系统维护"
+msgstr "系统维护"
+
+msgid "清理旧日志"
+msgstr "清理旧日志"
+
+msgid "优化数据"
+msgstr "优化数据"
+
+msgid "重置系统"
+msgstr "重置系统"
+
+msgid "注意：系统维护操作可能影响系统性能，请在低峰期执行。"
+msgstr "注意：系统维护操作可能影响系统性能，请在低峰期执行。"
+
+# 模态框相关翻译
+msgid "产品分类"
+msgstr "产品分类"
+
+msgid "请选择分类"
+msgstr "请选择分类"
+
+msgid "禽类产品"
+msgstr "禽类产品"
+
+msgid "蛋类"
+msgstr "蛋类"
+
+msgid "美味熟食/面点"
+msgstr "美味熟食/面点"
+
+msgid "新鲜蔬菜"
+msgstr "新鲜蔬菜"
+
+msgid "海鲜河鲜"
+msgstr "海鲜河鲜"
+
+msgid "时令水果"
+msgstr "时令水果"
+
+msgid "优选干货"
+msgstr "优选干货"
+
+msgid "如：个、斤、包"
+msgstr "如：个、斤、包"
+
+msgid "规格"
+msgstr "规格"
+
+msgid "如：500g、2个装"
+msgstr "如：500g、2个装"
+
+msgid "初始库存"
+msgstr "初始库存"
+
+msgid "最小库存警告"
+msgstr "最小库存警告"
+
+msgid "产品描述"
+msgstr "产品描述"
+
+msgid "产品关键词、特点等"
+msgstr "产品关键词、特点等"
+
+msgid "产品图片URL"
+msgstr "产品图片URL"
+
+msgid "调整库存"
+msgstr "调整库存"
+
+msgid "库存变动"
+msgstr "库存变动"
+
+msgid "正数为增加库存，负数为减少库存"
+msgstr "正数为增加库存，负数为减少库存"
+
+msgid "备注"
+msgstr "备注"
+
+msgid "库存变动原因..."
+msgstr "库存变动原因..."
+
+msgid "确认调整"
+msgstr "确认调整"
+
+msgid "反馈详情"
+msgstr "反馈详情"
+
+msgid "添加客户反馈"
+msgstr "添加客户反馈"
+
+msgid "请选择类型"
+msgstr "请选择类型"
+
+msgid "客户微信昵称"
+msgstr "客户微信昵称"
+
+msgid "客户所在群号"
+msgstr "客户所在群号"
+
+msgid "请选择状态"
+msgstr "请选择状态"
+
+msgid "已付款"
+msgstr "已付款"
+
+msgid "未付款"
+msgstr "未付款"
+
+msgid "反馈内容"
+msgstr "反馈内容"
+
+msgid "客户反馈的具体内容..."
+msgstr "客户反馈的具体内容..."
+
+msgid "客户上传图片URL"
+msgstr "客户上传图片URL"
+
+msgid "多个图片URL请用换行分隔"
+msgstr "多个图片URL请用换行分隔"
+
+msgid "每行一个图片URL"
+msgstr "每行一个图片URL"
+
+msgid "处理反馈"
+msgstr "处理反馈"
+
+msgid "处理备注"
+msgstr "处理备注"
+
+msgid "处理过程、解决方案等..."
+msgstr "处理过程、解决方案等..."
+
+msgid "更新状态"
+msgstr "更新状态"
 

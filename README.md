@@ -218,17 +218,29 @@ Chat AI 2.0/
 │   │   ├── inventory_comparison_manager.py # 库存对比分析
 │   │   ├── feedback_manager.py      # 反馈管理
 │   │   ├── operation_logger.py      # 操作日志
-│   │   └── data_exporter.py         # 数据导出
+│   │   ├── data_exporter.py         # 数据导出
+│   │   └── storage_area_manager.py  # 存储区域管理
+│   ├── storage/                  # 存储适配器
+│   │   ├── storage_manager.py       # 存储管理器
+│   │   └── nas_storage_adapter.py   # NAS存储适配器
 │   └── utils/                    # 工具函数
 │       ├── __init__.py
-│       └── generate_secret_key.py   # 密钥生成工具
-├── tests/                        # 测试文件
+│       ├── generate_secret_key.py   # 密钥生成工具
+│       ├── encoding_utils.py        # 编码工具
+│       ├── i18n_simple.py          # 国际化工具
+│       ├── i18n_config.py          # 国际化配置
+│       └── security_config.py      # 安全配置
+├── tests/                        # 测试文件目录
 │   ├── __init__.py
 │   ├── test_api.py              # API测试脚本
 │   ├── test_system.py           # 系统测试脚本
 │   ├── test_admin_system.py     # 管理员系统测试
-│   └── test_enhanced_features.py # 增强功能测试
-├── data/                         # 数据文件
+│   ├── test_enhanced_features.py # 增强功能测试
+│   ├── test_inventory_*.py      # 库存管理测试
+│   ├── test_language_*.py       # 语言功能测试
+│   ├── test_encoding_*.py       # 编码测试
+│   └── test_ui_controls_*.py    # UI控件测试
+├── data/                         # 数据文件目录
 │   ├── products.csv             # 产品数据
 │   ├── policy.json              # 政策数据
 │   ├── inventory.json           # 库存数据
@@ -236,21 +248,28 @@ Chat AI 2.0/
 │   ├── inventory_comparisons.json # 对比分析数据
 │   ├── feedback.json            # 反馈数据
 │   ├── admin.json               # 管理员账户
-│   └── operation_logs.json      # 操作日志
+│   ├── operation_logs.json      # 操作日志
+│   └── storage_areas.json       # 存储区域配置
 ├── docs/                         # 文档目录
 │   ├── PROJECT_SUMMARY.md       # 项目总结
 │   ├── DEPLOYMENT_CHECKLIST.md  # 部署检查清单
 │   ├── GITHUB_SETUP.md          # GitHub设置指南
 │   ├── RENDER_DEPLOYMENT.md     # Render部署指南
-│   ├── render_env_setup_guide.md # 环境设置指南
-│   ├── secret_key_lifecycle_guide.md # 密钥管理指南
-│   ├── security_best_practices.md # 安全最佳实践
+│   ├── INVENTORY_MANAGEMENT_GUIDE.md # 库存管理指南
+│   ├── MULTILINGUAL_SUPPORT.md  # 多语言支持文档
 │   ├── ADMIN_SYSTEM_SUMMARY.md  # 管理员系统总结
 │   ├── FINAL_PROJECT_SUMMARY.md # 项目完成总结
-│   └── USER_GUIDE.md            # 用户使用指南
-├── scripts/                      # 脚本文件
+│   ├── USER_GUIDE.md            # 用户使用指南
+│   ├── security_best_practices.md # 安全最佳实践
+│   ├── render_env_setup_guide.md # 环境设置指南
+│   ├── secret_key_lifecycle_guide.md # 密钥管理指南
+│   ├── NAS_*.md                 # NAS相关文档
+│   └── 各种分析报告.md           # 开发过程中的分析报告
+├── tools/                        # 工具脚本目录
+│   └── nas_config_validator.py  # NAS配置验证工具
+├── scripts/                      # 部署脚本目录
 │   └── upload_to_github.bat     # GitHub上传脚本
-├── templates/                    # HTML模板
+├── templates/                    # HTML模板目录
 │   ├── index.html               # 客服主页面
 │   ├── 404.html                 # 404错误页
 │   ├── 500.html                 # 500错误页
@@ -258,18 +277,31 @@ Chat AI 2.0/
 │       ├── login.html           # 登录页面
 │       ├── dashboard.html       # 管理控制台
 │       └── modals.html          # 模态框模板
-├── static/                       # 静态资源
+├── static/                       # 静态资源目录
 │   ├── css/
 │   │   └── admin.css            # 管理员样式
 │   ├── js/
 │   │   └── admin.js             # 管理员脚本
 │   ├── barcodes/                # 条形码图片目录
 │   └── uploads/                 # 文件上传目录
+├── translations/                 # 国际化翻译文件
+│   ├── en/                      # 英文翻译
+│   ├── zh/                      # 简体中文翻译
+│   └── zh_TW/                   # 繁体中文翻译
+├── temp/                         # 临时文件目录
+│   └── 开发过程中的临时文件      # 调试、测试等临时文件
+├── logs/                         # 日志文件目录
+│   └── 系统运行日志              # 应用程序日志文件
+├── backups/                      # 备份文件目录
+│   └── 数据备份文件              # 数据库和配置备份
 ├── app.py                        # Flask主应用
 ├── start.py                      # 启动脚本
+├── start_clean.py               # 清理启动脚本
+├── babel.cfg                    # Babel配置文件
 ├── requirements.txt              # Python依赖
 ├── render.yaml                   # 部署配置
 ├── .env.example                  # 环境变量示例
+├── .gitignore                   # Git忽略文件
 └── README.md                     # 项目文档
 ```
 

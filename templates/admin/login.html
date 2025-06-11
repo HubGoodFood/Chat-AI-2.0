@@ -1,38 +1,53 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="{{ get_current_language() }}">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>管理员登录 - 果蔬客服AI系统</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/admin.css') }}">
+    <title>{{ _('管理员登录 - 果蔬客服AI系统') }}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/admin.css') }}?v=20241231">
 </head>
 <body class="login-page">
+    <!-- 语言切换菜单 -->
+    <div class="language-switcher">
+        <select id="languageSelect" onchange="changeLanguage(this.value)">
+            <option value="zh" {% if get_current_language() == 'zh' %}selected{% endif %}>🇨🇳 {{ _('简体中文') }}</option>
+            <option value="en" {% if get_current_language() == 'en' %}selected{% endif %}>🇺🇸 {{ _('English') }}</option>
+        </select>
+    </div>
+
     <div class="login-container">
         <div class="login-box">
             <div class="login-header">
-                <h1>🍎🥬 管理员登录</h1>
-                <p>果蔬客服AI系统后台管理</p>
+                <h1>🍎🥬 {{ _('管理员登录') }}</h1>
+                <p>{{ _('果蔬客服AI系统后台管理') }}</p>
+                <p style="color: #28a745; font-size: 12px;">🔄 页面已更新 - 版本 20241231</p>
             </div>
             
             <form id="loginForm" class="login-form">
                 <div class="form-group">
-                    <label for="username">用户名</label>
+                    <label for="username">{{ _('用户名') }}</label>
                     <input type="text" id="username" name="username" required>
                 </div>
-                
+
                 <div class="form-group">
-                    <label for="password">密码</label>
+                    <label for="password">{{ _('密码') }}</label>
                     <input type="password" id="password" name="password" required>
                 </div>
-                
-                <button type="submit" class="login-btn">登录</button>
-                
+
+                <button type="submit" class="login-btn">{{ _('登录') }}</button>
+
+                <!-- 语言测试按钮 -->
+                <button type="button" onclick="testLanguageNow()" style="background: #28a745; color: white; border: none; padding: 10px 20px; margin-top: 10px; border-radius: 4px; cursor: pointer; width: 100%;">
+                    🧪 立即测试语言切换
+                </button>
+
                 <div id="errorMessage" class="error-message" style="display: none;"></div>
+                <div id="testResult" style="margin-top: 10px; padding: 10px; background: #f8f9fa; border-radius: 4px; display: none; font-family: monospace; font-size: 12px;"></div>
             </form>
-            
+
             <div class="login-footer">
-                <p>默认账户：admin / admin123</p>
-                <p><a href="/">返回客服系统</a></p>
+                <p>{{ _('默认账户：admin / admin123') }}</p>
+                <p><a href="/">{{ _('返回客服系统') }}</a></p>
             </div>
         </div>
     </div>
@@ -61,14 +76,88 @@
                     window.location.href = '/admin/dashboard';
                 } else {
                     // 显示错误信息
-                    errorDiv.textContent = result.error || '登录失败';
+                    errorDiv.textContent = result.error || '{{ _("登录失败") }}';
                     errorDiv.style.display = 'block';
                 }
             } catch (error) {
-                errorDiv.textContent = '网络错误，请稍后再试';
+                errorDiv.textContent = '{{ _("网络错误，请稍后再试") }}';
                 errorDiv.style.display = 'block';
             }
         });
+
+        // 语言切换函数
+        function changeLanguage(language) {
+            fetch(`/api/language/${language}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            }).then(response => response.json())
+            .then(result => {
+                if (result.success) {
+                    // 重新加载页面以应用新语言
+                    window.location.reload();
+                } else {
+                    console.error('语言切换失败:', result.error);
+                }
+            }).catch(error => {
+                console.error('语言切换失败:', error);
+            });
+        }
+
+        // 显示测试结果
+        function showTestResult(message, isError = false) {
+            const resultDiv = document.getElementById('testResult');
+            resultDiv.style.display = 'block';
+            resultDiv.style.color = isError ? '#dc3545' : '#28a745';
+            resultDiv.innerHTML += new Date().toLocaleTimeString() + ': ' + message + '<br>';
+        }
+
+        // 立即测试语言切换
+        function testLanguageNow() {
+            const resultDiv = document.getElementById('testResult');
+            resultDiv.innerHTML = '';
+            resultDiv.style.display = 'block';
+
+            showTestResult('开始语言切换测试...');
+
+            // 测试1: 获取当前语言
+            fetch('/api/language')
+                .then(r => r.json())
+                .then(data => {
+                    showTestResult(`当前语言: ${data.current_language.code}`);
+                    showTestResult(`可用语言: ${data.available_languages.map(l => l.code).join(', ')}`);
+
+                    // 测试2: 切换到英语
+                    showTestResult('正在切换到 en...');
+                    return fetch('/api/language/en', {method: 'POST'});
+                })
+                .then(r => r.json())
+                .then(data => {
+                    showTestResult(`切换结果: ${JSON.stringify(data)}`);
+                    if (data.success) {
+                        showTestResult('语言切换成功！2秒后重新加载页面...');
+                        setTimeout(() => location.reload(), 2000);
+                    } else {
+                        showTestResult(`语言切换失败: ${data.error}`, true);
+                    }
+                })
+                .catch(error => {
+                    showTestResult(`测试过程中出错: ${error.message}`, true);
+                });
+        }
+
+        // 自动语言测试功能
+        function autoTestLanguage() {
+            console.log('=== 开始自动语言测试 ===');
+            testLanguageNow();
+        }
+
+        // 页面加载后10秒自动测试
+        setTimeout(() => {
+            console.log('10秒后自动开始语言测试...');
+            autoTestLanguage();
+        }, 10000);
     </script>
 </body>
 </html>

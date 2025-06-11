@@ -1,37 +1,44 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="{{ get_current_language() }}">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>管理员控制台 - 果蔬客服AI系统</title>
+    <title>{{ _('管理员控制台 - 果蔬客服AI系统') }}</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/admin.css') }}">
 </head>
-<body class="admin-page">
+<body class="admin-page" data-default-section="{{ default_section or 'dashboard' }}">
     <div class="admin-container">
         <!-- 侧边栏 -->
         <nav class="sidebar">
             <div class="sidebar-header">
-                <h2>🍎🥬 管理后台</h2>
-                <p>欢迎，<span id="adminUsername">管理员</span></p>
+                <h2>🍎🥬 {{ _('管理后台') }}</h2>
+                <p>{{ _('欢迎，管理员') }}<span id="adminUsername"></span></p>
             </div>
             
             <ul class="sidebar-menu">
-                <li><a href="#dashboard" class="menu-item active" data-section="dashboard">📊 控制台</a></li>
-                <li><a href="#inventory" class="menu-item" data-section="inventory">📦 库存管理</a></li>
+                <li><a href="#dashboard" class="menu-item active" data-section="dashboard">📊 {{ _('控制台') }}</a></li>
+                <li><a href="#inventory" class="menu-item" data-section="inventory">📦 {{ _('库存管理') }}</a></li>
                 <li class="menu-submenu">
-                    <a href="#inventory-add-product" class="menu-item" data-section="inventory-add-product">📦 产品入库</a>
-                    <a href="#inventory-counts" class="menu-item" data-section="inventory-counts">📊 库存盘点</a>
-                    <a href="#inventory-analysis" class="menu-item" data-section="inventory-analysis">📈 数据对比分析</a>
+                    <a href="#inventory-add-product" class="menu-item" data-section="inventory-add-product">📦 {{ _('产品入库') }}</a>
+                    <a href="#inventory-counts" class="menu-item" data-section="inventory-counts">📊 {{ _('库存盘点') }}</a>
+                    <a href="#inventory-analysis" class="menu-item" data-section="inventory-analysis">📈 {{ _('数据对比分析') }}</a>
                 </li>
-                <li><a href="#feedback" class="menu-item" data-section="feedback">💬 反馈管理</a></li>
-                <li><a href="#logs" class="menu-item" data-section="logs">📋 操作日志</a></li>
-                <li><a href="#export" class="menu-item" data-section="export">📤 数据导出</a></li>
-                <li><a href="#settings" class="menu-item" data-section="settings">⚙️ 系统设置</a></li>
+                <li><a href="#feedback" class="menu-item" data-section="feedback">💬 {{ _('反馈管理') }}</a></li>
+                <li><a href="#logs" class="menu-item" data-section="logs">📋 {{ _('操作日志') }}</a></li>
+                <li><a href="#export" class="menu-item" data-section="export">📤 {{ _('数据导出') }}</a></li>
+                <li><a href="#settings" class="menu-item" data-section="settings">⚙️ {{ _('系统设置') }}</a></li>
             </ul>
             
             <div class="sidebar-footer">
-                <button id="logoutBtn" class="logout-btn">退出登录</button>
-                <p><a href="/" target="_blank">查看客服系统</a></p>
+                <!-- 语言切换菜单 -->
+                <div class="language-switcher">
+                    <select id="languageSelect" onchange="changeLanguage(this.value)">
+                        <option value="zh" {% if get_current_language() == 'zh' %}selected{% endif %}>🇨🇳 简体中文</option>
+                        <option value="en" {% if get_current_language() == 'en' %}selected{% endif %}>🇺🇸 English</option>
+                    </select>
+                </div>
+                <button id="logoutBtn" class="logout-btn">{{ _('退出登录') }}</button>
+                <p><a href="/" target="_blank">{{ _('查看客服系统') }}</a></p>
             </div>
         </nav>
         
@@ -40,40 +47,40 @@
             <!-- 控制台概览 -->
             <section id="dashboardSection" class="content-section active">
                 <div class="section-header">
-                    <h1>📊 系统概览</h1>
-                    <p>果蔬客服AI系统管理控制台</p>
+                    <h1>📊 {{ _('系统概览') }}</h1>
+                    <p>{{ _('果蔬客服AI系统管理控制台') }}</p>
                 </div>
-                
+
                 <div class="stats-grid">
                     <div class="stat-card">
                         <div class="stat-icon">📦</div>
                         <div class="stat-info">
                             <h3 id="totalProducts">-</h3>
-                            <p>总产品数</p>
+                            <p>{{ _('总产品数') }}</p>
                         </div>
                     </div>
-                    
+
                     <div class="stat-card">
                         <div class="stat-icon">⚠️</div>
                         <div class="stat-info">
                             <h3 id="lowStockCount">-</h3>
-                            <p>低库存产品</p>
+                            <p>{{ _('低库存产品') }}</p>
                         </div>
                     </div>
-                    
+
                     <div class="stat-card">
                         <div class="stat-icon">💬</div>
                         <div class="stat-info">
                             <h3 id="totalFeedback">-</h3>
-                            <p>总反馈数</p>
+                            <p>{{ _('总反馈数') }}</p>
                         </div>
                     </div>
-                    
+
                     <div class="stat-card">
                         <div class="stat-icon">⏳</div>
                         <div class="stat-info">
                             <h3 id="pendingFeedback">-</h3>
-                            <p>待处理反馈</p>
+                            <p>{{ _('待处理反馈') }}</p>
                         </div>
                     </div>
                 </div>
@@ -81,16 +88,16 @@
                 <div class="dashboard-content">
                     <div class="dashboard-row">
                         <div class="dashboard-card">
-                            <h3>📈 库存状态</h3>
+                            <h3>📈 {{ _('库存状态') }}</h3>
                             <div id="inventoryStatus">
-                                <p>正在加载...</p>
+                                <p>{{ _('正在加载...') }}</p>
                             </div>
                         </div>
-                        
+
                         <div class="dashboard-card">
-                            <h3>📝 最新反馈</h3>
+                            <h3>📝 {{ _('最新反馈') }}</h3>
                             <div id="recentFeedback">
-                                <p>正在加载...</p>
+                                <p>{{ _('正在加载...') }}</p>
                             </div>
                         </div>
                     </div>
@@ -100,24 +107,24 @@
             <!-- 库存管理 -->
             <section id="inventorySection" class="content-section">
                 <div class="section-header">
-                    <h1>📦 库存管理</h1>
-                    <button id="addProductBtn" class="primary-btn">+ 添加产品</button>
+                    <h1>📦 {{ _('库存管理') }}</h1>
+                    <button id="addProductBtn" class="primary-btn">+ {{ _('添加产品') }}</button>
                 </div>
-                
+
                 <div class="inventory-controls">
                     <div class="search-box">
-                        <input type="text" id="inventorySearch" placeholder="搜索产品...">
+                        <input type="text" id="inventorySearch" placeholder="{{ _('搜索产品...') }}">
                         <button id="searchInventoryBtn">🔍</button>
                     </div>
-                    
+
                     <div class="filter-controls">
                         <select id="categoryFilter">
-                            <option value="">所有分类</option>
+                            <option value="">{{ _('所有分类') }}</option>
                         </select>
                         <select id="statusFilter">
-                            <option value="">所有状态</option>
-                            <option value="active">正常</option>
-                            <option value="inactive">停用</option>
+                            <option value="">{{ _('所有状态') }}</option>
+                            <option value="active">{{ _('正常') }}</option>
+                            <option value="inactive">{{ _('停用') }}</option>
                         </select>
                     </div>
                 </div>
@@ -126,17 +133,17 @@
                     <table id="inventoryTable" class="data-table">
                         <thead>
                             <tr>
-                                <th>产品名称</th>
-                                <th>分类</th>
-                                <th>价格</th>
-                                <th>当前库存</th>
-                                <th>状态</th>
-                                <th>操作</th>
+                                <th>{{ _('产品名称') }}</th>
+                                <th>{{ _('分类') }}</th>
+                                <th>{{ _('价格') }}</th>
+                                <th>{{ _('当前库存') }}</th>
+                                <th>{{ _('状态') }}</th>
+                                <th>{{ _('操作') }}</th>
                             </tr>
                         </thead>
                         <tbody id="inventoryTableBody">
                             <tr>
-                                <td colspan="6" class="loading">正在加载库存数据...</td>
+                                <td colspan="6" class="loading">{{ _('正在加载库存数据...') }}</td>
                             </tr>
                         </tbody>
                     </table>
@@ -146,27 +153,27 @@
             <!-- 反馈管理 -->
             <section id="feedbackSection" class="content-section">
                 <div class="section-header">
-                    <h1>💬 客户反馈管理</h1>
-                    <button id="addFeedbackBtn" class="primary-btn">+ 添加反馈</button>
+                    <h1>💬 {{ _('客户反馈管理') }}</h1>
+                    <button id="addFeedbackBtn" class="primary-btn">+ {{ _('添加反馈') }}</button>
                 </div>
-                
+
                 <div class="feedback-controls">
                     <div class="search-box">
-                        <input type="text" id="feedbackSearch" placeholder="搜索反馈...">
+                        <input type="text" id="feedbackSearch" placeholder="{{ _('搜索反馈...') }}">
                         <button id="searchFeedbackBtn">🔍</button>
                     </div>
-                    
+
                     <div class="filter-controls">
                         <select id="feedbackTypeFilter">
-                            <option value="">所有类型</option>
-                            <option value="positive">正面反馈</option>
-                            <option value="negative">负面反馈</option>
+                            <option value="">{{ _('所有类型') }}</option>
+                            <option value="positive">{{ _('正面反馈') }}</option>
+                            <option value="negative">{{ _('负面反馈') }}</option>
                         </select>
                         <select id="feedbackStatusFilter">
-                            <option value="">所有状态</option>
-                            <option value="待处理">待处理</option>
-                            <option value="处理中">处理中</option>
-                            <option value="已解决">已解决</option>
+                            <option value="">{{ _('所有状态') }}</option>
+                            <option value="待处理">{{ _('待处理') }}</option>
+                            <option value="处理中">{{ _('处理中') }}</option>
+                            <option value="已解决">{{ _('已解决') }}</option>
                         </select>
                     </div>
                 </div>
@@ -175,18 +182,18 @@
                     <table id="feedbackTable" class="data-table">
                         <thead>
                             <tr>
-                                <th>产品名称</th>
-                                <th>客户昵称</th>
-                                <th>反馈类型</th>
-                                <th>付款状态</th>
-                                <th>处理状态</th>
-                                <th>反馈时间</th>
-                                <th>操作</th>
+                                <th>{{ _('产品名称') }}</th>
+                                <th>{{ _('客户昵称') }}</th>
+                                <th>{{ _('反馈类型') }}</th>
+                                <th>{{ _('付款状态') }}</th>
+                                <th>{{ _('处理状态') }}</th>
+                                <th>{{ _('反馈时间') }}</th>
+                                <th>{{ _('操作') }}</th>
                             </tr>
                         </thead>
                         <tbody id="feedbackTableBody">
                             <tr>
-                                <td colspan="7" class="loading">正在加载反馈数据...</td>
+                                <td colspan="7" class="loading">{{ _('正在加载反馈数据...') }}</td>
                             </tr>
                         </tbody>
                     </table>
@@ -196,30 +203,32 @@
             <!-- 操作日志 -->
             <section id="logsSection" class="content-section">
                 <div class="section-header">
-                    <h1>📋 操作日志</h1>
-                    <button id="refreshLogsBtn" class="primary-btn">🔄 刷新</button>
+                    <h1>📋 {{ _('操作日志') }}</h1>
+                    <button id="refreshLogsBtn" class="primary-btn">🔄 {{ _('刷新') }}</button>
                 </div>
+
+
 
                 <div class="logs-controls">
                     <div class="filter-controls">
                         <select id="logOperatorFilter">
-                            <option value="">所有操作员</option>
+                            <option value="">{{ _('所有操作员') }}</option>
                         </select>
                         <select id="logOperationFilter">
-                            <option value="">所有操作</option>
-                            <option value="create">创建</option>
-                            <option value="update">更新</option>
-                            <option value="delete">删除</option>
-                            <option value="update_stock">库存调整</option>
-                            <option value="export">数据导出</option>
+                            <option value="">{{ _('所有操作') }}</option>
+                            <option value="create">{{ _('创建') }}</option>
+                            <option value="update">{{ _('更新') }}</option>
+                            <option value="delete">{{ _('删除') }}</option>
+                            <option value="update_stock">{{ _('库存调整') }}</option>
+                            <option value="export">{{ _('数据导出') }}</option>
                         </select>
                         <select id="logTargetFilter">
-                            <option value="">所有目标</option>
-                            <option value="inventory">库存</option>
-                            <option value="feedback">反馈</option>
-                            <option value="admin">管理员</option>
+                            <option value="">{{ _('所有目标') }}</option>
+                            <option value="inventory">{{ _('库存') }}</option>
+                            <option value="feedback">{{ _('反馈') }}</option>
+                            <option value="admin">{{ _('管理员') }}</option>
                         </select>
-                        <input type="number" id="logLimitInput" value="100" min="10" max="1000" placeholder="显示条数">
+                        <input type="number" id="logLimitInput" value="100" min="10" max="1000" placeholder="{{ _('显示条数') }}">
                     </div>
                 </div>
 
@@ -227,18 +236,18 @@
                     <table id="logsTable" class="data-table">
                         <thead>
                             <tr>
-                                <th>时间</th>
-                                <th>操作员</th>
-                                <th>操作类型</th>
-                                <th>目标类型</th>
-                                <th>目标ID</th>
-                                <th>结果</th>
-                                <th>详情</th>
+                                <th>{{ _('时间') }}</th>
+                                <th>{{ _('操作员') }}</th>
+                                <th>{{ _('操作类型') }}</th>
+                                <th>{{ _('目标类型') }}</th>
+                                <th>{{ _('目标ID') }}</th>
+                                <th>{{ _('结果') }}</th>
+                                <th>{{ _('详情') }}</th>
                             </tr>
                         </thead>
                         <tbody id="logsTableBody">
                             <tr>
-                                <td colspan="7" class="loading">正在加载日志数据...</td>
+                                <td colspan="7" class="loading">{{ _('正在加载日志数据...') }}</td>
                             </tr>
                         </tbody>
                     </table>
@@ -248,50 +257,50 @@
             <!-- 数据导出 -->
             <section id="exportSection" class="content-section">
                 <div class="section-header">
-                    <h1>📤 数据导出</h1>
+                    <h1>📤 {{ _('数据导出') }}</h1>
                 </div>
 
                 <div class="export-content">
                     <div class="export-card">
-                        <h3>📦 库存数据导出</h3>
-                        <p>导出所有产品和库存信息</p>
+                        <h3>📦 {{ _('库存数据导出') }}</h3>
+                        <p>{{ _('导出所有产品和库存信息') }}</p>
                         <div class="export-actions">
-                            <button class="primary-btn" onclick="admin.exportData('inventory', 'csv')">导出CSV</button>
-                            <button class="secondary-btn" onclick="admin.exportData('inventory', 'json')">导出JSON</button>
-                            <button class="secondary-btn" onclick="admin.generateReport('inventory')">生成报告</button>
+                            <button class="primary-btn" onclick="admin.exportData('inventory', 'csv')">{{ _('导出CSV') }}</button>
+                            <button class="secondary-btn" onclick="admin.exportData('inventory', 'json')">{{ _('导出JSON') }}</button>
+                            <button class="secondary-btn" onclick="admin.generateReport('inventory')">{{ _('生成报告') }}</button>
                         </div>
                     </div>
 
                     <div class="export-card">
-                        <h3>💬 反馈数据导出</h3>
-                        <p>导出所有客户反馈信息</p>
+                        <h3>💬 {{ _('反馈数据导出') }}</h3>
+                        <p>{{ _('导出所有客户反馈信息') }}</p>
                         <div class="export-actions">
-                            <button class="primary-btn" onclick="admin.exportData('feedback', 'csv')">导出CSV</button>
-                            <button class="secondary-btn" onclick="admin.exportData('feedback', 'json')">导出JSON</button>
-                            <button class="secondary-btn" onclick="admin.generateReport('feedback')">生成报告</button>
+                            <button class="primary-btn" onclick="admin.exportData('feedback', 'csv')">{{ _('导出CSV') }}</button>
+                            <button class="secondary-btn" onclick="admin.exportData('feedback', 'json')">{{ _('导出JSON') }}</button>
+                            <button class="secondary-btn" onclick="admin.generateReport('feedback')">{{ _('生成报告') }}</button>
                         </div>
                     </div>
 
                     <div class="export-card">
-                        <h3>📋 操作日志导出</h3>
-                        <p>导出系统操作日志</p>
+                        <h3>📋 {{ _('操作日志导出') }}</h3>
+                        <p>{{ _('导出系统操作日志') }}</p>
                         <div class="export-date-range">
-                            <label for="exportStartDate">开始日期:</label>
+                            <label for="exportStartDate">{{ _('开始日期') }}:</label>
                             <input type="date" id="exportStartDate">
-                            <label for="exportEndDate">结束日期:</label>
+                            <label for="exportEndDate">{{ _('结束日期') }}:</label>
                             <input type="date" id="exportEndDate">
                         </div>
                         <div class="export-actions">
-                            <button class="primary-btn" onclick="admin.exportLogs('csv')">导出CSV</button>
-                            <button class="secondary-btn" onclick="admin.exportLogs('json')">导出JSON</button>
+                            <button class="primary-btn" onclick="admin.exportLogs('csv')">{{ _('导出CSV') }}</button>
+                            <button class="secondary-btn" onclick="admin.exportLogs('json')">{{ _('导出JSON') }}</button>
                         </div>
                     </div>
 
                     <div class="export-card">
-                        <h3>💾 完整数据备份</h3>
-                        <p>导出所有系统数据的完整备份</p>
+                        <h3>💾 {{ _('完整数据备份') }}</h3>
+                        <p>{{ _('导出所有系统数据的完整备份') }}</p>
                         <div class="export-actions">
-                            <button class="primary-btn" onclick="admin.createBackup()">创建备份</button>
+                            <button class="primary-btn" onclick="admin.createBackup()">{{ _('创建备份') }}</button>
                         </div>
                     </div>
                 </div>
@@ -300,46 +309,46 @@
             <!-- 系统设置 -->
             <section id="settingsSection" class="content-section">
                 <div class="section-header">
-                    <h1>⚙️ 系统设置</h1>
+                    <h1>⚙️ {{ _('系统设置') }}</h1>
                 </div>
 
                 <div class="settings-content">
                     <div class="settings-card">
-                        <h3>🔐 修改密码</h3>
+                        <h3>🔐 {{ _('修改密码') }}</h3>
                         <form id="changePasswordForm">
                             <div class="form-group">
-                                <label for="oldPassword">当前密码</label>
+                                <label for="oldPassword">{{ _('当前密码') }}</label>
                                 <input type="password" id="oldPassword" required>
                             </div>
                             <div class="form-group">
-                                <label for="newPassword">新密码</label>
+                                <label for="newPassword">{{ _('新密码') }}</label>
                                 <input type="password" id="newPassword" required>
                             </div>
                             <div class="form-group">
-                                <label for="confirmPassword">确认新密码</label>
+                                <label for="confirmPassword">{{ _('确认新密码') }}</label>
                                 <input type="password" id="confirmPassword" required>
                             </div>
-                            <button type="submit" class="primary-btn">修改密码</button>
+                            <button type="submit" class="primary-btn">{{ _('修改密码') }}</button>
                         </form>
                     </div>
 
                     <div class="settings-card">
-                        <h3>📊 系统信息</h3>
+                        <h3>📊 {{ _('系统信息') }}</h3>
                         <div class="system-info">
-                            <p><strong>系统版本：</strong>2.0</p>
-                            <p><strong>最后更新：</strong><span id="lastUpdate">-</span></p>
-                            <p><strong>运行状态：</strong><span class="status-active">正常运行</span></p>
+                            <p><strong>{{ _('系统版本') }}：</strong>2.0</p>
+                            <p><strong>{{ _('最后更新') }}：</strong><span id="lastUpdate">-</span></p>
+                            <p><strong>{{ _('运行状态') }}：</strong><span class="status-active">{{ _('正常运行') }}</span></p>
                         </div>
                     </div>
 
                     <div class="settings-card">
-                        <h3>🧹 系统维护</h3>
+                        <h3>🧹 {{ _('系统维护') }}</h3>
                         <div class="maintenance-actions">
-                            <button class="secondary-btn" onclick="admin.clearOldLogs()">清理旧日志</button>
-                            <button class="secondary-btn" onclick="admin.optimizeDatabase()">优化数据</button>
-                            <button class="danger-btn" onclick="admin.resetSystem()">重置系统</button>
+                            <button class="secondary-btn" onclick="admin.clearOldLogs()">{{ _('清理旧日志') }}</button>
+                            <button class="secondary-btn" onclick="admin.optimizeDatabase()">{{ _('优化数据') }}</button>
+                            <button class="danger-btn" onclick="admin.resetSystem()">{{ _('重置系统') }}</button>
                         </div>
-                        <p class="maintenance-note">注意：系统维护操作可能影响系统性能，请在低峰期执行。</p>
+                        <p class="maintenance-note">{{ _('注意：系统维护操作可能影响系统性能，请在低峰期执行。') }}</p>
                     </div>
                 </div>
             </section>
@@ -348,95 +357,95 @@
             <section id="inventory-add-productSection" class="content-section">
                 <div class="section-header">
                     <div>
-                        <h1>📦 产品入库</h1>
-                        <p>添加新产品到库存系统，自动生成条形码</p>
+                        <h1>📦 {{ _('产品入库') }}</h1>
+                        <p>{{ _('添加新产品到库存系统，自动生成条形码') }}</p>
                     </div>
                 </div>
 
                 <div class="add-product-container">
                     <div class="add-product-form-section">
                         <div class="form-card">
-                            <h3>产品信息</h3>
+                            <h3>{{ _('产品信息') }}</h3>
                             <form id="addProductForm" class="product-form">
                                 <div class="form-row">
                                     <div class="form-group">
-                                        <label for="productName">产品名称 *</label>
+                                        <label for="productName">{{ _('产品名称') }} *</label>
                                         <input type="text" id="productName" name="product_name" required>
                                     </div>
                                     <div class="form-group">
-                                        <label for="productCategory">产品分类 *</label>
+                                        <label for="productCategory">{{ _('产品分类') }} *</label>
                                         <select id="productCategory" name="category" required>
-                                            <option value="">请选择分类</option>
-                                            <option value="水果">水果</option>
-                                            <option value="蔬菜">蔬菜</option>
-                                            <option value="肉类">肉类</option>
-                                            <option value="海鲜">海鲜</option>
-                                            <option value="熟食">熟食</option>
-                                            <option value="其他">其他</option>
+                                            <option value="">{{ _('请选择分类') }}</option>
+                                            <option value="水果">{{ _('时令水果') }}</option>
+                                            <option value="蔬菜">{{ _('新鲜蔬菜') }}</option>
+                                            <option value="肉类">{{ _('禽类产品') }}</option>
+                                            <option value="海鲜">{{ _('海鲜河鲜') }}</option>
+                                            <option value="熟食">{{ _('美味熟食/面点') }}</option>
+                                            <option value="其他">{{ _('优选干货') }}</option>
                                         </select>
                                     </div>
                                 </div>
 
                                 <div class="form-row">
                                     <div class="form-group">
-                                        <label for="productPrice">价格 *</label>
-                                        <input type="text" id="productPrice" name="price" placeholder="例：15元/斤" required>
+                                        <label for="productPrice">{{ _('价格') }} *</label>
+                                        <input type="text" id="productPrice" name="price" placeholder="{{ _('例：15元/斤') }}" required>
                                     </div>
                                     <div class="form-group">
-                                        <label for="productUnit">单位 *</label>
+                                        <label for="productUnit">{{ _('单位') }} *</label>
                                         <select id="productUnit" name="unit" required>
-                                            <option value="">请选择单位</option>
-                                            <option value="斤">斤</option>
-                                            <option value="个">个</option>
-                                            <option value="包">包</option>
-                                            <option value="盒">盒</option>
-                                            <option value="袋">袋</option>
+                                            <option value="">{{ _('请选择单位') }}</option>
+                                            <option value="斤">{{ _('斤') }}</option>
+                                            <option value="个">{{ _('个') }}</option>
+                                            <option value="包">{{ _('包') }}</option>
+                                            <option value="盒">{{ _('盒') }}</option>
+                                            <option value="袋">{{ _('袋') }}</option>
                                         </select>
                                     </div>
                                 </div>
 
                                 <div class="form-row">
                                     <div class="form-group">
-                                        <label for="productSpecification">规格</label>
-                                        <input type="text" id="productSpecification" name="specification" placeholder="例：500g/包">
+                                        <label for="productSpecification">{{ _('规格') }}</label>
+                                        <input type="text" id="productSpecification" name="specification" placeholder="{{ _('如：500g、2个装') }}">
                                     </div>
                                     <div class="form-group">
-                                        <label for="storageArea">存储区域 *</label>
+                                        <label for="storageArea">{{ _('存储区域') }} *</label>
                                         <select id="storageArea" name="storage_area" required>
-                                            <option value="">请选择存储区域</option>
-                                            <option value="A">A区 - 水果区</option>
-                                            <option value="B">B区 - 蔬菜区</option>
-                                            <option value="C">C区 - 肉类区</option>
-                                            <option value="D">D区 - 海鲜区</option>
-                                            <option value="E">E区 - 熟食区</option>
+                                            <option value="">{{ _('请选择存储区域') }}</option>
+                                            <option value="A">{{ _('A区 - 水果区') }}</option>
+                                            <option value="B">{{ _('B区 - 蔬菜区') }}</option>
+                                            <option value="C">{{ _('C区 - 肉类区') }}</option>
+                                            <option value="D">{{ _('D区 - 海鲜区') }}</option>
+                                            <option value="E">{{ _('E区 - 熟食区') }}</option>
                                         </select>
                                     </div>
                                 </div>
 
                                 <div class="form-row">
                                     <div class="form-group">
-                                        <label for="initialStock">初始库存</label>
+                                        <label for="initialStock">{{ _('初始库存') }}</label>
                                         <input type="number" id="initialStock" name="initial_stock" min="0" value="0">
                                     </div>
                                     <div class="form-group">
-                                        <label for="minStockWarning">最小库存警告</label>
+                                        <label for="minStockWarning">{{ _('最小库存警告') }}</label>
                                         <input type="number" id="minStockWarning" name="min_stock_warning" min="0" value="10">
                                     </div>
                                 </div>
 
                                 <div class="form-group">
-                                    <label for="productDescription">产品描述</label>
-                                    <textarea id="productDescription" name="description" rows="3" placeholder="产品特点、产地、保存方法等"></textarea>
+                                    <label for="productDescription">{{ _('产品描述') }}</label>
+                                    <textarea id="productDescription" name="description" rows="3" placeholder="{{ _('产品关键词、特点等') }}"></textarea>
                                 </div>
 
                                 <div class="form-group">
-                                    <label for="productImageUrl">产品图片URL</label>
+                                    <label for="productImageUrl">{{ _('产品图片URL') }}</label>
                                     <input type="url" id="productImageUrl" name="image_url" placeholder="https://example.com/image.jpg">
                                 </div>
 
                                 <div class="form-actions">
-                                    <button type="submit" class="primary-btn">保存产品</button>
-                                    <button type="reset" class="secondary-btn">重置表单</button>
+                                    <button type="submit" class="primary-btn">{{ _('保存产品') }}</button>
+                                    <button type="reset" class="secondary-btn">{{ _('重置表单') }}</button>
                                 </div>
                             </form>
                         </div>
@@ -444,41 +453,41 @@
 
                     <div class="add-product-preview-section">
                         <div class="preview-card">
-                            <h3>条形码预览</h3>
+                            <h3>{{ _('条形码预览') }}</h3>
                             <div id="barcodePreview" class="barcode-preview">
                                 <div class="barcode-placeholder">
                                     <p>📊</p>
-                                    <p>输入产品信息后将自动生成条形码</p>
+                                    <p>{{ _('输入产品信息后将自动生成条形码') }}</p>
                                 </div>
                             </div>
                             <div id="barcodeInfo" class="barcode-info" style="display: none;">
-                                <p><strong>条形码：</strong><span id="barcodeNumber">-</span></p>
-                                <p><strong>产品ID：</strong><span id="productId">-</span></p>
+                                <p><strong>{{ _('条形码') }}：</strong><span id="barcodeNumber">-</span></p>
+                                <p><strong>{{ _('产品ID') }}：</strong><span id="productId">-</span></p>
                             </div>
                         </div>
 
                         <div class="storage-info-card">
-                            <h3>存储区域信息</h3>
+                            <h3>{{ _('存储区域信息') }}</h3>
                             <div id="storageAreaInfo" class="storage-area-info">
                                 <div class="area-item">
-                                    <span class="area-label">A区</span>
-                                    <span class="area-desc">水果类产品</span>
+                                    <span class="area-label">{{ _('A区') }}</span>
+                                    <span class="area-desc">{{ _('水果类产品') }}</span>
                                 </div>
                                 <div class="area-item">
-                                    <span class="area-label">B区</span>
-                                    <span class="area-desc">蔬菜类产品</span>
+                                    <span class="area-label">{{ _('B区') }}</span>
+                                    <span class="area-desc">{{ _('蔬菜类产品') }}</span>
                                 </div>
                                 <div class="area-item">
-                                    <span class="area-label">C区</span>
-                                    <span class="area-desc">肉类产品</span>
+                                    <span class="area-label">{{ _('C区') }}</span>
+                                    <span class="area-desc">{{ _('肉类产品') }}</span>
                                 </div>
                                 <div class="area-item">
-                                    <span class="area-label">D区</span>
-                                    <span class="area-desc">海鲜类产品</span>
+                                    <span class="area-label">{{ _('D区') }}</span>
+                                    <span class="area-desc">{{ _('海鲜类产品') }}</span>
                                 </div>
                                 <div class="area-item">
-                                    <span class="area-label">E区</span>
-                                    <span class="area-desc">熟食类产品</span>
+                                    <span class="area-label">{{ _('E区') }}</span>
+                                    <span class="area-desc">{{ _('熟食类产品') }}</span>
                                 </div>
                             </div>
                         </div>
@@ -490,41 +499,41 @@
             <section id="inventory-countsSection" class="content-section">
                 <div class="section-header">
                     <div>
-                        <h1>📊 库存盘点</h1>
-                        <p>创建和管理库存盘点任务，支持条形码扫描和手动录入</p>
+                        <h1>📊 {{ _('库存盘点') }}</h1>
+                        <p>{{ _('创建和管理库存盘点任务，支持条形码扫描和手动录入') }}</p>
                     </div>
-                    <button id="createCountTaskBtn" class="primary-btn">+ 创建新盘点</button>
+                    <button id="createCountTaskBtn" class="primary-btn">{{ _('+ 创建新盘点') }}</button>
                 </div>
 
                 <!-- 盘点任务管理区域 -->
                 <div class="count-tasks-section">
                     <div class="tasks-card">
-                        <h3>盘点任务列表</h3>
+                        <h3>{{ _('盘点任务列表') }}</h3>
                         <div class="tasks-controls">
                             <div class="filter-controls">
                                 <select id="countStatusFilter">
-                                    <option value="">所有状态</option>
-                                    <option value="in_progress">进行中</option>
-                                    <option value="completed">已完成</option>
-                                    <option value="cancelled">已取消</option>
+                                    <option value="">{{ _('所有状态') }}</option>
+                                    <option value="in_progress">{{ _('进行中') }}</option>
+                                    <option value="completed">{{ _('已完成') }}</option>
+                                    <option value="cancelled">{{ _('已取消') }}</option>
                                 </select>
-                                <button id="refreshCountTasksBtn" class="secondary-btn">刷新</button>
+                                <button id="refreshCountTasksBtn" class="secondary-btn">{{ _('刷新') }}</button>
                             </div>
                         </div>
                         <div class="count-tasks-table-container">
                             <table class="data-table">
                                 <thead>
                                     <tr>
-                                        <th>任务ID</th>
-                                        <th>创建时间</th>
-                                        <th>操作员</th>
-                                        <th>状态</th>
-                                        <th>产品数量</th>
-                                        <th>操作</th>
+                                        <th>{{ _('任务ID') }}</th>
+                                        <th>{{ _('创建时间') }}</th>
+                                        <th>{{ _('操作员') }}</th>
+                                        <th>{{ _('状态') }}</th>
+                                        <th>{{ _('产品数量') }}</th>
+                                        <th>{{ _('操作') }}</th>
                                     </tr>
                                 </thead>
                                 <tbody id="countTasksTableBody">
-                                    <tr><td colspan="6" class="loading">加载中...</td></tr>
+                                    <tr><td colspan="6" class="loading">{{ _('加载中...') }}</td></tr>
                                 </tbody>
                             </table>
                         </div>
@@ -536,21 +545,21 @@
                     <div class="count-operation-container">
                         <div class="count-input-section">
                             <div class="input-card">
-                                <h3>添加盘点产品</h3>
+                                <h3>{{ _('添加盘点产品') }}</h3>
                                 <div class="input-methods">
                                     <div class="input-method">
-                                        <label for="barcodeInput">条形码扫描/输入</label>
+                                        <label for="barcodeInput">{{ _('条形码扫描/输入') }}</label>
                                         <div class="barcode-input-group">
-                                            <input type="text" id="barcodeInput" placeholder="扫描或输入条形码">
-                                            <button id="addByBarcodeBtn" class="primary-btn">添加</button>
+                                            <input type="text" id="barcodeInput" placeholder="{{ _('扫描或输入条形码') }}">
+                                            <button id="addByBarcodeBtn" class="primary-btn">{{ _('添加') }}</button>
                                         </div>
                                     </div>
-                                    <div class="input-divider">或</div>
+                                    <div class="input-divider">{{ _('或') }}</div>
                                     <div class="input-method">
-                                        <label for="productSearchInput">产品搜索</label>
+                                        <label for="productSearchInput">{{ _('产品搜索') }}</label>
                                         <div class="product-search-group">
-                                            <input type="text" id="productSearchInput" placeholder="搜索产品名称">
-                                            <button id="searchProductBtn" class="secondary-btn">搜索</button>
+                                            <input type="text" id="productSearchInput" placeholder="{{ _('搜索产品名称') }}">
+                                            <button id="searchProductBtn" class="secondary-btn">{{ _('搜索') }}</button>
                                         </div>
                                         <div id="productSearchResults" class="search-results" style="display: none;"></div>
                                     </div>
@@ -560,39 +569,39 @@
 
                         <div class="count-list-section">
                             <div class="list-card">
-                                <h3>当前盘点项目</h3>
+                                <h3>{{ _('当前盘点项目') }}</h3>
                                 <div id="currentCountInfo" class="count-info">
-                                    <span>任务ID: <strong id="currentCountId">-</strong></span>
-                                    <span>创建时间: <strong id="currentCountDate">-</strong></span>
-                                    <span>项目数量: <strong id="currentCountItemsCount">0</strong></span>
+                                    <span>{{ _('任务ID: ') }}<strong id="currentCountId">-</strong></span>
+                                    <span>{{ _('创建时间: ') }}<strong id="currentCountDate">-</strong></span>
+                                    <span>{{ _('项目数量: ') }}<strong id="currentCountItemsCount">0</strong></span>
                                 </div>
                                 <div class="count-items-table-container">
                                     <table class="data-table">
                                         <thead>
                                             <tr>
-                                                <th>产品名称</th>
-                                                <th>条形码</th>
-                                                <th>存储区域</th>
-                                                <th>账面数量</th>
-                                                <th>实际数量</th>
-                                                <th>差异</th>
-                                                <th>操作</th>
+                                                <th>{{ _('产品名称') }}</th>
+                                                <th>{{ _('条形码') }}</th>
+                                                <th>{{ _('存储区域') }}</th>
+                                                <th>{{ _('账面数量') }}</th>
+                                                <th>{{ _('实际数量') }}</th>
+                                                <th>{{ _('差异') }}</th>
+                                                <th>{{ _('操作') }}</th>
                                             </tr>
                                         </thead>
                                         <tbody id="countItemsTableBody">
-                                            <tr><td colspan="7" class="no-data">暂无盘点项目</td></tr>
+                                            <tr><td colspan="7" class="no-data">{{ _('暂无盘点项目') }}</td></tr>
                                         </tbody>
                                     </table>
                                 </div>
                                 <div class="count-summary">
                                     <div class="summary-stats">
-                                        <span>总项目: <strong id="totalCountItems">0</strong></span>
-                                        <span>已录入: <strong id="recordedCountItems">0</strong></span>
-                                        <span>有差异: <strong id="differenceCountItems">0</strong></span>
+                                        <span>{{ _('总项目: ') }}<strong id="totalCountItems">0</strong></span>
+                                        <span>{{ _('已录入: ') }}<strong id="recordedCountItems">0</strong></span>
+                                        <span>{{ _('有差异: ') }}<strong id="differenceCountItems">0</strong></span>
                                     </div>
                                     <div class="count-actions">
-                                        <button id="completeCountBtn" class="primary-btn" disabled>完成盘点</button>
-                                        <button id="cancelCountBtn" class="danger-btn">取消盘点</button>
+                                        <button id="completeCountBtn" class="primary-btn" disabled>{{ _('完成盘点') }}</button>
+                                        <button id="cancelCountBtn" class="danger-btn">{{ _('取消盘点') }}</button>
                                     </div>
                                 </div>
                             </div>
@@ -605,41 +614,41 @@
             <section id="inventory-analysisSection" class="content-section">
                 <div class="section-header">
                     <div>
-                        <h1>📈 数据对比分析</h1>
-                        <p>对比不同时期的库存数据，分析变化趋势和异常情况</p>
+                        <h1>📈 {{ _('数据对比分析') }}</h1>
+                        <p>{{ _('对比不同时期的库存数据，分析变化趋势和异常情况') }}</p>
                     </div>
                 </div>
 
                 <!-- 对比分析创建区域 -->
                 <div class="analysis-creation-section">
                     <div class="creation-card">
-                        <h3>创建对比分析</h3>
+                        <h3>{{ _('创建对比分析') }}</h3>
                         <div class="creation-methods">
                             <div class="method-group">
                                 <div class="method-item">
-                                    <h4>周对比分析</h4>
-                                    <p>自动对比最近一周的盘点数据</p>
-                                    <button id="createWeeklyAnalysisBtn" class="primary-btn">生成周对比</button>
+                                    <h4>{{ _('周对比分析') }}</h4>
+                                    <p>{{ _('自动对比最近一周的盘点数据') }}</p>
+                                    <button id="createWeeklyAnalysisBtn" class="primary-btn">{{ _('生成周对比') }}</button>
                                 </div>
                                 <div class="method-item">
-                                    <h4>手动对比选择</h4>
-                                    <p>选择两个盘点任务进行对比</p>
+                                    <h4>{{ _('手动对比选择') }}</h4>
+                                    <p>{{ _('选择两个盘点任务进行对比') }}</p>
                                     <div class="manual-comparison">
                                         <div class="comparison-selects">
                                             <div class="select-group">
-                                                <label>当前盘点:</label>
+                                                <label>{{ _('当前盘点:') }}</label>
                                                 <select id="currentCountSelect">
-                                                    <option value="">请选择盘点任务</option>
+                                                    <option value="">{{ _('请选择盘点任务') }}</option>
                                                 </select>
                                             </div>
                                             <div class="select-group">
-                                                <label>对比盘点:</label>
+                                                <label>{{ _('对比盘点:') }}</label>
                                                 <select id="previousCountSelect">
-                                                    <option value="">请选择盘点任务</option>
+                                                    <option value="">{{ _('请选择盘点任务') }}</option>
                                                 </select>
                                             </div>
                                         </div>
-                                        <button id="createManualAnalysisBtn" class="primary-btn">开始对比</button>
+                                        <button id="createManualAnalysisBtn" class="primary-btn">{{ _('开始对比') }}</button>
                                     </div>
                                 </div>
                             </div>
@@ -656,28 +665,28 @@
                                 <div class="card-icon">📦</div>
                                 <div class="card-info">
                                     <h4 id="totalProductsAnalyzed">0</h4>
-                                    <p>总产品数</p>
+                                    <p>{{ _('总产品数') }}</p>
                                 </div>
                             </div>
                             <div class="summary-card">
                                 <div class="card-icon">📊</div>
                                 <div class="card-info">
                                     <h4 id="changedProductsCount">0</h4>
-                                    <p>变化产品数</p>
+                                    <p>{{ _('变化产品数') }}</p>
                                 </div>
                             </div>
                             <div class="summary-card">
                                 <div class="card-icon">⚠️</div>
                                 <div class="card-info">
                                     <h4 id="anomaliesCount">0</h4>
-                                    <p>异常项目数</p>
+                                    <p>{{ _('异常项目数') }}</p>
                                 </div>
                             </div>
                             <div class="summary-card">
                                 <div class="card-icon">💰</div>
                                 <div class="card-info">
                                     <h4 id="totalValueChange">0</h4>
-                                    <p>总价值变化</p>
+                                    <p>{{ _('总价值变化') }}</p>
                                 </div>
                             </div>
                         </div>
@@ -686,18 +695,18 @@
                     <!-- 变化明细表格 -->
                     <div class="changes-detail-section">
                         <div class="detail-card">
-                            <h3>变化明细</h3>
+                            <h3>{{ _('变化明细') }}</h3>
                             <div class="detail-controls">
                                 <div class="filter-controls">
                                     <select id="changeTypeFilter">
-                                        <option value="">所有变化</option>
-                                        <option value="increased">库存增加</option>
-                                        <option value="decreased">库存减少</option>
-                                        <option value="new">新增产品</option>
-                                        <option value="removed">移除产品</option>
+                                        <option value="">{{ _('所有变化') }}</option>
+                                        <option value="increased">{{ _('库存增加') }}</option>
+                                        <option value="decreased">{{ _('库存减少') }}</option>
+                                        <option value="new">{{ _('新增产品') }}</option>
+                                        <option value="removed">{{ _('移除产品') }}</option>
                                     </select>
                                     <select id="categoryAnalysisFilter">
-                                        <option value="">所有分类</option>
+                                        <option value="">{{ _('所有分类') }}</option>
                                     </select>
                                 </div>
                             </div>
@@ -705,18 +714,18 @@
                                 <table class="data-table">
                                     <thead>
                                         <tr>
-                                            <th>产品名称</th>
-                                            <th>分类</th>
-                                            <th>存储区域</th>
-                                            <th>之前数量</th>
-                                            <th>当前数量</th>
-                                            <th>变化量</th>
-                                            <th>变化百分比</th>
-                                            <th>状态</th>
+                                            <th>{{ _('产品名称') }}</th>
+                                            <th>{{ _('分类') }}</th>
+                                            <th>{{ _('存储区域') }}</th>
+                                            <th>{{ _('之前数量') }}</th>
+                                            <th>{{ _('当前数量') }}</th>
+                                            <th>{{ _('变化量') }}</th>
+                                            <th>{{ _('变化百分比') }}</th>
+                                            <th>{{ _('状态') }}</th>
                                         </tr>
                                     </thead>
                                     <tbody id="changesTableBody">
-                                        <tr><td colspan="8" class="no-data">暂无变化数据</td></tr>
+                                        <tr><td colspan="8" class="no-data">{{ _('暂无变化数据') }}</td></tr>
                                     </tbody>
                                 </table>
                             </div>
@@ -726,9 +735,9 @@
                     <!-- 异常检测结果 -->
                     <div class="anomalies-section">
                         <div class="anomalies-card">
-                            <h3>异常检测结果</h3>
+                            <h3>{{ _('异常检测结果') }}</h3>
                             <div id="anomaliesList" class="anomalies-list">
-                                <div class="no-data">暂无异常检测结果</div>
+                                <div class="no-data">{{ _('暂无异常检测结果') }}</div>
                             </div>
                         </div>
                     </div>
@@ -736,16 +745,16 @@
                     <!-- 报表生成功能 -->
                     <div class="reports-section">
                         <div class="reports-card">
-                            <h3>报表生成</h3>
+                            <h3>{{ _('报表生成') }}</h3>
                             <div class="report-actions">
-                                <button id="downloadAnalysisReportBtn" class="primary-btn">📄 下载分析报告</button>
-                                <button id="downloadChangesExcelBtn" class="secondary-btn">📊 导出Excel</button>
-                                <button id="generateTrendChartBtn" class="secondary-btn">📈 生成趋势图</button>
+                                <button id="downloadAnalysisReportBtn" class="primary-btn">{{ _('📄 下载分析报告') }}</button>
+                                <button id="downloadChangesExcelBtn" class="secondary-btn">{{ _('📊 导出Excel') }}</button>
+                                <button id="generateTrendChartBtn" class="secondary-btn">{{ _('📈 生成趋势图') }}</button>
                             </div>
                             <div id="analysisInfo" class="analysis-info">
-                                <p><strong>分析时间：</strong><span id="analysisDate">-</span></p>
-                                <p><strong>对比范围：</strong><span id="analysisRange">-</span></p>
-                                <p><strong>分析类型：</strong><span id="analysisType">-</span></p>
+                                <p><strong>{{ _('分析时间：') }}</strong><span id="analysisDate">-</span></p>
+                                <p><strong>{{ _('对比范围：') }}</strong><span id="analysisRange">-</span></p>
+                                <p><strong>{{ _('分析类型：') }}</strong><span id="analysisType">-</span></p>
                             </div>
                         </div>
                     </div>
@@ -765,6 +774,169 @@
     <!-- 模态框模板 -->
     {% include 'admin/modals.html' %}
 
-    <script src="{{ url_for('static', filename='js/admin.js') }}"></script>
+    <script>
+        // JavaScript Translation Object
+        window.translations = {
+            // Common Messages
+            '网络错误': '{{ _("网络错误") }}',
+            '操作成功': '{{ _("操作成功") }}',
+            '操作失败': '{{ _("操作失败") }}',
+            '加载中...': '{{ _("加载中...") }}',
+            '暂无数据': '{{ _("暂无数据") }}',
+
+            // Product Management
+            '产品删除成功': '{{ _("产品删除成功") }}',
+            '确认删除吗？': '{{ _("确认删除吗？") }}',
+
+            // Feedback Management
+            '反馈删除成功': '{{ _("反馈删除成功") }}',
+
+            // Inventory Count
+            '盘点任务创建成功！': '{{ _("盘点任务创建成功！") }}',
+            '请输入盘点备注（可选）:': '{{ _("请输入盘点备注（可选）:") }}',
+            '确认完成盘点吗？': '{{ _("确认完成盘点吗？") }}',
+            '确认取消盘点吗？': '{{ _("确认取消盘点吗？") }}',
+            '所有项目都已录入实际数量': '{{ _("所有项目都已录入实际数量") }}',
+            '还有项目未录入实际数量': '{{ _("还有项目未录入实际数量") }}',
+            '请输入条形码': '{{ _("请输入条形码") }}',
+            '请输入搜索关键词': '{{ _("请输入搜索关键词") }}',
+            '暂无盘点任务': '{{ _("暂无盘点任务") }}',
+            '暂无盘点项目': '{{ _("暂无盘点项目") }}',
+            '暂无库存数据': '{{ _("暂无库存数据") }}',
+            '暂无反馈数据': '{{ _("暂无反馈数据") }}',
+            '暂无日志数据': '{{ _("暂无日志数据") }}',
+
+            // Data Analysis
+            '周对比分析创建成功！': '{{ _("周对比分析创建成功！") }}',
+            '手动对比分析创建成功！': '{{ _("手动对比分析创建成功！") }}',
+            '请选择要对比的盘点任务': '{{ _("请选择要对比的盘点任务") }}',
+            '请先选择两个不同的盘点任务': '{{ _("请先选择两个不同的盘点任务") }}',
+            '获取分析详情失败': '{{ _("获取分析详情失败") }}',
+            '暂无变化数据': '{{ _("暂无变化数据") }}',
+            '暂无异常检测结果': '{{ _("暂无异常检测结果") }}',
+
+            // Status Text
+            '进行中': '{{ _("进行中") }}',
+            '已完成': '{{ _("已完成") }}',
+            '已取消': '{{ _("已取消") }}',
+            '正常': '{{ _("正常") }}',
+            '停用': '{{ _("停用") }}',
+
+            // Button Text
+            '查看': '{{ _("查看") }}',
+            '编辑': '{{ _("编辑") }}',
+            '删除': '{{ _("删除") }}',
+            '继续': '{{ _("继续") }}',
+            '添加': '{{ _("添加") }}',
+            '移除': '{{ _("移除") }}',
+            '调库存': '{{ _("调库存") }}',
+            '处理': '{{ _("处理") }}',
+
+            // Additional JavaScript Text
+            '所有产品库存充足': '{{ _("所有产品库存充足") }}',
+            '加载失败': '{{ _("加载失败") }}',
+            '正面': '{{ _("正面") }}',
+            '负面': '{{ _("负面") }}',
+            '暂无最新反馈': '{{ _("暂无最新反馈") }}',
+            '网络错误': '{{ _("网络错误") }}',
+            '错误': '{{ _("错误") }}',
+            '成功': '{{ _("成功") }}',
+            '确认删除': '{{ _("确认删除") }}',
+            '确认': '{{ _("确认") }}',
+            '取消': '{{ _("取消") }}',
+            '保存': '{{ _("保存") }}',
+            '关闭': '{{ _("关闭") }}',
+            '加载中': '{{ _("加载中") }}',
+            '操作成功': '{{ _("操作成功") }}',
+            '操作失败': '{{ _("操作失败") }}',
+            '请输入': '{{ _("请输入") }}',
+            '请选择': '{{ _("请选择") }}',
+            '必填项': '{{ _("必填项") }}',
+            '格式错误': '{{ _("格式错误") }}',
+            '数据已保存': '{{ _("数据已保存") }}',
+            '数据保存失败': '{{ _("数据保存失败") }}',
+
+            // 库存盘点相关翻译
+            '进行中': '{{ _("进行中") }}',
+            '已完成': '{{ _("已完成") }}',
+            '已取消': '{{ _("已取消") }}',
+            '条形码': '{{ _("条形码") }}',
+            '存储区域': '{{ _("存储区域") }}',
+            '账面数量': '{{ _("账面数量") }}',
+            '实际数量': '{{ _("实际数量") }}',
+            '差异': '{{ _("差异") }}',
+            '暂无盘点项目': '{{ _("暂无盘点项目") }}',
+            '盘点任务详情': '{{ _("盘点任务详情") }}',
+            '任务ID': '{{ _("任务ID") }}',
+            '创建时间': '{{ _("创建时间") }}',
+            '操作员': '{{ _("操作员") }}',
+            '状态': '{{ _("状态") }}',
+            '备注': '{{ _("备注") }}',
+            '无': '{{ _("无") }}',
+            '盘点汇总': '{{ _("盘点汇总") }}',
+            '总项目': '{{ _("总项目") }}',
+            '有差异项目': '{{ _("有差异项目") }}',
+            '总差异价值': '{{ _("总差异价值") }}',
+            '盘点项目': '{{ _("盘点项目") }}',
+            '继续盘点': '{{ _("继续盘点") }}',
+
+            // 操作日志相关翻译
+            '暂无日志数据': '{{ _("暂无日志数据") }}',
+            '登录': '{{ _("登录") }}',
+            '登出': '{{ _("登出") }}',
+            '盘点': '{{ _("盘点") }}',
+            '完成盘点': '{{ _("完成盘点") }}',
+            '取消盘点': '{{ _("取消盘点") }}',
+            '处理反馈': '{{ _("处理反馈") }}',
+            '产品': '{{ _("产品") }}',
+            '盘点任务': '{{ _("盘点任务") }}',
+            '系统': '{{ _("系统") }}',
+            '导出': '{{ _("导出") }}',
+            '备份': '{{ _("备份") }}',
+            '失败': '{{ _("失败") }}',
+            '已取消': '{{ _("已取消") }}',
+            '待处理': '{{ _("待处理") }}',
+
+            // 补充缺失的翻译条目
+            '测试': '{{ _("测试") }}',
+            '创建': '{{ _("创建") }}',
+            '更新': '{{ _("更新") }}',
+            '库存': '{{ _("库存") }}',
+            '反馈': '{{ _("反馈") }}',
+            '管理员': '{{ _("管理员") }}',
+            '数据导出': '{{ _("数据导出") }}',
+            '库存调整': '{{ _("库存调整") }}'
+        };
+
+        // Translation Function
+        function _(text) {
+            return window.translations[text] || text;
+        }
+    </script>
+    <script src="{{ url_for('static', filename='js/admin.js') }}?v=20250101-4"></script>
+    <script>
+        // Language Switch Function
+        function changeLanguage(language) {
+            console.log('Switching to language:', language);
+            fetch(`/api/language/${language}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                credentials: 'same-origin'  // 确保发送session cookie
+            }).then(response => response.json())
+            .then(result => {
+                console.log('Language switch result:', result);
+                if (result.success) {
+                    // Reload page to apply new language
+                    window.location.reload();
+                } else {
+                    console.error('Language switch failed:', result.error);
+                }
+            }).catch(error => {
+                console.error('Language switch failed:', error);
+            });
+        }
+    </script>
 </body>
 </html>

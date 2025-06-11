@@ -222,3 +222,944 @@ msgstr "Clear Chat"
 msgid "欢迎使用果蔬客服AI助手！"
 msgstr "Welcome to Fruit & Vegetable AI Assistant!"
 
+# 管理后台专用文本
+msgid "管理后台"
+msgstr "Admin Panel"
+
+msgid "管理员登录"
+msgstr "Admin Login"
+
+msgid "控制台"
+msgstr "Dashboard"
+
+msgid "欢迎，管理员"
+msgstr "Welcome, Admin"
+
+# 页面标题
+msgid "管理员登录 - 果蔬客服AI系统"
+msgstr "Admin Login - Fruit & Vegetable AI System"
+
+msgid "管理员控制台 - 果蔬客服AI系统"
+msgstr "Admin Dashboard - Fruit & Vegetable AI System"
+
+msgid "果蔬客服AI系统后台管理"
+msgstr "Fruit & Vegetable AI System Admin Panel"
+
+# 菜单项
+msgid "产品入库"
+msgstr "Product Entry"
+
+msgid "库存盘点"
+msgstr "Inventory Count"
+
+msgid "数据对比分析"
+msgstr "Data Analysis"
+
+msgid "反馈管理"
+msgstr "Feedback Management"
+
+msgid "操作日志"
+msgstr "Operation Logs"
+
+msgid "数据导出"
+msgstr "Data Export"
+
+msgid "系统设置"
+msgstr "System Settings"
+
+# 表单标签
+msgid "产品名称"
+msgstr "Product Name"
+
+msgid "分类"
+msgstr "Category"
+
+msgid "价格"
+msgstr "Price"
+
+msgid "单位"
+msgstr "Unit"
+
+msgid "数量"
+msgstr "Quantity"
+
+msgid "存储区域"
+msgstr "Storage Area"
+
+# 按钮文本
+msgid "退出登录"
+msgstr "Logout"
+
+msgid "刷新"
+msgstr "Refresh"
+
+msgid "提交"
+msgstr "Submit"
+
+msgid "重置"
+msgstr "Reset"
+
+# 状态文本
+msgid "正在加载..."
+msgstr "Loading..."
+
+msgid "正在保存..."
+msgstr "Saving..."
+
+msgid "启用"
+msgstr "Enabled"
+
+msgid "停用"
+msgstr "Disabled"
+
+# 错误消息
+msgid "用户名或密码错误"
+msgstr "Invalid username or password"
+
+msgid "网络错误，请稍后再试"
+msgstr "Network error, please try again later"
+
+# 成功消息
+msgid "已退出登录"
+msgstr "Logged out successfully"
+
+msgid "保存成功"
+msgstr "Saved successfully"
+
+msgid "删除成功"
+msgstr "Deleted successfully"
+
+msgid "更新成功"
+msgstr "Updated successfully"
+
+# 确认消息
+msgid "确定要删除吗？"
+msgstr "Are you sure you want to delete?"
+
+msgid "确定要退出登录吗？"
+msgstr "Are you sure you want to logout?"
+
+# 默认文本
+msgid "默认账户：admin / admin123"
+msgstr "Default account: admin / admin123"
+
+msgid "返回客服系统"
+msgstr "Return to Chat System"
+
+# 语言切换
+msgid "语言"
+msgstr "Language"
+
+msgid "简体中文"
+msgstr "简体中文"
+
+msgid "English"
+msgstr "English"
+
+# 新增的API消息
+msgid "请输入用户名和密码"
+msgstr "Please enter username and password"
+
+msgid "系统暂时不可用"
+msgstr "System temporarily unavailable"
+
+msgid "登录失败，请稍后再试"
+msgstr "Login failed, please try again later"
+
+# 新增的界面文本
+msgid "系统概览"
+msgstr "System Overview"
+
+msgid "果蔬客服AI系统管理控制台"
+msgstr "Fruit & Vegetable AI System Admin Console"
+
+msgid "总产品数"
+msgstr "Total Products"
+
+msgid "低库存产品"
+msgstr "Low Stock Products"
+
+msgid "总反馈数"
+msgstr "Total Feedback"
+
+msgid "待处理反馈"
+msgstr "Pending Feedback"
+
+msgid "查看客服系统"
+msgstr "View Chat System"
+
+# 新增的界面文本 - 第二批
+msgid "库存状态"
+msgstr "Inventory Status"
+
+msgid "最新反馈"
+msgstr "Recent Feedback"
+
+msgid "正在加载库存数据..."
+msgstr "Loading inventory data..."
+
+msgid "正在加载反馈数据..."
+msgstr "Loading feedback data..."
+
+msgid "正在加载日志数据..."
+msgstr "Loading log data..."
+
+msgid "添加产品"
+msgstr "Add Product"
+
+msgid "搜索产品..."
+msgstr "Search products..."
+
+msgid "所有分类"
+msgstr "All Categories"
+
+msgid "所有状态"
+msgstr "All Status"
+
+msgid "正常"
+msgstr "Normal"
+
+msgid "停用"
+msgstr "Disabled"
+
+msgid "当前库存"
+msgstr "Current Stock"
+
+msgid "操作"
+msgstr "Actions"
+
+msgid "客户反馈管理"
+msgstr "Customer Feedback Management"
+
+msgid "添加反馈"
+msgstr "Add Feedback"
+
+msgid "搜索反馈..."
+msgstr "Search feedback..."
+
+msgid "所有类型"
+msgstr "All Types"
+
+msgid "正面反馈"
+msgstr "Positive Feedback"
+
+msgid "负面反馈"
+msgstr "Negative Feedback"
+
+msgid "已解决"
+msgstr "Resolved"
+
+msgid "客户昵称"
+msgstr "Customer Name"
+
+msgid "反馈类型"
+msgstr "Feedback Type"
+
+msgid "付款状态"
+msgstr "Payment Status"
+
+msgid "处理状态"
+msgstr "Processing Status"
+
+msgid "反馈时间"
+msgstr "Feedback Time"
+
+msgid "所有操作员"
+msgstr "All Operators"
+
+msgid "所有操作"
+msgstr "All Operations"
+
+msgid "创建"
+msgstr "Create"
+
+msgid "更新"
+msgstr "Update"
+
+msgid "库存调整"
+msgstr "Stock Adjustment"
+
+msgid "所有目标"
+msgstr "All Targets"
+
+msgid "库存"
+msgstr "Inventory"
+
+msgid "反馈"
+msgstr "Feedback"
+
+msgid "管理员"
+msgstr "Administrator"
+
+msgid "显示条数"
+msgstr "Display Count"
+
+msgid "时间"
+msgstr "Time"
+
+msgid "操作员"
+msgstr "Operator"
+
+msgid "操作类型"
+msgstr "Operation Type"
+
+msgid "目标类型"
+msgstr "Target Type"
+
+msgid "目标ID"
+msgstr "Target ID"
+
+msgid "结果"
+msgstr "Result"
+
+msgid "详情"
+msgstr "Details"
+
+msgid "库存数据导出"
+msgstr "Inventory Data Export"
+
+msgid "导出所有产品和库存信息"
+msgstr "Export all product and inventory information"
+
+msgid "导出CSV"
+msgstr "Export CSV"
+
+msgid "导出JSON"
+msgstr "Export JSON"
+
+msgid "生成报告"
+msgstr "Generate Report"
+
+msgid "反馈数据导出"
+msgstr "Feedback Data Export"
+
+msgid "导出所有客户反馈信息"
+msgstr "Export all customer feedback information"
+
+msgid "操作日志导出"
+msgstr "Operation Log Export"
+
+msgid "导出系统操作日志"
+msgstr "Export system operation logs"
+
+msgid "开始日期"
+msgstr "Start Date"
+
+msgid "结束日期"
+msgstr "End Date"
+
+msgid "完整数据备份"
+msgstr "Complete Data Backup"
+
+msgid "导出所有系统数据的完整备份"
+msgstr "Export complete backup of all system data"
+
+msgid "创建备份"
+msgstr "Create Backup"
+
+msgid "修改密码"
+msgstr "Change Password"
+
+msgid "当前密码"
+msgstr "Current Password"
+
+msgid "新密码"
+msgstr "New Password"
+
+msgid "确认新密码"
+msgstr "Confirm New Password"
+
+msgid "系统信息"
+msgstr "System Information"
+
+msgid "系统版本"
+msgstr "System Version"
+
+msgid "最后更新"
+msgstr "Last Update"
+
+msgid "运行状态"
+msgstr "Running Status"
+
+msgid "正常运行"
+msgstr "Running Normally"
+
+msgid "系统维护"
+msgstr "System Maintenance"
+
+msgid "清理旧日志"
+msgstr "Clear Old Logs"
+
+msgid "优化数据"
+msgstr "Optimize Data"
+
+msgid "重置系统"
+msgstr "Reset System"
+
+msgid "注意：系统维护操作可能影响系统性能，请在低峰期执行。"
+msgstr "Note: System maintenance operations may affect system performance, please execute during off-peak hours."
+
+# 模态框相关翻译
+msgid "产品分类"
+msgstr "Product Category"
+
+msgid "请选择分类"
+msgstr "Please select category"
+
+msgid "禽类产品"
+msgstr "Poultry Products"
+
+msgid "蛋类"
+msgstr "Eggs"
+
+msgid "美味熟食/面点"
+msgstr "Delicious Cooked Food/Pastries"
+
+msgid "新鲜蔬菜"
+msgstr "Fresh Vegetables"
+
+msgid "海鲜河鲜"
+msgstr "Seafood & River Fresh"
+
+msgid "时令水果"
+msgstr "Seasonal Fruits"
+
+msgid "优选干货"
+msgstr "Premium Dried Goods"
+
+msgid "如：个、斤、包"
+msgstr "e.g.: piece, pound, pack"
+
+msgid "规格"
+msgstr "Specification"
+
+msgid "如：500g、2个装"
+msgstr "e.g.: 500g, 2-pack"
+
+msgid "初始库存"
+msgstr "Initial Stock"
+
+msgid "最小库存警告"
+msgstr "Minimum Stock Warning"
+
+msgid "产品描述"
+msgstr "Product Description"
+
+msgid "产品关键词、特点等"
+msgstr "Product keywords, features, etc."
+
+msgid "产品图片URL"
+msgstr "Product Image URL"
+
+msgid "调整库存"
+msgstr "Adjust Stock"
+
+msgid "库存变动"
+msgstr "Stock Change"
+
+msgid "正数为增加库存，负数为减少库存"
+msgstr "Positive numbers increase stock, negative numbers decrease stock"
+
+msgid "备注"
+msgstr "Notes"
+
+msgid "库存变动原因..."
+msgstr "Reason for stock change..."
+
+msgid "确认调整"
+msgstr "Confirm Adjustment"
+
+msgid "反馈详情"
+msgstr "Feedback Details"
+
+msgid "添加客户反馈"
+msgstr "Add Customer Feedback"
+
+msgid "请选择类型"
+msgstr "Please select type"
+
+msgid "客户微信昵称"
+msgstr "Customer WeChat Name"
+
+msgid "客户所在群号"
+msgstr "Customer Group Number"
+
+msgid "请选择状态"
+msgstr "Please select status"
+
+msgid "已付款"
+msgstr "Paid"
+
+msgid "未付款"
+msgstr "Unpaid"
+
+msgid "反馈内容"
+msgstr "Feedback Content"
+
+msgid "客户反馈的具体内容..."
+msgstr "Specific content of customer feedback..."
+
+msgid "客户上传图片URL"
+msgstr "Customer Uploaded Image URLs"
+
+msgid "多个图片URL请用换行分隔"
+msgstr "Separate multiple image URLs with line breaks"
+
+msgid "每行一个图片URL"
+msgstr "One image URL per line"
+
+msgid "处理反馈"
+msgstr "Process Feedback"
+
+msgid "处理备注"
+msgstr "Processing Notes"
+
+msgid "处理过程、解决方案等..."
+msgstr "Processing steps, solutions, etc..."
+
+msgid "更新状态"
+msgstr "Update Status"
+
+# 产品入库页面专用翻译
+msgid "添加新产品到库存系统，自动生成条形码"
+msgstr "Add new products to inventory system with automatic barcode generation"
+
+msgid "产品信息"
+msgstr "Product Information"
+
+msgid "例：15元/斤"
+msgstr "e.g.: 15 yuan/jin"
+
+msgid "请选择单位"
+msgstr "Please select unit"
+
+msgid "斤"
+msgstr "Jin"
+
+msgid "个"
+msgstr "Piece"
+
+msgid "包"
+msgstr "Pack"
+
+msgid "盒"
+msgstr "Box"
+
+msgid "袋"
+msgstr "Bag"
+
+msgid "请选择存储区域"
+msgstr "Please select storage area"
+
+msgid "A区 - 水果区"
+msgstr "Area A - Fruits"
+
+msgid "B区 - 蔬菜区"
+msgstr "Area B - Vegetables"
+
+msgid "C区 - 肉类区"
+msgstr "Area C - Meat"
+
+msgid "D区 - 海鲜区"
+msgstr "Area D - Seafood"
+
+msgid "E区 - 熟食区"
+msgstr "Area E - Cooked Food"
+
+msgid "条形码预览"
+msgstr "Barcode Preview"
+
+msgid "输入产品信息后将自动生成条形码"
+msgstr "Barcode will be generated automatically after entering product information"
+
+msgid "条形码"
+msgstr "Barcode"
+
+msgid "产品ID"
+msgstr "Product ID"
+
+msgid "存储区域信息"
+msgstr "Storage Area Information"
+
+msgid "A区"
+msgstr "Area A"
+
+msgid "B区"
+msgstr "Area B"
+
+msgid "C区"
+msgstr "Area C"
+
+msgid "D区"
+msgstr "Area D"
+
+msgid "E区"
+msgstr "Area E"
+
+msgid "水果类产品"
+msgstr "Fruit Products"
+
+msgid "蔬菜类产品"
+msgstr "Vegetable Products"
+
+msgid "肉类产品"
+msgstr "Meat Products"
+
+msgid "海鲜类产品"
+msgstr "Seafood Products"
+
+msgid "熟食类产品"
+msgstr "Cooked Food Products"
+
+msgid "保存产品"
+msgstr "Save Product"
+
+msgid "重置表单"
+msgstr "Reset Form"
+
+# 库存盘点页面翻译
+msgid "库存盘点管理"
+msgstr "Inventory Count Management"
+
+msgid "创建新的盘点任务，系统化管理库存"
+msgstr "Create new count tasks for systematic inventory management"
+
+# 数据分析页面翻译
+msgid "库存数据对比分析"
+msgstr "Inventory Data Comparison Analysis"
+
+msgid "对比不同时期的库存数据，分析变化趋势"
+msgstr "Compare inventory data across different periods and analyze trends"
+
+# 客户反馈页面翻译
+msgid "客户反馈管理"
+msgstr "Customer Feedback Management"
+
+msgid "管理和处理客户反馈信息"
+msgstr "Manage and process customer feedback information"
+
+msgid "搜索反馈..."
+msgstr "Search feedback..."
+
+msgid "所有类型"
+msgstr "All Types"
+
+# 操作日志页面翻译
+msgid "系统操作日志"
+msgstr "System Operation Logs"
+
+msgid "查看系统操作记录和审计信息"
+msgstr "View system operation records and audit information"
+
+msgid "所有操作员"
+msgstr "All Operators"
+
+msgid "所有操作"
+msgstr "All Operations"
+
+msgid "所有目标"
+msgstr "All Targets"
+
+msgid "显示条数"
+msgstr "Display Count"
+
+# 数据导出页面翻译
+msgid "系统数据导出"
+msgstr "System Data Export"
+
+msgid "导出各类系统数据和生成报告"
+msgstr "Export various system data and generate reports"
+
+# 系统设置页面翻译
+msgid "系统配置与维护"
+msgstr "System Configuration & Maintenance"
+
+msgid "管理系统设置和执行维护操作"
+msgstr "Manage system settings and perform maintenance operations"
+
+# 库存盘点页面专用翻译
+msgid "创建和管理库存盘点任务，支持条形码扫描和手动录入"
+msgstr "Create and manage inventory count tasks with barcode scanning and manual entry support"
+
+msgid "+ 创建新盘点"
+msgstr "+ Create New Count"
+
+msgid "盘点任务列表"
+msgstr "Count Task List"
+
+msgid "任务ID"
+msgstr "Task ID"
+
+msgid "创建时间"
+msgstr "Created Time"
+
+msgid "产品数量"
+msgstr "Product Count"
+
+msgid "添加盘点产品"
+msgstr "Add Count Product"
+
+msgid "条形码扫描/输入"
+msgstr "Barcode Scan/Input"
+
+msgid "扫描或输入条形码"
+msgstr "Scan or enter barcode"
+
+msgid "或"
+msgstr "OR"
+
+msgid "产品搜索"
+msgstr "Product Search"
+
+msgid "搜索产品名称"
+msgstr "Search product name"
+
+msgid "当前盘点项目"
+msgstr "Current Count Items"
+
+msgid "任务ID: "
+msgstr "Task ID: "
+
+msgid "创建时间: "
+msgstr "Created Time: "
+
+msgid "项目数量: "
+msgstr "Item Count: "
+
+msgid "账面数量"
+msgstr "Book Quantity"
+
+msgid "实际数量"
+msgstr "Actual Quantity"
+
+msgid "差异"
+msgstr "Difference"
+
+msgid "暂无盘点项目"
+msgstr "No count items"
+
+msgid "总项目: "
+msgstr "Total Items: "
+
+msgid "已录入: "
+msgstr "Recorded: "
+
+msgid "有差异: "
+msgstr "With Difference: "
+
+msgid "完成盘点"
+msgstr "Complete Count"
+
+msgid "取消盘点"
+msgstr "Cancel Count"
+
+# 数据分析页面专用翻译
+msgid "对比不同时期的库存数据，分析变化趋势和异常情况"
+msgstr "Compare inventory data across different periods and analyze trends and anomalies"
+
+msgid "创建对比分析"
+msgstr "Create Comparison Analysis"
+
+msgid "周对比分析"
+msgstr "Weekly Comparison Analysis"
+
+msgid "自动对比最近一周的盘点数据"
+msgstr "Automatically compare count data from the past week"
+
+msgid "生成周对比"
+msgstr "Generate Weekly Comparison"
+
+msgid "手动对比选择"
+msgstr "Manual Comparison Selection"
+
+msgid "选择两个盘点任务进行对比"
+msgstr "Select two count tasks for comparison"
+
+msgid "当前盘点:"
+msgstr "Current Count:"
+
+msgid "对比盘点:"
+msgstr "Comparison Count:"
+
+msgid "请选择盘点任务"
+msgstr "Please select count task"
+
+msgid "开始对比"
+msgstr "Start Comparison"
+
+msgid "总产品数"
+msgstr "Total Products"
+
+msgid "变化产品数"
+msgstr "Changed Products"
+
+msgid "异常项目数"
+msgstr "Anomaly Items"
+
+msgid "总价值变化"
+msgstr "Total Value Change"
+
+msgid "变化明细"
+msgstr "Change Details"
+
+msgid "所有变化"
+msgstr "All Changes"
+
+msgid "库存增加"
+msgstr "Stock Increased"
+
+msgid "库存减少"
+msgstr "Stock Decreased"
+
+msgid "新增产品"
+msgstr "New Product"
+
+msgid "移除产品"
+msgstr "Removed Product"
+
+msgid "之前数量"
+msgstr "Previous Quantity"
+
+msgid "当前数量"
+msgstr "Current Quantity"
+
+msgid "变化量"
+msgstr "Change Amount"
+
+msgid "变化百分比"
+msgstr "Change Percentage"
+
+msgid "状态"
+msgstr "Status"
+
+msgid "暂无变化数据"
+msgstr "No change data"
+
+msgid "异常检测结果"
+msgstr "Anomaly Detection Results"
+
+msgid "暂无异常检测结果"
+msgstr "No anomaly detection results"
+
+msgid "报表生成"
+msgstr "Report Generation"
+
+msgid "📄 下载分析报告"
+msgstr "📄 Download Analysis Report"
+
+msgid "📊 导出Excel"
+msgstr "📊 Export Excel"
+
+msgid "📈 生成趋势图"
+msgstr "📈 Generate Trend Chart"
+
+msgid "分析时间："
+msgstr "Analysis Time:"
+
+msgid "对比范围："
+msgstr "Comparison Range:"
+
+msgid "分析类型："
+msgstr "Analysis Type:"
+
+# JavaScript翻译专用条目
+msgid "网络错误"
+msgstr "Network Error"
+
+msgid "产品删除成功"
+msgstr "Product deleted successfully"
+
+msgid "确认删除吗？"
+msgstr "Are you sure you want to delete?"
+
+msgid "反馈删除成功"
+msgstr "Feedback deleted successfully"
+
+msgid "盘点任务创建成功！"
+msgstr "Count task created successfully!"
+
+msgid "请输入盘点备注（可选）:"
+msgstr "Please enter count notes (optional):"
+
+msgid "确认完成盘点吗？"
+msgstr "Are you sure you want to complete the count?"
+
+msgid "确认取消盘点吗？"
+msgstr "Are you sure you want to cancel the count?"
+
+msgid "所有项目都已录入实际数量"
+msgstr "All items have actual quantities recorded"
+
+msgid "还有项目未录入实际数量"
+msgstr "Some items still need actual quantities recorded"
+
+msgid "请输入条形码"
+msgstr "Please enter barcode"
+
+msgid "请输入搜索关键词"
+msgstr "Please enter search keywords"
+
+msgid "暂无盘点任务"
+msgstr "No count tasks"
+
+msgid "暂无盘点项目"
+msgstr "No count items"
+
+msgid "暂无库存数据"
+msgstr "No inventory data"
+
+msgid "暂无反馈数据"
+msgstr "No feedback data"
+
+msgid "暂无日志数据"
+msgstr "No log data"
+
+msgid "周对比分析创建成功！"
+msgstr "Weekly comparison analysis created successfully!"
+
+msgid "手动对比分析创建成功！"
+msgstr "Manual comparison analysis created successfully!"
+
+msgid "请选择要对比的盘点任务"
+msgstr "Please select count tasks to compare"
+
+msgid "请先选择两个不同的盘点任务"
+msgstr "Please select two different count tasks first"
+
+msgid "获取分析详情失败"
+msgstr "Failed to get analysis details"
+
+msgid "暂无变化数据"
+msgstr "No change data"
+
+msgid "暂无异常检测结果"
+msgstr "No anomaly detection results"
+
+msgid "进行中"
+msgstr "In Progress"
+
+msgid "已取消"
+msgstr "Cancelled"
+
+msgid "查看"
+msgstr "View"
+
+msgid "继续"
+msgstr "Continue"
+
+msgid "移除"
+msgstr "Remove"
+
+msgid "调库存"
+msgstr "Adjust Stock"
+
+msgid "处理"
+msgstr "Process"
+
+# 语言切换相关
+msgid "语言切换失败:"
+msgstr "Language switch failed:"
+
+msgid "重新加载页面以应用新语言"
+msgstr "Reload page to apply new language"
+

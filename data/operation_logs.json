@@ -92,6 +92,21 @@
       "result": "success",
       "ip_address": "",
       "user_agent": ""
+    },
+    {
+      "log_id": "20250611010222_7",
+      "timestamp": "2025-06-11T01:02:22.861744",
+      "operator": "admin",
+      "operation_type": "export",
+      "target_type": "inventory",
+      "target_id": "all",
+      "details": {
+        "format": "csv",
+        "count": 65
+      },
+      "result": "success",
+      "ip_address": "",
+      "user_agent": ""
     }
   ]
 }

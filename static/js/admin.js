@@ -1,4 +1,6 @@
-// 管理员页面JavaScript
+// 管理员页面JavaScript - 版本: 20250101-4 (操作日志翻译修复版)
+console.log('🔄 Admin.js 加载完成 - 版本: 20250101-4');
+
 class AdminDashboard {
     constructor() {
         this.currentSection = 'dashboard';
@@ -9,8 +11,8 @@ class AdminDashboard {
 
     init() {
         this.setupEventListeners();
-        this.loadDashboardData();
         this.checkAuthStatus();
+        this.initializeFromURL();
     }
 
     setupEventListeners() {
@@ -111,17 +113,40 @@ class AdminDashboard {
         try {
             const response = await fetch('/api/admin/status');
             const result = await response.json();
-            
+
             if (!result.authenticated) {
                 window.location.href = '/admin/login';
                 return;
             }
-            
+
             document.getElementById('adminUsername').textContent = result.username || '管理员';
         } catch (error) {
             console.error('检查认证状态失败:', error);
             window.location.href = '/admin/login';
         }
+    }
+
+    initializeFromURL() {
+        // 检查URL路径，确定要显示的section
+        const path = window.location.pathname;
+        let defaultSection = 'dashboard';
+
+        if (path.includes('/admin/inventory/products/add')) {
+            defaultSection = 'inventory-add-product';
+        } else if (path.includes('/admin/inventory/counts')) {
+            defaultSection = 'inventory-counts';
+        } else if (path.includes('/admin/inventory/analysis')) {
+            defaultSection = 'inventory-analysis';
+        }
+
+        // 如果模板传递了默认section参数，优先使用
+        const templateSection = document.body.dataset.defaultSection;
+        if (templateSection) {
+            defaultSection = templateSection;
+        }
+
+        // 切换到对应的section
+        this.switchSection(defaultSection);
     }
 
     switchSection(section) {
@@ -219,11 +244,11 @@ class AdminDashboard {
                 html += '</div>';
                 statusDiv.innerHTML = html;
             } else {
-                statusDiv.innerHTML = '<p class="no-data">✅ 所有产品库存充足</p>';
+                statusDiv.innerHTML = `<p class="no-data">✅ ${_('所有产品库存充足')}</p>`;
             }
         } catch (error) {
             console.error('加载库存状态失败:', error);
-            document.getElementById('inventoryStatus').innerHTML = '<p class="error">加载失败</p>';
+            document.getElementById('inventoryStatus').innerHTML = `<p class="error">${_('加载失败')}</p>`;
         }
     }
 
@@ -238,7 +263,7 @@ class AdminDashboard {
                 let html = '<div class="recent-feedback-list">';
                 result.data.slice(0, 5).forEach(feedback => {
                     const typeClass = feedback.feedback_type === 'positive' ? 'feedback-positive' : 'feedback-negative';
-                    const typeText = feedback.feedback_type === 'positive' ? '正面' : '负面';
+                    const typeText = feedback.feedback_type === 'positive' ? _('正面') : _('负面');
                     
                     html += `
                         <div class="feedback-item">
@@ -256,11 +281,11 @@ class AdminDashboard {
                 html += '</div>';
                 feedbackDiv.innerHTML = html;
             } else {
-                feedbackDiv.innerHTML = '<p class="no-data">暂无最新反馈</p>';
+                feedbackDiv.innerHTML = `<p class="no-data">${_('暂无最新反馈')}</p>`;
             }
         } catch (error) {
             console.error('加载最新反馈失败:', error);
-            document.getElementById('recentFeedback').innerHTML = '<p class="error">加载失败</p>';
+            document.getElementById('recentFeedback').innerHTML = `<p class="error">${_('加载失败')}</p>`;
         }
     }
 
@@ -278,7 +303,7 @@ class AdminDashboard {
             }
         } catch (error) {
             console.error('加载库存数据失败:', error);
-            this.showError('网络错误');
+            this.showError(_('网络错误'));
         }
     }
 
@@ -286,14 +311,14 @@ class AdminDashboard {
         const tbody = document.getElementById('inventoryTableBody');
         
         if (data.length === 0) {
-            tbody.innerHTML = '<tr><td colspan="6" class="no-data">暂无库存数据</td></tr>';
+            tbody.innerHTML = `<tr><td colspan="6" class="no-data">${_('暂无库存数据')}</td></tr>`;
             return;
         }
 
         let html = '';
         data.forEach(product => {
             const statusClass = product.status === 'active' ? 'status-active' : 'status-inactive';
-            const statusText = product.status === 'active' ? '正常' : '停用';
+            const statusText = product.status === 'active' ? _('正常') : _('停用');
             const lowStock = product.current_stock <= product.min_stock_warning;
             
             html += `
@@ -310,9 +335,9 @@ class AdminDashboard {
                     </td>
                     <td><span class="${statusClass}">${statusText}</span></td>
                     <td>
-                        <button class="secondary-btn" onclick="admin.editProduct('${product.product_id}')">编辑</button>
-                        <button class="secondary-btn" onclick="admin.adjustStock('${product.product_id}')">调库存</button>
-                        <button class="danger-btn" onclick="admin.deleteProduct('${product.product_id}')">删除</button>
+                        <button class="secondary-btn" onclick="admin.editProduct('${product.product_id}')">${_('编辑')}</button>
+                        <button class="secondary-btn" onclick="admin.adjustStock('${product.product_id}')">${_('调库存')}</button>
+                        <button class="danger-btn" onclick="admin.deleteProduct('${product.product_id}')">${_('删除')}</button>
                     </td>
                 </tr>
             `;
@@ -334,7 +359,7 @@ class AdminDashboard {
             }
         } catch (error) {
             console.error('加载反馈数据失败:', error);
-            this.showError('网络错误');
+            this.showError(_('网络错误'));
         }
     }
 
@@ -342,14 +367,14 @@ class AdminDashboard {
         const tbody = document.getElementById('feedbackTableBody');
         
         if (data.length === 0) {
-            tbody.innerHTML = '<tr><td colspan="7" class="no-data">暂无反馈数据</td></tr>';
+            tbody.innerHTML = `<tr><td colspan="7" class="no-data">${_('暂无反馈数据')}</td></tr>`;
             return;
         }
 
         let html = '';
         data.forEach(feedback => {
             const typeClass = feedback.feedback_type === 'positive' ? 'feedback-positive' : 'feedback-negative';
-            const typeText = feedback.feedback_type === 'positive' ? '正面反馈' : '负面反馈';
+            const typeText = feedback.feedback_type === 'positive' ? _('正面反馈') : _('负面反馈');
             
             let statusClass = 'status-pending';
             if (feedback.processing_status === '处理中') statusClass = 'status-processing';
@@ -364,9 +389,9 @@ class AdminDashboard {
                     <td><span class="${statusClass}">${feedback.processing_status}</span></td>
                     <td>${new Date(feedback.feedback_time).toLocaleString()}</td>
                     <td>
-                        <button class="secondary-btn" onclick="admin.viewFeedback('${feedback.feedback_id}')">查看</button>
-                        <button class="secondary-btn" onclick="admin.processFeedback('${feedback.feedback_id}')">处理</button>
-                        <button class="danger-btn" onclick="admin.deleteFeedback('${feedback.feedback_id}')">删除</button>
+                        <button class="secondary-btn" onclick="admin.viewFeedback('${feedback.feedback_id}')">${_('查看')}</button>
+                        <button class="secondary-btn" onclick="admin.processFeedback('${feedback.feedback_id}')">${_('处理')}</button>
+                        <button class="danger-btn" onclick="admin.deleteFeedback('${feedback.feedback_id}')">${_('删除')}</button>
                     </td>
                 </tr>
             `;
@@ -448,11 +473,42 @@ class AdminDashboard {
     }
 
     showError(message) {
-        alert('错误: ' + message);
+        alert(_('错误') + ': ' + message);
     }
 
     showSuccess(message) {
-        alert('成功: ' + message);
+        alert(_('成功') + ': ' + message);
+    }
+
+    showModal(content) {
+        const modal = document.getElementById('modal');
+        const modalBody = document.getElementById('modalBody');
+
+        if (modal && modalBody) {
+            modalBody.innerHTML = content;
+            modal.style.display = 'block';
+
+            // 点击模态框外部关闭
+            modal.onclick = (e) => {
+                if (e.target === modal) {
+                    this.hideModal();
+                }
+            };
+
+            // ESC键关闭
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape') {
+                    this.hideModal();
+                }
+            });
+        }
+    }
+
+    hideModal() {
+        const modal = document.getElementById('modal');
+        if (modal) {
+            modal.style.display = 'none';
+        }
     }
 
     // 库存相关方法
@@ -523,7 +579,7 @@ class AdminDashboard {
     // 产品管理方法
     showAddProductModal() {
         this.showModalTemplate('productModal');
-        document.getElementById('productModalTitle').textContent = '添加产品';
+        document.getElementById('productModalTitle').textContent = _('添加产品');
         document.getElementById('productForm').reset();
     }
 
@@ -585,7 +641,7 @@ class AdminDashboard {
     }
 
     async deleteProduct(productId) {
-        if (confirm('确定要删除这个产品吗？此操作将设置产品状态为停用。')) {
+        if (confirm(_('确定要删除这个产品吗？此操作将设置产品状态为停用。'))) {
             try {
                 const response = await fetch(`/api/admin/inventory/${productId}`, {
                     method: 'DELETE'
@@ -618,7 +674,7 @@ class AdminDashboard {
 
             if (result.success) {
                 const feedback = result.data;
-                const typeText = feedback.feedback_type === 'positive' ? '正面反馈' : '负面反馈';
+                const typeText = feedback.feedback_type === 'positive' ? _('正面反馈') : _('负面反馈');
                 const typeClass = feedback.feedback_type === 'positive' ? 'feedback-positive' : 'feedback-negative';
 
                 let customerImages = '';
@@ -631,36 +687,36 @@ class AdminDashboard {
                 const content = `
                     <div class="feedback-detail">
                         <div class="detail-row">
-                            <strong>产品名称：</strong>${feedback.product_name}
+                            <strong>${_('产品名称')}：</strong>${feedback.product_name}
                         </div>
                         <div class="detail-row">
-                            <strong>反馈类型：</strong><span class="${typeClass}">${typeText}</span>
+                            <strong>${_('反馈类型')}：</strong><span class="${typeClass}">${typeText}</span>
                         </div>
                         <div class="detail-row">
-                            <strong>客户昵称：</strong>${feedback.customer_wechat_name}
+                            <strong>${_('客户昵称')}：</strong>${feedback.customer_wechat_name}
                         </div>
                         <div class="detail-row">
-                            <strong>客户群号：</strong>${feedback.customer_group_number}
+                            <strong>${_('客户群号')}：</strong>${feedback.customer_group_number}
                         </div>
                         <div class="detail-row">
-                            <strong>付款状态：</strong>${feedback.payment_status}
+                            <strong>${_('付款状态')}：</strong>${feedback.payment_status}
                         </div>
                         <div class="detail-row">
-                            <strong>反馈时间：</strong>${new Date(feedback.feedback_time).toLocaleString()}
+                            <strong>${_('反馈时间')}：</strong>${new Date(feedback.feedback_time).toLocaleString()}
                         </div>
                         <div class="detail-row">
-                            <strong>处理状态：</strong>${feedback.processing_status}
+                            <strong>${_('处理状态')}：</strong>${feedback.processing_status}
                         </div>
-                        ${feedback.processor ? `<div class="detail-row"><strong>处理人：</strong>${feedback.processor}</div>` : ''}
+                        ${feedback.processor ? `<div class="detail-row"><strong>${_('处理人')}：</strong>${feedback.processor}</div>` : ''}
                         <div class="detail-row">
-                            <strong>反馈内容：</strong>
+                            <strong>${_('反馈内容')}：</strong>
                             <div style="margin-top: 5px; padding: 10px; background: #f8f9fa; border-radius: 4px;">
                                 ${feedback.feedback_content}
                             </div>
                         </div>
                         ${feedback.processing_notes ? `
                             <div class="detail-row">
-                                <strong>处理备注：</strong>
+                                <strong>${_('处理备注')}：</strong>
                                 <div style="margin-top: 5px; padding: 10px; background: #f8f9fa; border-radius: 4px;">
                                     ${feedback.processing_notes}
                                 </div>
@@ -668,7 +724,7 @@ class AdminDashboard {
                         ` : ''}
                         ${customerImages ? `
                             <div class="detail-row">
-                                <strong>客户图片：</strong>
+                                <strong>${_('客户图片')}：</strong>
                                 <div style="margin-top: 5px;">
                                     ${customerImages}
                                 </div>
@@ -677,7 +733,7 @@ class AdminDashboard {
                     </div>
                 `;
 
-                this.showModal('反馈详情', content);
+                this.showModal(_('反馈详情'), content);
             } else {
                 this.showError(result.error || '获取反馈详情失败');
             }
@@ -702,9 +758,9 @@ class AdminDashboard {
 
                 document.getElementById('processFeedbackInfo').innerHTML = `
                     <h4>${feedback.product_name}</h4>
-                    <p><strong>客户：</strong>${feedback.customer_wechat_name}</p>
-                    <p><strong>反馈类型：</strong>${feedback.feedback_type === 'positive' ? '正面反馈' : '负面反馈'}</p>
-                    <p><strong>当前状态：</strong>${feedback.processing_status}</p>
+                    <p><strong>${_('客户')}：</strong>${feedback.customer_wechat_name}</p>
+                    <p><strong>${_('反馈类型')}：</strong>${feedback.feedback_type === 'positive' ? _('正面反馈') : _('负面反馈')}</p>
+                    <p><strong>${_('当前状态')}：</strong>${feedback.processing_status}</p>
                 `;
             } else {
                 this.showError(result.error || '获取反馈信息失败');
@@ -903,7 +959,7 @@ class AdminDashboard {
         const tbody = document.getElementById('logsTableBody');
 
         if (data.length === 0) {
-            tbody.innerHTML = '<tr><td colspan="7" class="no-data">暂无日志数据</td></tr>';
+            tbody.innerHTML = `<tr><td colspan="7" class="no-data">${_('暂无日志数据')}</td></tr>`;
             return;
         }
 
@@ -913,20 +969,71 @@ class AdminDashboard {
             const resultClass = `result-${log.result}`;
             const details = JSON.stringify(log.details || {});
 
+            // 翻译操作类型
+            const operationType = this.translateOperationType(log.operation_type);
+            // 翻译目标类型
+            const targetType = this.translateTargetType(log.target_type);
+            // 翻译结果
+            const result = this.translateResult(log.result);
+
             html += `
                 <tr>
                     <td>${timestamp}</td>
                     <td>${log.operator}</td>
-                    <td>${log.operation_type}</td>
-                    <td>${log.target_type}</td>
+                    <td>${operationType}</td>
+                    <td>${targetType}</td>
                     <td>${log.target_id}</td>
-                    <td><span class="${resultClass}">${log.result}</span></td>
+                    <td><span class="${resultClass}">${result}</span></td>
                     <td><div class="log-details" title="${details}">${details}</div></td>
                 </tr>
             `;
         });
 
         tbody.innerHTML = html;
+    }
+
+    translateOperationType(operationType) {
+        const translations = {
+            'create': _('创建'),
+            'update': _('更新'),
+            'delete': _('删除'),
+            'view': _('查看'),
+            'update_stock': _('库存调整'),
+            'export': _('数据导出'),
+            'login': _('登录'),
+            'logout': _('登出'),
+            'count': _('盘点'),
+            'complete_count': _('完成盘点'),
+            'cancel_count': _('取消盘点'),
+            'process_feedback': _('处理反馈'),
+            'test': _('测试')
+        };
+        return translations[operationType] || operationType;
+    }
+
+    translateTargetType(targetType) {
+        const translations = {
+            'inventory': _('库存'),
+            'feedback': _('反馈'),
+            'admin': _('管理员'),
+            'product': _('产品'),
+            'count_task': _('盘点任务'),
+            'system': _('系统'),
+            'export': _('导出'),
+            'backup': _('备份')
+        };
+        return translations[targetType] || targetType;
+    }
+
+    translateResult(result) {
+        const translations = {
+            'success': _('成功'),
+            'failed': _('失败'),
+            'error': _('错误'),
+            'cancelled': _('已取消'),
+            'pending': _('待处理')
+        };
+        return translations[result] || result;
     }
 
     filterLogs() {
@@ -1230,7 +1337,7 @@ class AdminDashboard {
         const tbody = document.getElementById('countTasksTableBody');
 
         if (tasks.length === 0) {
-            tbody.innerHTML = '<tr><td colspan="6" class="no-data">暂无盘点任务</td></tr>';
+            tbody.innerHTML = `<tr><td colspan="6" class="no-data">${_('暂无盘点任务')}</td></tr>`;
             return;
         }
 
@@ -1238,9 +1345,9 @@ class AdminDashboard {
         tasks.forEach(task => {
             const statusClass = `status-${task.status.replace('_', '-')}`;
             const statusText = {
-                'in_progress': '进行中',
-                'completed': '已完成',
-                'cancelled': '已取消'
+                'in_progress': _('进行中'),
+                'completed': _('已完成'),
+                'cancelled': _('已取消')
             }[task.status] || task.status;
 
             html += `
@@ -1251,9 +1358,9 @@ class AdminDashboard {
                     <td><span class="${statusClass}">${statusText}</span></td>
                     <td>${task.summary.total_items}</td>
                     <td>
-                        <button class="secondary-btn" onclick="admin.viewCountTask('${task.count_id}')">查看</button>
+                        <button class="secondary-btn" onclick="admin.viewCountTask('${task.count_id}')">${_('查看')}</button>
                         ${task.status === 'in_progress' ?
-                            `<button class="primary-btn" onclick="admin.continueCountTask('${task.count_id}')">继续</button>` :
+                            `<button class="primary-btn" onclick="admin.continueCountTask('${task.count_id}')">${_('继续')}</button>` :
                             ''
                         }
                     </td>
@@ -1264,9 +1371,38 @@ class AdminDashboard {
         tbody.innerHTML = html;
     }
 
+    async filterCountTasks() {
+        try {
+            const statusFilter = document.getElementById('countStatusFilter')?.value;
+
+            let url = '/api/admin/inventory/counts';
+            if (statusFilter) {
+                url += `?status=${statusFilter}`;
+            }
+
+            const response = await fetch(url);
+            const result = await response.json();
+
+            if (result.success) {
+                this.renderCountTasksTable(result.data);
+
+                // 更新过滤提示
+                const filterInfo = statusFilter ?
+                    `已过滤显示: ${{'in_progress': '进行中', 'completed': '已完成', 'cancelled': '已取消'}[statusFilter] || statusFilter}任务` :
+                    '显示所有任务';
+                console.log(filterInfo);
+            } else {
+                this.showError('过滤盘点任务失败');
+            }
+        } catch (error) {
+            console.error('过滤盘点任务失败:', error);
+            this.showError('网络错误');
+        }
+    }
+
     async createCountTask() {
         try {
-            const note = prompt('请输入盘点备注（可选）:') || '';
+            const note = prompt(_('请输入盘点备注（可选）:')) || '';
 
             const response = await fetch('/api/admin/inventory/counts', {
                 method: 'POST',
@@ -1279,7 +1415,7 @@ class AdminDashboard {
             const result = await response.json();
 
             if (result.success) {
-                this.showSuccess('盘点任务创建成功！');
+                this.showSuccess(_('盘点任务创建成功！'));
                 this.loadCountTasks();
                 this.continueCountTask(result.count_id);
             } else {
@@ -1289,6 +1425,122 @@ class AdminDashboard {
             console.error('创建盘点任务失败:', error);
             this.showError('网络错误');
         }
+    }
+
+    async viewCountTask(countId) {
+        try {
+            const response = await fetch(`/api/admin/inventory/counts/${countId}`);
+            const result = await response.json();
+
+            if (result.success) {
+                const task = result.data;
+
+                // 显示盘点任务详情模态框
+                this.showCountTaskDetail(task);
+            } else {
+                this.showError('获取盘点任务详情失败');
+            }
+        } catch (error) {
+            console.error('获取盘点任务详情失败:', error);
+            this.showError('网络错误');
+        }
+    }
+
+    showCountTaskDetail(task) {
+        const statusText = {
+            'in_progress': _('进行中'),
+            'completed': _('已完成'),
+            'cancelled': _('已取消')
+        }[task.status] || task.status;
+
+        const statusClass = `status-${task.status.replace('_', '-')}`;
+
+        let itemsHtml = '';
+        if (task.items && task.items.length > 0) {
+            itemsHtml = `
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>${_('产品名称')}</th>
+                            <th>${_('条形码')}</th>
+                            <th>${_('存储区域')}</th>
+                            <th>${_('账面数量')}</th>
+                            <th>${_('实际数量')}</th>
+                            <th>${_('差异')}</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${task.items.map(item => {
+                            const difference = (item.actual_quantity || 0) - item.expected_quantity;
+                            const differenceClass = difference > 0 ? 'positive' : difference < 0 ? 'negative' : 'neutral';
+                            const differenceDisplay = difference !== 0 ? (difference > 0 ? `+${difference}` : difference) : '0';
+
+                            return `
+                                <tr>
+                                    <td>${item.product_name}</td>
+                                    <td>${item.barcode}</td>
+                                    <td>${item.storage_area}</td>
+                                    <td>${item.expected_quantity}</td>
+                                    <td>${item.actual_quantity || '-'}</td>
+                                    <td><span class="${differenceClass}">${differenceDisplay}</span></td>
+                                </tr>
+                            `;
+                        }).join('')}
+                    </tbody>
+                </table>
+            `;
+        } else {
+            itemsHtml = `<p class="no-data">${_('暂无盘点项目')}</p>`;
+        }
+
+        const modalContent = `
+            <div class="count-task-detail">
+                <h3>${_('盘点任务详情')}</h3>
+                <div class="task-info">
+                    <div class="info-row">
+                        <span class="label">${_('任务ID')}:</span>
+                        <span class="value">${task.count_id}</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="label">${_('创建时间')}:</span>
+                        <span class="value">${new Date(task.count_date).toLocaleString()}</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="label">${_('操作员')}:</span>
+                        <span class="value">${task.operator}</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="label">${_('状态')}:</span>
+                        <span class="value"><span class="${statusClass}">${statusText}</span></span>
+                    </div>
+                    <div class="info-row">
+                        <span class="label">${_('备注')}:</span>
+                        <span class="value">${task.note || _('无')}</span>
+                    </div>
+                </div>
+                <div class="task-summary">
+                    <h4>${_('盘点汇总')}</h4>
+                    <div class="summary-stats">
+                        <span>${_('总项目')}: <strong>${task.summary.total_items}</strong></span>
+                        <span>${_('有差异项目')}: <strong>${task.summary.items_with_difference}</strong></span>
+                        <span>${_('总差异价值')}: <strong>¥${task.summary.total_difference_value.toFixed(2)}</strong></span>
+                    </div>
+                </div>
+                <div class="task-items">
+                    <h4>${_('盘点项目')}</h4>
+                    ${itemsHtml}
+                </div>
+                <div class="modal-actions">
+                    ${task.status === 'in_progress' ?
+                        `<button class="primary-btn" onclick="admin.continueCountTask('${task.count_id}'); admin.hideModal();">${_('继续盘点')}</button>` :
+                        ''
+                    }
+                    <button class="secondary-btn" onclick="admin.hideModal();">${_('关闭')}</button>
+                </div>
+            </div>
+        `;
+
+        this.showModal(modalContent);
     }
 
     async continueCountTask(countId) {
@@ -1482,6 +1734,161 @@ class AdminDashboard {
         }
     }
 
+    async searchProductsForCount() {
+        const keyword = document.getElementById('productSearchInput')?.value.trim();
+        if (!keyword) {
+            this.showError('请输入搜索关键词');
+            return;
+        }
+
+        if (!this.currentCountTask) {
+            this.showError('请先选择一个盘点任务');
+            return;
+        }
+
+        try {
+            const response = await fetch(`/api/admin/inventory/search?keyword=${encodeURIComponent(keyword)}`);
+            const result = await response.json();
+
+            if (result.success && result.data.length > 0) {
+                this.showProductSearchResults(result.data);
+            } else {
+                this.showError('未找到匹配的产品');
+            }
+        } catch (error) {
+            console.error('搜索产品失败:', error);
+            this.showError('网络错误');
+        }
+    }
+
+    showProductSearchResults(products) {
+        const resultsHtml = products.map(product => `
+            <div class="search-result-item">
+                <div class="product-info">
+                    <strong>${product.product_name}</strong>
+                    <span class="product-category">${product.category}</span>
+                    <span class="product-stock">库存: ${product.current_stock}</span>
+                </div>
+                <button class="secondary-btn" onclick="admin.addProductToCount('${product.product_id}')">
+                    添加到盘点
+                </button>
+            </div>
+        `).join('');
+
+        this.showModal('搜索结果', `
+            <div class="product-search-results">
+                ${resultsHtml}
+            </div>
+            <div style="text-align: center; margin-top: 20px;">
+                <button class="secondary-btn" onclick="admin.closeModal()">关闭</button>
+            </div>
+        `);
+    }
+
+    async addProductToCount(productId) {
+        if (!this.currentCountTask) {
+            this.showError('请先选择一个盘点任务');
+            return;
+        }
+
+        try {
+            const response = await fetch(`/api/admin/inventory/counts/${this.currentCountTask.count_id}/items`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ product_id: productId })
+            });
+
+            const result = await response.json();
+
+            if (result.success) {
+                this.showSuccess('产品已添加到盘点列表');
+                this.closeModal();
+                // 重新加载当前盘点任务
+                this.continueCountTask(this.currentCountTask.count_id);
+            } else {
+                this.showError(result.error || '添加产品失败');
+            }
+        } catch (error) {
+            console.error('添加产品失败:', error);
+            this.showError('网络错误');
+        }
+    }
+
+    async completeCurrentCount() {
+        if (!this.currentCountTask) {
+            this.showError('没有正在进行的盘点任务');
+            return;
+        }
+
+        // 检查是否所有项目都已录入实际数量
+        const incompleteItems = this.currentCountTask.items.filter(item => item.actual_quantity === null);
+        if (incompleteItems.length > 0) {
+            this.showError(`还有 ${incompleteItems.length} 个产品未录入实际数量`);
+            return;
+        }
+
+        if (!confirm('确定要完成当前盘点任务吗？完成后将无法修改。')) {
+            return;
+        }
+
+        try {
+            const response = await fetch(`/api/admin/inventory/counts/${this.currentCountTask.count_id}/complete`, {
+                method: 'POST'
+            });
+
+            const result = await response.json();
+
+            if (result.success) {
+                this.showSuccess('盘点任务已完成！');
+                this.hideCurrentCountSection();
+                this.loadCountTasks();
+            } else {
+                this.showError(result.error || '完成盘点任务失败');
+            }
+        } catch (error) {
+            console.error('完成盘点任务失败:', error);
+            this.showError('网络错误');
+        }
+    }
+
+    async cancelCurrentCount() {
+        if (!this.currentCountTask) {
+            this.showError('没有正在进行的盘点任务');
+            return;
+        }
+
+        const reason = prompt('请输入取消原因（可选）:') || '';
+
+        if (!confirm('确定要取消当前盘点任务吗？取消后数据将无法恢复。')) {
+            return;
+        }
+
+        try {
+            const response = await fetch(`/api/admin/inventory/counts/${this.currentCountTask.count_id}`, {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ reason })
+            });
+
+            const result = await response.json();
+
+            if (result.success) {
+                this.showSuccess('盘点任务已取消');
+                this.hideCurrentCountSection();
+                this.loadCountTasks();
+            } else {
+                this.showError(result.error || '取消盘点任务失败');
+            }
+        } catch (error) {
+            console.error('取消盘点任务失败:', error);
+            this.showError('网络错误');
+        }
+    }
+
     // ==================== 数据对比分析页面方法 ====================
 
     loadInventoryAnalysisPage() {
@@ -1519,14 +1926,24 @@ class AdminDashboard {
 
     async createWeeklyAnalysis() {
         try {
+            // 第一步：创建周对比分析
             const response = await fetch('/api/admin/inventory/comparisons/weekly', {
                 method: 'POST'
             });
 
             const result = await response.json();
 
-            if (result.success) {
-                this.showAnalysisResults(result.data);
+            if (result.success && result.comparison_id) {
+                // 第二步：获取完整的分析数据
+                const detailResponse = await fetch(`/api/admin/inventory/comparisons/${result.comparison_id}`);
+                const detailResult = await detailResponse.json();
+
+                if (detailResult.success) {
+                    this.showAnalysisResults(detailResult.data);
+                    this.showSuccess('周对比分析创建成功！');
+                } else {
+                    this.showError('获取分析详情失败');
+                }
             } else {
                 this.showError(result.error || '生成周对比分析失败');
             }
@@ -1551,6 +1968,7 @@ class AdminDashboard {
         }
 
         try {
+            // 第一步：创建对比分析
             const response = await fetch('/api/admin/inventory/comparisons', {
                 method: 'POST',
                 headers: {
@@ -1565,8 +1983,17 @@ class AdminDashboard {
 
             const result = await response.json();
 
-            if (result.success) {
-                this.showAnalysisResults(result.data);
+            if (result.success && result.comparison_id) {
+                // 第二步：获取完整的分析数据
+                const detailResponse = await fetch(`/api/admin/inventory/comparisons/${result.comparison_id}`);
+                const detailResult = await detailResponse.json();
+
+                if (detailResult.success) {
+                    this.showAnalysisResults(detailResult.data);
+                    this.showSuccess('手动对比分析创建成功！');
+                } else {
+                    this.showError('获取分析详情失败');
+                }
             } else {
                 this.showError(result.error || '生成对比分析失败');
             }

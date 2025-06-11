@@ -272,12 +272,20 @@ static/barcodes/
 static/barcodes/*.png
 static/barcodes/*.jpg
 
-# 测试文件（开发过程中的临时文件）
-test_api.py
-test_frontend.html
-INVENTORY_*.md
-INVENTORY_FEATURE_MATRIX.md
-INVENTORY_SYSTEM_ANALYSIS_REPORT.md
+# 临时文件目录（开发过程中的临时文件）
+temp/
+temp/*
+
+# 日志文件目录
+logs/
+logs/*
+
+# 备份文件目录
+backups/
+backups/*
+
+# 翻译编译文件
+translations/*/LC_MESSAGES/*.mo
 
 # 如果有本地测试数据文件
 # test_products.csv

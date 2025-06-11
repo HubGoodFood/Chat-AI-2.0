@@ -111,6 +111,59 @@ body {
     text-decoration: none;
 }
 
+/* 语言切换菜单样式 */
+.language-switcher {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    z-index: 1000;
+}
+
+.login-page .language-switcher {
+    position: fixed;
+}
+
+.language-switcher select {
+    padding: 8px 12px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    background: white;
+    color: #333;
+    font-size: 14px;
+    cursor: pointer;
+    min-width: 150px;
+    transition: border-color 0.3s;
+}
+
+.language-switcher select:focus {
+    outline: none;
+    border-color: #667eea;
+}
+
+.language-switcher select:hover {
+    border-color: #667eea;
+}
+
+/* 侧边栏中的语言切换 */
+.sidebar .language-switcher {
+    position: relative;
+    top: auto;
+    right: auto;
+    margin-bottom: 15px;
+}
+
+.sidebar .language-switcher select {
+    width: 100%;
+    background: #34495e;
+    color: white;
+    border: 1px solid #4a5f7a;
+}
+
+.sidebar .language-switcher select:focus,
+.sidebar .language-switcher select:hover {
+    border-color: #3498db;
+}
+
 /* 管理员页面布局 */
 .admin-page {
     background-color: #f8f9fa;

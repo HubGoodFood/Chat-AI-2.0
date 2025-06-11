@@ -1,7 +1,7 @@
 """
 果蔬客服AI系统 - Flask Web应用
 """
-from flask import Flask, render_template, request, jsonify, session
+from flask import Flask, render_template, request, jsonify, session, send_from_directory
 import uuid
 import os
 from datetime import datetime
@@ -13,7 +13,8 @@ from src.models.inventory_comparison_manager import InventoryComparisonManager
 from src.models.feedback_manager import FeedbackManager
 from src.models.operation_logger import operation_logger, log_admin_operation
 from src.models.data_exporter import data_exporter
-from src.utils.i18n_config import i18n_config, _, SystemMessages, UITexts
+from src.utils.i18n_simple import i18n_simple, _
+from src.utils.simple_flask_fix import apply_simple_fixes
 from dotenv import load_dotenv
 
 # 加载环境变量
@@ -22,8 +23,11 @@ load_dotenv()
 app = Flask(__name__)
 app.secret_key = os.environ.get('SECRET_KEY', 'fruit_vegetable_ai_service_2024')
 
-# 初始化国际化配置
-i18n_config.init_app(app)
+# 应用Flask配置修复
+apply_simple_fixes(app)
+
+# 初始化简洁的国际化配置
+i18n_simple.init_app(app)
 
 # 全局变量
 knowledge_retriever = None
@@ -241,10 +245,18 @@ def health_check():
 @app.route('/api/language', methods=['GET'])
 def get_language_info():
     """获取语言信息"""
+    print(f"[DEBUG] get_language_info被调用")
+    print(f"[DEBUG] i18n_simple.languages.keys(): {list(i18n_simple.languages.keys())}")
+    print(f"[DEBUG] 'en_US' in i18n_simple.languages: {'en_US' in i18n_simple.languages}")
+
     return jsonify({
         'success': True,
-        'current_language': i18n_config.get_current_language(),
-        'available_languages': i18n_config.get_available_languages()
+        'current_language': i18n_simple.get_current_language(),
+        'available_languages': i18n_simple.get_available_languages(),
+        'debug_info': {
+            'all_language_keys': list(i18n_simple.languages.keys()),
+            'en_US_exists': 'en_US' in i18n_simple.languages
+        }
     })
 
 
@@ -252,27 +264,72 @@ def get_language_info():
 def set_language(language_code):
     """设置语言"""
     try:
-        success = i18n_config.set_language(language_code)
+        print(f"[DEBUG] 设置语言请求: {language_code}")
+        print(f"[DEBUG] 当前session: {dict(session)}")
+
+        success = i18n_simple.set_language(language_code)
+        print(f"[DEBUG] 设置语言结果: {success}")
+        print(f"[DEBUG] 设置后session: {dict(session)}")
+
         if success:
             return jsonify({
                 'success': True,
-                'message': _('语言设置成功'),
-                'current_language': i18n_config.get_current_language()
+                'message': 'Language set successfully',
+                'current_language': i18n_simple.get_current_language()
             })
         else:
             return jsonify({
                 'success': False,
-                'error': _('不支持的语言')
+                'error': 'Unsupported language'
             })
     except Exception as e:
         print(f"设置语言错误: {e}")
         return jsonify({
             'success': False,
-            'error': _('设置语言失败')
+            'error': 'Failed to set language'
         })
+
+@app.route('/test-translation')
+def test_translation():
+    """测试翻译功能"""
+    import sys
+    print(f"[DEBUG] 测试翻译功能", flush=True)
+    print(f"[DEBUG] 当前语言: {i18n_simple.get_locale()}", flush=True)
+    print(f"[DEBUG] session内容: {dict(session)}", flush=True)
+    print(f"[DEBUG] 翻译测试 '管理后台': {i18n_simple.translate('管理后台')}", flush=True)
+    sys.stdout.flush()
+
+    return jsonify({
+        'current_language': i18n_simple.get_locale(),
+        'session': dict(session),
+        'translation_test': i18n_simple.translate('管理后台'),
+        'available_languages': i18n_simple.get_available_languages()
+    })
+
+
+@app.route('/test-translation-page')
+def test_translation_page():
+    """测试翻译页面"""
+    print(f"[DEBUG] 渲染翻译测试页面")
+    print(f"[DEBUG] 当前语言: {i18n_simple.get_locale()}")
+    return render_template('test_translation.html')
+
+
+@app.route('/final-translation-test')
+def final_translation_test():
+    """最终翻译测试页面"""
+    print(f"[DEBUG] 渲染最终翻译测试页面")
+    print(f"[DEBUG] 当前语言: {i18n_simple.get_locale()}")
+    return render_template('translation_test_final.html')
 
 
 # ==================== 管理员路由 ====================
+
+@app.route('/admin')
+def admin_redirect():
+    """管理员页面重定向"""
+    from flask import redirect, url_for
+    return redirect(url_for('admin_dashboard'))
 
 @app.route('/admin/login')
 def admin_login_page():
@@ -280,10 +337,74 @@ def admin_login_page():
     return render_template('admin/login.html')
 
 
+@app.route('/test/language')
+def test_language_debug():
+    """语言调试测试页面"""
+    print(f"[DEBUG] 访问语言测试页面")
+    return "Language test page - working!"
+
+
+@app.route('/test/lang')
+def test_lang_simple():
+    """简单语言测试"""
+    print(f"[DEBUG] 访问简单语言测试页面")
+    try:
+        return render_template('test_language.html')
+    except Exception as e:
+        print(f"[ERROR] 渲染测试页面失败: {e}")
+        return f"Error rendering test page: {e}"
+
+
+@app.route('/test/auto')
+def test_language_auto():
+    """自动语言测试页面"""
+    print(f"[DEBUG] 访问自动语言测试页面")
+    try:
+        with open('static/test_language_auto.html', 'r', encoding='utf-8') as f:
+            content = f.read()
+        return content
+    except Exception as e:
+        print(f"[ERROR] 读取自动测试页面失败: {e}")
+        return f"Error loading auto test page: {e}"
+
+
+@app.route('/debug/i18n')
+def debug_i18n():
+    """调试i18n配置"""
+    return jsonify({
+        'available_languages': list(i18n_simple.languages.keys()),
+        'en_US_exists': 'en_US' in i18n_simple.languages,
+        'current_language': i18n_simple.get_locale(),
+        'session_content': dict(session),
+        'languages_detail': i18n_simple.languages
+    })
+
+
 @app.route('/admin/dashboard')
 def admin_dashboard():
     """管理员控制台"""
+    print(f"[DEBUG] 渲染管理后台页面")
+    print(f"[DEBUG] 当前语言: {i18n_simple.get_locale()}")
+    print(f"[DEBUG] 翻译测试: {i18n_simple.translate('管理后台')}")
     return render_template('admin/dashboard.html')
+
+
+@app.route('/admin/inventory/products/add')
+def admin_inventory_add_product():
+    """产品入库页面"""
+    return render_template('admin/dashboard.html', default_section='inventory-add-product')
+
+
+@app.route('/admin/inventory/counts')
+def admin_inventory_counts():
+    """库存盘点页面"""
+    return render_template('admin/dashboard.html', default_section='inventory-counts')
+
+
+@app.route('/admin/inventory/analysis')
+def admin_inventory_analysis():
+    """数据对比分析页面"""
+    return render_template('admin/dashboard.html', default_section='inventory-analysis')
 
 
 @app.route('/api/admin/login', methods=['POST'])
@@ -297,7 +418,7 @@ def admin_login():
         if not username or not password:
             return jsonify({
                 'success': False,
-                'error': '请输入用户名和密码'
+                'error': _('请输入用户名和密码')
             })
 
         if admin_auth:
@@ -306,24 +427,24 @@ def admin_login():
                 session['admin_token'] = session_token
                 return jsonify({
                     'success': True,
-                    'message': '登录成功'
+                    'message': _('登录成功')
                 })
             else:
                 return jsonify({
                     'success': False,
-                    'error': '用户名或密码错误'
+                    'error': _('用户名或密码错误')
                 })
         else:
             return jsonify({
                 'success': False,
-                'error': '系统暂时不可用'
+                'error': _('系统暂时不可用')
             })
 
     except Exception as e:
         print(f"管理员登录错误: {e}")
         return jsonify({
             'success': False,
-            'error': '登录失败，请稍后再试'
+            'error': _('登录失败，请稍后再试')
         })
 
 
@@ -780,14 +901,13 @@ def get_count_task_detail(count_id):
 
 
 @app.route('/api/admin/inventory/counts/<count_id>/items', methods=['POST'])
-def add_count_item():
+def add_count_item(count_id):
     """添加盘点项目（支持条形码和产品ID）"""
     try:
         if not require_admin_auth():
             return jsonify({'success': False, 'error': '未授权访问'})
 
         data = request.get_json()
-        count_id = request.view_args['count_id']
         barcode = data.get('barcode', '').strip()
         product_id = data.get('product_id', '').strip()
 
@@ -829,15 +949,13 @@ def add_count_item():
 
 
 @app.route('/api/admin/inventory/counts/<count_id>/items/<product_id>/quantity', methods=['POST'])
-def record_actual_quantity():
+def record_actual_quantity(count_id, product_id):
     """记录产品的实际盘点数量"""
     try:
         if not require_admin_auth():
             return jsonify({'success': False, 'error': '未授权访问'})
 
         data = request.get_json()
-        count_id = request.view_args['count_id']
-        product_id = request.view_args['product_id']
         actual_quantity = data.get('actual_quantity')
         note = data.get('note', '')
 
@@ -876,13 +994,11 @@ def record_actual_quantity():
 
 
 @app.route('/api/admin/inventory/counts/<count_id>/complete', methods=['POST'])
-def complete_count_task():
+def complete_count_task(count_id):
     """完成盘点任务"""
     try:
         if not require_admin_auth():
             return jsonify({'success': False, 'error': '未授权访问'})
-
-        count_id = request.view_args['count_id']
 
         if inventory_count_manager:
             success = inventory_count_manager.complete_count_task(count_id)
@@ -907,6 +1023,42 @@ def complete_count_task():
         return jsonify({
             'success': False,
             'error': '完成盘点任务失败'
+        })
+
+
+@app.route('/api/admin/inventory/counts/<count_id>', methods=['DELETE'])
+def cancel_count_task(count_id):
+    """取消盘点任务"""
+    try:
+        if not require_admin_auth():
+            return jsonify({'success': False, 'error': '未授权访问'})
+
+        data = request.get_json() or {}
+        reason = data.get('reason', '')
+
+        if inventory_count_manager:
+            success = inventory_count_manager.cancel_count_task(count_id, reason)
+            if success:
+                return jsonify({
+                    'success': True,
+                    'message': '盘点任务已取消'
+                })
+            else:
+                return jsonify({
+                    'success': False,
+                    'error': '取消盘点任务失败'
+                })
+        else:
+            return jsonify({
+                'success': False,
+                'error': '库存盘点系统不可用'
+            })
+
+    except Exception as e:
+        print(f"取消盘点任务错误: {e}")
+        return jsonify({
+            'success': False,
+            'error': '取消盘点任务失败'
         })
 
 
