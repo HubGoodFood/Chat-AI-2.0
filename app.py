@@ -1,7 +1,8 @@
+# -*- coding: utf-8 -*-
 """
 果蔬客服AI系统 - Flask Web应用
 """
-from flask import Flask, render_template, request, jsonify, session, send_from_directory
+from flask import Flask, render_template, request, jsonify, session, send_from_directory, redirect, url_for, send_file
 import uuid
 import os
 from datetime import datetime
@@ -15,10 +16,15 @@ from src.models.operation_logger import operation_logger, log_admin_operation
 from src.models.data_exporter import data_exporter
 from src.utils.i18n_simple import i18n_simple, _
 from src.utils.simple_flask_fix import apply_simple_fixes
+from src.utils.logger_config import get_logger, safe_print
+from src.utils.barcode_batch_generator import BarcodeBatchGenerator
 from dotenv import load_dotenv
 
 # 加载环境变量
 load_dotenv()
+
+# 初始化日志记录器
+logger = get_logger('app')
 
 app = Flask(__name__)
 app.secret_key = os.environ.get('SECRET_KEY', 'fruit_vegetable_ai_service_2024')
@@ -50,9 +56,9 @@ def initialize_system():
         # nas_path = "/mnt/nas/ChatAI_Data/ChatAI_System/data"  # Linux示例
         # storage_success = initialize_storage(StorageType.NAS, nas_path=nas_path)
         # if storage_success:
-        #     print("✅ NAS存储系统初始化成功")
+        #     logger.info("NAS存储系统初始化成功")
         # else:
-        #     print("⚠️ NAS存储初始化失败，使用本地存储")
+        #     logger.warning("NAS存储初始化失败，使用本地存储")
 
         knowledge_retriever = KnowledgeRetriever()
         knowledge_retriever.initialize()
@@ -64,16 +70,10 @@ def initialize_system():
         inventory_comparison_manager = InventoryComparisonManager()
         feedback_manager = FeedbackManager()
 
-        try:
-            print("✅ 果蔬客服AI系统初始化成功！")
-        except UnicodeEncodeError:
-            print("AI Customer Service System initialized successfully!")
+        logger.info("果蔬客服AI系统初始化成功！")
         return True
     except Exception as e:
-        try:
-            print(f"❌ 系统初始化失败: {e}")
-        except UnicodeEncodeError:
-            print(f"System initialization failed: {e}")
+        logger.error(f"系统初始化失败: {e}")
         return False
 
 
@@ -94,47 +94,50 @@ def chat():
     try:
         data = request.get_json()
         user_message = data.get('message', '').strip()
-        
+
         if not user_message:
             return jsonify({
                 'success': False,
                 'error': '请输入您的问题'
             })
-        
+
         # 获取会话ID
         session_id = session.get('session_id')
         if not session_id:
             session_id = str(uuid.uuid4())
             session['session_id'] = session_id
             conversation_sessions[session_id] = []
-        
+
         # 获取对话历史
         conversation_history = conversation_sessions.get(session_id, [])
-        
+
         # 生成AI回复
         if knowledge_retriever:
             ai_response = knowledge_retriever.answer_question(user_message, conversation_history)
         else:
             ai_response = "抱歉，系统暂时不可用，请稍后再试。"
-        
+
         # 更新对话历史
         conversation_history.append({"role": "user", "content": user_message})
         conversation_history.append({"role": "assistant", "content": ai_response})
-        
+
         # 保持最近10轮对话
         if len(conversation_history) > 20:
             conversation_history = conversation_history[-20:]
-        
+
         conversation_sessions[session_id] = conversation_history
-        
+
         return jsonify({
             'success': True,
             'response': ai_response,
             'timestamp': datetime.now().strftime('%H:%M')
         })
-        
+
     except Exception as e:
-        print(f"聊天API错误: {e}")
+        try:
+            print(f"聊天API错误: {e}")
+        except UnicodeEncodeError:
+            print("Chat API error occurred (Unicode display issue)")
         return jsonify({
             'success': False,
             'error': '处理您的请求时出现错误，请稍后再试'
@@ -238,6 +241,9 @@ def health_check():
         'system_ready': knowledge_retriever is not None,
         'timestamp': datetime.now().isoformat()
     })
+
+
+
 
 
 # ==================== 国际化路由 ====================
@@ -399,6 +405,23 @@ def admin_inventory_add_product():
 def admin_inventory_counts():
     """库存盘点页面"""
     return render_template('admin/dashboard.html', default_section='inventory-counts')
+
+
+@app.route('/admin/pickup-locations-test')
+def admin_pickup_locations_test():
+    """测试路由"""
+    return "测试路由工作正常"
+
+@app.route('/admin/pickup-locations')
+def admin_pickup_locations():
+    """取货点管理页面"""
+    try:
+        if not require_admin_auth():
+            return redirect(url_for('admin_login_page'))
+        return render_template('admin/dashboard.html', default_section='pickup-locations')
+    except Exception as e:
+        print(f"取货点页面错误: {e}")
+        return f"错误: {e}", 500
 
 
 @app.route('/admin/inventory/analysis')
@@ -793,6 +816,279 @@ def delete_product_api(product_id):
         return jsonify({
             'success': False,
             'error': '删除产品失败'
+        })
+
+
+# ==================== 条形码相关API ====================
+
+@app.route('/api/admin/inventory/<product_id>/barcode', methods=['POST'])
+def generate_product_barcode(product_id):
+    """为产品生成条形码"""
+    try:
+        if not require_admin_auth():
+            return jsonify({'success': False, 'error': '未授权访问'})
+
+        # 获取操作员信息
+        admin_token = session.get('admin_token')
+        session_info = admin_auth.get_session_info(admin_token)
+        operator = session_info.get('username', '管理员') if session_info else '管理员'
+
+        if inventory_manager:
+            success = inventory_manager.regenerate_barcode(product_id, operator)
+            if success:
+                return jsonify({
+                    'success': True,
+                    'message': '条形码生成成功'
+                })
+            else:
+                return jsonify({
+                    'success': False,
+                    'error': '产品不存在或生成失败'
+                })
+        else:
+            return jsonify({
+                'success': False,
+                'error': '库存管理系统不可用'
+            })
+
+    except Exception as e:
+        logger.error(f"生成条形码失败: {e}")
+        return jsonify({
+            'success': False,
+            'error': '生成条形码失败'
+        })
+
+
+@app.route('/api/admin/inventory/<product_id>/barcode/regenerate', methods=['POST'])
+def regenerate_product_barcode(product_id):
+    """重新生成产品条形码"""
+    try:
+        if not require_admin_auth():
+            return jsonify({'success': False, 'error': '未授权访问'})
+
+        # 获取操作员信息
+        admin_token = session.get('admin_token')
+        session_info = admin_auth.get_session_info(admin_token)
+        operator = session_info.get('username', '管理员') if session_info else '管理员'
+
+        if inventory_manager:
+            success = inventory_manager.regenerate_barcode(product_id, operator)
+            if success:
+                return jsonify({
+                    'success': True,
+                    'message': '条形码重新生成成功'
+                })
+            else:
+                return jsonify({
+                    'success': False,
+                    'error': '产品不存在或重新生成失败'
+                })
+        else:
+            return jsonify({
+                'success': False,
+                'error': '库存管理系统不可用'
+            })
+
+    except Exception as e:
+        logger.error(f"重新生成条形码失败: {e}")
+        return jsonify({
+            'success': False,
+            'error': '重新生成条形码失败'
+        })
+
+
+@app.route('/api/admin/inventory/<product_id>/barcode/download')
+def download_product_barcode(product_id):
+    """下载产品条形码图片"""
+    try:
+        if not require_admin_auth():
+            return jsonify({'success': False, 'error': '未授权访问'})
+
+        if inventory_manager:
+            product = inventory_manager.get_product_by_id(product_id)
+            if product and product.get('barcode_image'):
+                barcode_path = product['barcode_image']
+                # 移除路径前缀，获取实际文件路径
+                if barcode_path.startswith('barcodes/'):
+                    file_path = os.path.join('static', barcode_path)
+                else:
+                    file_path = barcode_path
+
+                if os.path.exists(file_path):
+                    return send_file(
+                        file_path,
+                        as_attachment=True,
+                        download_name=f"barcode_{product_id}_{product.get('barcode', 'unknown')}.png",
+                        mimetype='image/png'
+                    )
+                else:
+                    return jsonify({
+                        'success': False,
+                        'error': '条形码图片文件不存在'
+                    })
+            else:
+                return jsonify({
+                    'success': False,
+                    'error': '产品不存在或未生成条形码'
+                })
+        else:
+            return jsonify({
+                'success': False,
+                'error': '库存管理系统不可用'
+            })
+
+    except Exception as e:
+        logger.error(f"下载条形码失败: {e}")
+        return jsonify({
+            'success': False,
+            'error': '下载条形码失败'
+        })
+
+
+@app.route('/api/admin/inventory/<product_id>/barcode/print')
+def print_product_barcode(product_id):
+    """打印产品条形码页面"""
+    try:
+        if not require_admin_auth():
+            return '<h1>未授权访问</h1>'
+
+        if inventory_manager:
+            product = inventory_manager.get_product_by_id(product_id)
+            if product and product.get('barcode_image'):
+                barcode_path = product['barcode_image']
+                # 构建完整的URL路径
+                barcode_url = f"/{barcode_path}"
+
+                # 返回简单的打印页面HTML
+                return f'''
+                <!DOCTYPE html>
+                <html>
+                <head>
+                    <title>打印条形码 - {product['product_name']}</title>
+                    <style>
+                        body {{
+                            font-family: Arial, sans-serif;
+                            text-align: center;
+                            padding: 20px;
+                        }}
+                        .barcode-container {{
+                            border: 1px solid #ddd;
+                            padding: 20px;
+                            margin: 20px auto;
+                            max-width: 400px;
+                        }}
+                        .product-info {{
+                            margin-bottom: 15px;
+                            font-size: 16px;
+                        }}
+                        .barcode-image {{
+                            margin: 15px 0;
+                        }}
+                        .barcode-number {{
+                            font-family: 'Courier New', monospace;
+                            font-size: 18px;
+                            font-weight: bold;
+                            margin-top: 10px;
+                        }}
+                        @media print {{
+                            body {{ margin: 0; }}
+                            .no-print {{ display: none; }}
+                        }}
+                    </style>
+                </head>
+                <body>
+                    <div class="barcode-container">
+                        <div class="product-info">
+                            <strong>{product['product_name']}</strong><br>
+                            分类: {product['category']}<br>
+                            价格: {product['price']}
+                        </div>
+                        <div class="barcode-image">
+                            <img src="{barcode_url}" alt="条形码" style="max-width: 100%; height: auto;">
+                        </div>
+                        <div class="barcode-number">
+                            {product['barcode']}
+                        </div>
+                    </div>
+                    <div class="no-print">
+                        <button onclick="window.print()">打印</button>
+                        <button onclick="window.close()">关闭</button>
+                    </div>
+                </body>
+                </html>
+                '''
+            else:
+                return '<h1>产品不存在或未生成条形码</h1>'
+        else:
+            return '<h1>库存管理系统不可用</h1>'
+
+    except Exception as e:
+        logger.error(f"打印条形码页面失败: {e}")
+        return '<h1>打印条形码页面加载失败</h1>'
+
+
+# ==================== 批量条形码生成API ====================
+
+@app.route('/api/admin/inventory/barcodes/status')
+def check_barcodes_status():
+    """检查所有产品的条形码状态"""
+    try:
+        if not require_admin_auth():
+            return jsonify({'success': False, 'error': '未授权访问'})
+
+        generator = BarcodeBatchGenerator()
+        status_result = generator.check_products_barcode_status()
+
+        return jsonify(status_result)
+
+    except Exception as e:
+        logger.error(f"检查条形码状态失败: {e}")
+        return jsonify({
+            'success': False,
+            'message': f'检查条形码状态失败: {e}',
+            'total_products': 0,
+            'products_with_barcode': 0,
+            'products_without_barcode': 0,
+            'products_need_regeneration': 0,
+            'products_to_process': []
+        })
+
+
+@app.route('/api/admin/inventory/barcodes/batch-generate', methods=['POST'])
+def batch_generate_barcodes():
+    """批量生成条形码"""
+    try:
+        if not require_admin_auth():
+            return jsonify({'success': False, 'error': '未授权访问'})
+
+        data = request.get_json() or {}
+        product_ids = data.get('product_ids', [])
+
+        # 获取操作员信息
+        admin_token = session.get('admin_token')
+        session_info = admin_auth.get_session_info(admin_token)
+        operator = session_info.get('username', '管理员') if session_info else '管理员'
+
+        generator = BarcodeBatchGenerator()
+
+        if product_ids:
+            # 为指定产品生成条形码
+            result = generator.generate_barcodes_for_products(product_ids, operator)
+        else:
+            # 为所有缺失条形码的产品生成
+            result = generator.generate_all_missing_barcodes(operator)
+
+        return jsonify(result)
+
+    except Exception as e:
+        logger.error(f"批量生成条形码失败: {e}")
+        return jsonify({
+            'success': False,
+            'message': f'批量生成条形码失败: {e}',
+            'total_requested': 0,
+            'successfully_generated': 0,
+            'failed_generations': 0,
+            'errors': [str(e)]
         })
 
 
@@ -1411,7 +1707,8 @@ def get_storage_areas():
         include_inactive = request.args.get('include_inactive', 'false').lower() == 'true'
 
         if inventory_manager:
-            areas = inventory_manager.get_all_storage_areas(include_inactive)
+            # 获取包含产品数量统计的存储区域列表
+            areas = inventory_manager.get_storage_areas_with_product_counts(include_inactive)
             return jsonify({
                 'success': True,
                 'data': areas
@@ -1477,6 +1774,391 @@ def add_storage_area():
         return jsonify({
             'success': False,
             'error': '添加存储区域失败'
+        })
+
+
+@app.route('/api/admin/inventory/storage-areas/<area_id>')
+def get_storage_area_detail(area_id):
+    """获取存储区域详情"""
+    try:
+        if not require_admin_auth():
+            return jsonify({'success': False, 'error': '未授权访问'})
+
+        if inventory_manager:
+            area = inventory_manager.storage_area_manager.get_area_by_id(area_id)
+            if area:
+                # 添加产品数量统计
+                product_counts = inventory_manager.get_storage_area_product_counts()
+                area["product_count"] = product_counts.get(area_id, 0)
+
+                return jsonify({
+                    'success': True,
+                    'data': area
+                })
+            else:
+                return jsonify({
+                    'success': False,
+                    'error': '存储区域不存在'
+                })
+        else:
+            return jsonify({
+                'success': False,
+                'error': '库存管理系统不可用'
+            })
+
+    except Exception as e:
+        print(f"获取存储区域详情错误: {e}")
+        return jsonify({
+            'success': False,
+            'error': '获取存储区域详情失败'
+        })
+
+
+@app.route('/api/admin/inventory/storage-areas/<area_id>', methods=['PUT'])
+def update_storage_area(area_id):
+    """更新存储区域信息"""
+    try:
+        if not require_admin_auth():
+            return jsonify({'success': False, 'error': '未授权访问'})
+
+        data = request.get_json()
+        area_name = data.get('area_name', '').strip()
+        description = data.get('description', '').strip()
+        capacity = data.get('capacity', 1000)
+
+        if not area_name:
+            return jsonify({
+                'success': False,
+                'error': '请提供区域名称'
+            })
+
+        # 获取操作员信息
+        operator = get_current_operator()
+
+        if inventory_manager:
+            success = inventory_manager.update_storage_area(
+                area_id, area_name, description, capacity, operator
+            )
+            if success:
+                return jsonify({
+                    'success': True,
+                    'message': '存储区域更新成功'
+                })
+            else:
+                return jsonify({
+                    'success': False,
+                    'error': '更新存储区域失败'
+                })
+        else:
+            return jsonify({
+                'success': False,
+                'error': '库存管理系统不可用'
+            })
+
+    except Exception as e:
+        print(f"更新存储区域错误: {e}")
+        return jsonify({
+            'success': False,
+            'error': '更新存储区域失败'
+        })
+
+
+@app.route('/api/admin/inventory/storage-areas/<area_id>', methods=['DELETE'])
+def deactivate_storage_area(area_id):
+    """停用存储区域"""
+    try:
+        if not require_admin_auth():
+            return jsonify({'success': False, 'error': '未授权访问'})
+
+        # 获取操作员信息
+        operator = get_current_operator()
+
+        if inventory_manager:
+            success = inventory_manager.deactivate_storage_area(area_id, operator)
+            if success:
+                return jsonify({
+                    'success': True,
+                    'message': '存储区域停用成功'
+                })
+            else:
+                return jsonify({
+                    'success': False,
+                    'error': '停用存储区域失败'
+                })
+        else:
+            return jsonify({
+                'success': False,
+                'error': '库存管理系统不可用'
+            })
+
+    except Exception as e:
+        print(f"停用存储区域错误: {e}")
+        return jsonify({
+            'success': False,
+            'error': '停用存储区域失败'
+        })
+
+
+@app.route('/api/admin/inventory/storage-areas/<area_id>/products')
+def get_storage_area_products(area_id):
+    """获取指定存储区域的产品列表"""
+    try:
+        if not require_admin_auth():
+            return jsonify({'success': False, 'error': '未授权访问'})
+
+        # 获取查询参数
+        search = request.args.get('search', '').strip()
+        page = int(request.args.get('page', 1))
+        per_page = int(request.args.get('per_page', 50))
+
+        if inventory_manager:
+            # 获取该存储区域的所有产品
+            products = inventory_manager.get_products_by_storage_area(area_id)
+
+            # 如果有搜索条件，进行筛选
+            if search:
+                filtered_products = []
+                search_lower = search.lower()
+                for product in products:
+                    if (search_lower in product.get('product_name', '').lower() or
+                        search_lower in product.get('barcode', '').lower() or
+                        search_lower in product.get('product_id', '').lower() or
+                        search_lower in product.get('category', '').lower()):
+                        filtered_products.append(product)
+                products = filtered_products
+
+            # 计算分页
+            total = len(products)
+            start = (page - 1) * per_page
+            end = start + per_page
+            paginated_products = products[start:end]
+
+            # 获取存储区域信息
+            area_info = inventory_manager.storage_area_manager.get_area_by_id(area_id)
+
+            return jsonify({
+                'success': True,
+                'data': {
+                    'products': paginated_products,
+                    'total': total,
+                    'page': page,
+                    'per_page': per_page,
+                    'total_pages': (total + per_page - 1) // per_page,
+                    'area_info': area_info
+                }
+            })
+        else:
+            return jsonify({
+                'success': False,
+                'error': '库存管理系统不可用'
+            })
+
+    except Exception as e:
+        print(f"获取存储区域产品列表错误: {e}")
+        return jsonify({
+            'success': False,
+            'error': '获取产品列表失败'
+        })
+
+
+# ==================== 取货点管理API ====================
+
+@app.route('/api/admin/inventory/pickup-locations')
+def get_pickup_locations():
+    """获取取货点列表"""
+    try:
+        if not require_admin_auth():
+            return jsonify({'success': False, 'error': '未授权访问'})
+
+        include_inactive = request.args.get('include_inactive', 'false').lower() == 'true'
+
+        if inventory_manager:
+            locations = inventory_manager.get_all_pickup_locations(include_inactive)
+            return jsonify({
+                'success': True,
+                'data': locations
+            })
+        else:
+            return jsonify({
+                'success': False,
+                'error': '库存管理系统不可用'
+            })
+
+    except Exception as e:
+        print(f"获取取货点列表错误: {e}")
+        return jsonify({
+            'success': False,
+            'error': '获取取货点列表失败'
+        })
+
+
+@app.route('/api/admin/inventory/pickup-locations', methods=['POST'])
+def add_pickup_location():
+    """添加新的取货点"""
+    try:
+        if not require_admin_auth():
+            return jsonify({'success': False, 'error': '未授权访问'})
+
+        data = request.get_json()
+        location_id = data.get('location_id', '').strip().lower()
+        location_name = data.get('location_name', '').strip()
+        address = data.get('address', '').strip()
+        phone = data.get('phone', '').strip()
+        contact_person = data.get('contact_person', '').strip()
+        business_hours = data.get('business_hours', '请关注群内通知').strip()
+        description = data.get('description', '').strip()
+
+        # 获取操作员信息
+        admin_token = session.get('admin_token')
+        session_info = admin_auth.get_session_info(admin_token)
+        operator = session_info.get('username', '管理员') if session_info else '管理员'
+
+        if not location_id or not location_name or not address:
+            return jsonify({
+                'success': False,
+                'error': '请提供取货点ID、名称和地址'
+            })
+
+        if inventory_manager:
+            success = inventory_manager.add_pickup_location(
+                location_id, location_name, address, phone,
+                contact_person, business_hours, description, operator
+            )
+            if success:
+                return jsonify({
+                    'success': True,
+                    'message': '取货点添加成功'
+                })
+            else:
+                return jsonify({
+                    'success': False,
+                    'error': '添加取货点失败'
+                })
+        else:
+            return jsonify({
+                'success': False,
+                'error': '库存管理系统不可用'
+            })
+
+    except Exception as e:
+        print(f"添加取货点错误: {e}")
+        return jsonify({
+            'success': False,
+            'error': '添加取货点失败'
+        })
+
+
+@app.route('/api/admin/inventory/pickup-locations/<location_id>', methods=['PUT'])
+def update_pickup_location(location_id):
+    """更新取货点信息"""
+    try:
+        if not require_admin_auth():
+            return jsonify({'success': False, 'error': '未授权访问'})
+
+        data = request.get_json()
+
+        # 获取操作员信息
+        admin_token = session.get('admin_token')
+        session_info = admin_auth.get_session_info(admin_token)
+        operator = session_info.get('username', '管理员') if session_info else '管理员'
+
+        # 添加操作员信息到更新数据中
+        data['operator'] = operator
+
+        if inventory_manager:
+            success = inventory_manager.update_pickup_location(location_id, **data)
+            if success:
+                return jsonify({
+                    'success': True,
+                    'message': '取货点更新成功'
+                })
+            else:
+                return jsonify({
+                    'success': False,
+                    'error': '更新取货点失败'
+                })
+        else:
+            return jsonify({
+                'success': False,
+                'error': '库存管理系统不可用'
+            })
+
+    except Exception as e:
+        print(f"更新取货点错误: {e}")
+        return jsonify({
+            'success': False,
+            'error': '更新取货点失败'
+        })
+
+
+@app.route('/api/admin/inventory/pickup-locations/<location_id>', methods=['DELETE'])
+def deactivate_pickup_location(location_id):
+    """停用取货点"""
+    try:
+        if not require_admin_auth():
+            return jsonify({'success': False, 'error': '未授权访问'})
+
+        # 获取操作员信息
+        admin_token = session.get('admin_token')
+        session_info = admin_auth.get_session_info(admin_token)
+        operator = session_info.get('username', '管理员') if session_info else '管理员'
+
+        if inventory_manager:
+            success = inventory_manager.deactivate_pickup_location(location_id, operator)
+            if success:
+                return jsonify({
+                    'success': True,
+                    'message': '取货点停用成功'
+                })
+            else:
+                return jsonify({
+                    'success': False,
+                    'error': '停用取货点失败'
+                })
+        else:
+            return jsonify({
+                'success': False,
+                'error': '库存管理系统不可用'
+            })
+
+    except Exception as e:
+        print(f"停用取货点错误: {e}")
+        return jsonify({
+            'success': False,
+            'error': '停用取货点失败'
+        })
+
+
+@app.route('/api/admin/inventory/pickup-locations/<location_id>')
+def get_pickup_location_detail(location_id):
+    """获取取货点详情"""
+    try:
+        if not require_admin_auth():
+            return jsonify({'success': False, 'error': '未授权访问'})
+
+        if inventory_manager:
+            location = inventory_manager.get_pickup_location_by_id(location_id)
+            if location:
+                return jsonify({
+                    'success': True,
+                    'data': location
+                })
+            else:
+                return jsonify({
+                    'success': False,
+                    'error': '取货点不存在'
+                })
+        else:
+            return jsonify({
+                'success': False,
+                'error': '库存管理系统不可用'
+            })
+
+    except Exception as e:
+        print(f"获取取货点详情错误: {e}")
+        return jsonify({
+            'success': False,
+            'error': '获取取货点详情失败'
         })
 
 
@@ -2096,10 +2778,7 @@ def internal_error(error):
 
 
 if __name__ == '__main__':
-    try:
-        print("启动果蔬客服AI系统...")
-    except UnicodeEncodeError:
-        print("Starting AI Customer Service System...")
+    logger.info("启动果蔬客服AI系统...")
 
     # 获取端口配置（Render会提供PORT环境变量）
     port = int(os.environ.get('PORT', 5000))
@@ -2107,13 +2786,7 @@ if __name__ == '__main__':
 
     # 初始化系统
     if initialize_system():
-        try:
-            print(f"启动Web服务器... 端口: {port}")
-        except UnicodeEncodeError:
-            print(f"Starting Web Server... Port: {port}")
+        logger.info(f"启动Web服务器... 端口: {port}")
         app.run(debug=debug_mode, host='0.0.0.0', port=port)
     else:
-        try:
-            print("系统初始化失败，无法启动服务器")
-        except UnicodeEncodeError:
-            print("System initialization failed, cannot start server")
+        logger.error("系统初始化失败，无法启动服务器")

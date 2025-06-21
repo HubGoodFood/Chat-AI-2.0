@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """
 库存管理模块 - 增强版
 支持条形码生成、存储区域管理等功能
@@ -12,7 +13,12 @@ from barcode.writer import ImageWriter
 from PIL import Image
 import secrets
 from .storage_area_manager import StorageAreaManager
+from .pickup_location_manager import PickupLocationManager
 from ..utils.encoding_utils import safe_barcode_filename, clean_product_data, safe_print
+from ..utils.logger_config import get_logger
+
+# 初始化日志记录器
+logger = get_logger('inventory_manager')
 
 
 class InventoryManager:
@@ -21,6 +27,7 @@ class InventoryManager:
         self.products_file = 'data/products.csv'
         self.barcode_dir = 'static/barcodes'  # 条形码图片存储目录
         self.storage_area_manager = StorageAreaManager()  # 存储区域管理器
+        self.pickup_location_manager = PickupLocationManager()  # 取货点管理器
         self._ensure_directories()
         self._ensure_inventory_file()
 
@@ -51,7 +58,7 @@ class InventoryManager:
             return barcode_number
 
         except Exception as e:
-            print(f"生成条形码失败: {e}")
+            logger.error(f"生成条形码失败: {e}")
             # 如果生成失败，返回基于时间戳的备用条形码
             timestamp = str(int(datetime.now().timestamp()))[-8:]
             return f"88{timestamp}0000"
@@ -148,10 +155,10 @@ class InventoryManager:
             with open(self.inventory_file, 'w', encoding='utf-8') as f:
                 json.dump(inventory_data, f, ensure_ascii=False, indent=2)
             
-            print(f"✅ 库存数据初始化完成，共 {len(inventory_data['products'])} 个产品")
-            
+            logger.info(f"库存数据初始化完成，共 {len(inventory_data['products'])} 个产品")
+
         except Exception as e:
-            print(f"❌ 初始化库存数据失败: {e}")
+            logger.error(f"初始化库存数据失败: {e}")
             # 创建空的库存文件
             empty_inventory = {
                 "last_updated": datetime.now().isoformat(),
@@ -166,7 +173,7 @@ class InventoryManager:
             with open(self.inventory_file, 'r', encoding='utf-8') as f:
                 return json.load(f)
         except Exception as e:
-            print(f"加载库存数据失败: {e}")
+            logger.error(f"加载库存数据失败: {e}")
             return {"last_updated": datetime.now().isoformat(), "products": {}}
     
     def _save_inventory(self, inventory_data: Dict):
@@ -176,7 +183,7 @@ class InventoryManager:
             with open(self.inventory_file, 'w', encoding='utf-8') as f:
                 json.dump(inventory_data, f, ensure_ascii=False, indent=2)
         except Exception as e:
-            print(f"保存库存数据失败: {e}")
+            logger.error(f"保存库存数据失败: {e}")
     
     def get_all_products(self) -> List[Dict]:
         """获取所有产品库存信息"""
@@ -224,12 +231,13 @@ class InventoryManager:
         """更新库存数量"""
         try:
             inventory_data = self._load_inventory()
-            
+
             if product_id not in inventory_data["products"]:
                 return False
-            
+
             product = inventory_data["products"][product_id]
-            old_stock = product["current_stock"]
+            # 确保current_stock是数字类型（防止字符串类型导致的错误）
+            old_stock = int(product["current_stock"]) if isinstance(product["current_stock"], str) else product["current_stock"]
             new_stock = old_stock + quantity_change
             
             # 检查库存不能为负数
@@ -257,7 +265,7 @@ class InventoryManager:
             return True
             
         except Exception as e:
-            print(f"更新库存失败: {e}")
+            logger.error(f"更新库存失败: {e}")
             return False
     
     def add_product(self, product_data: Dict, operator: str) -> Optional[str]:
@@ -308,11 +316,11 @@ class InventoryManager:
 
             # 保存数据
             self._save_inventory(inventory_data)
-            safe_print(f"产品添加成功，ID: {new_id}, 条形码: {barcode_number}")
+            logger.info(f"产品添加成功，ID: {new_id}, 条形码: {barcode_number}")
             return new_id
 
         except Exception as e:
-            safe_print(f"添加产品失败: {e}")
+            logger.error(f"添加产品失败: {e}")
             return None
     
     def update_product(self, product_id: str, product_data: Dict, operator: str) -> bool:
@@ -342,7 +350,7 @@ class InventoryManager:
             return True
             
         except Exception as e:
-            print(f"更新产品失败: {e}")
+            logger.error(f"更新产品失败: {e}")
             return False
     
     def delete_product(self, product_id: str) -> bool:
@@ -361,7 +369,7 @@ class InventoryManager:
             return True
             
         except Exception as e:
-            print(f"删除产品失败: {e}")
+            logger.error(f"删除产品失败: {e}")
             return False
     
     def get_low_stock_products(self) -> List[Dict]:
@@ -597,3 +605,148 @@ class InventoryManager:
             Dict: 统计信息
         """
         return self.storage_area_manager.get_area_statistics()
+
+    def get_storage_area_product_counts(self) -> Dict[str, int]:
+        """
+        获取每个存储区域的产品数量统计
+
+        Returns:
+            Dict[str, int]: 存储区域ID到产品数量的映射
+        """
+        try:
+            inventory_data = self._load_inventory()
+            area_counts = {}
+
+            # 初始化所有活跃存储区域的计数为0
+            active_areas = self.storage_area_manager.get_area_ids()
+            for area_id in active_areas:
+                area_counts[area_id] = 0
+
+            # 统计每个区域的产品数量
+            for product in inventory_data["products"].values():
+                if product["status"] == "active":
+                    storage_area = product.get("storage_area", "")
+                    if storage_area in area_counts:
+                        area_counts[storage_area] += 1
+                    elif storage_area:  # 处理可能存在的无效存储区域
+                        area_counts[storage_area] = area_counts.get(storage_area, 0) + 1
+
+            return area_counts
+
+        except Exception as e:
+            print(f"获取存储区域产品统计失败: {e}")
+            return {}
+
+    def get_storage_areas_with_product_counts(self, include_inactive: bool = False) -> List[Dict]:
+        """
+        获取包含产品数量统计的存储区域列表
+
+        Args:
+            include_inactive: 是否包含非活跃区域
+
+        Returns:
+            List[Dict]: 包含产品数量的存储区域列表
+        """
+        try:
+            # 获取存储区域列表
+            areas = self.storage_area_manager.get_all_areas(include_inactive)
+
+            # 获取产品数量统计
+            product_counts = self.get_storage_area_product_counts()
+
+            # 为每个区域添加产品数量信息
+            for area in areas:
+                area_id = area["area_id"]
+                area["product_count"] = product_counts.get(area_id, 0)
+
+            return areas
+
+        except Exception as e:
+            print(f"获取存储区域及产品统计失败: {e}")
+            return []
+
+    # ==================== 取货点管理方法 ====================
+
+    def get_all_pickup_locations(self, include_inactive: bool = False) -> List[Dict]:
+        """
+        获取所有取货点
+
+        Args:
+            include_inactive: 是否包含非活跃取货点
+
+        Returns:
+            List[Dict]: 取货点列表
+        """
+        return self.pickup_location_manager.get_all_locations(include_inactive)
+
+    def get_pickup_location_by_id(self, location_id: str) -> Optional[Dict]:
+        """
+        根据ID获取取货点信息
+
+        Args:
+            location_id: 取货点ID
+
+        Returns:
+            Optional[Dict]: 取货点信息
+        """
+        return self.pickup_location_manager.get_location_by_id(location_id)
+
+    def add_pickup_location(self, location_id: str, location_name: str, address: str,
+                           phone: str = "", contact_person: str = "",
+                           business_hours: str = "请关注群内通知",
+                           description: str = "", operator: str = "system") -> bool:
+        """
+        添加新的取货点
+
+        Args:
+            location_id: 取货点ID
+            location_name: 取货点名称
+            address: 地址
+            phone: 联系电话
+            contact_person: 联系人
+            business_hours: 营业时间
+            description: 描述
+            operator: 操作员
+
+        Returns:
+            bool: 是否添加成功
+        """
+        return self.pickup_location_manager.add_location(
+            location_id, location_name, address, phone,
+            contact_person, business_hours, description, operator
+        )
+
+    def update_pickup_location(self, location_id: str, **kwargs) -> bool:
+        """
+        更新取货点信息
+
+        Args:
+            location_id: 取货点ID
+            **kwargs: 要更新的字段
+
+        Returns:
+            bool: 是否更新成功
+        """
+        return self.pickup_location_manager.update_location(location_id, **kwargs)
+
+    def deactivate_pickup_location(self, location_id: str, operator: str = "system") -> bool:
+        """
+        停用取货点
+
+        Args:
+            location_id: 取货点ID
+            operator: 操作员
+
+        Returns:
+            bool: 是否停用成功
+        """
+        return self.pickup_location_manager.deactivate_location(location_id, operator)
+
+    def get_pickup_locations_summary(self) -> Dict:
+        """
+        获取取货点统计信息
+
+        Returns:
+            Dict: 统计信息
+        """
+        return self.pickup_location_manager.get_locations_summary()

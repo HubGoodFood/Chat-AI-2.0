@@ -6,12 +6,12 @@
     <form id="productForm">
         <div class="form-row">
             <div class="form-group">
-                <label for="productName">{{ _('产品名称') }} *</label>
-                <input type="text" id="productName" name="product_name" required>
+                <label for="editProductName">{{ _('产品名称') }} *</label>
+                <input type="text" id="editProductName" name="product_name" required>
             </div>
             <div class="form-group">
-                <label for="productCategory">{{ _('产品分类') }} *</label>
-                <select id="productCategory" name="category" required>
+                <label for="editProductCategory">{{ _('产品分类') }} *</label>
+                <select id="editProductCategory" name="category" required>
                     <option value="">{{ _('请选择分类') }}</option>
                     <option value="禽类产品">{{ _('禽类产品') }}</option>
                     <option value="蛋类">{{ _('蛋类') }}</option>
@@ -26,34 +26,34 @@
         
         <div class="form-row">
             <div class="form-group">
-                <label for="productPrice">{{ _('价格') }} *</label>
-                <input type="number" id="productPrice" name="price" step="0.01" required>
+                <label for="editProductPrice">{{ _('价格') }} *</label>
+                <input type="number" id="editProductPrice" name="price" step="0.01" required>
             </div>
             <div class="form-group">
-                <label for="productUnit">{{ _('单位') }} *</label>
-                <input type="text" id="productUnit" name="unit" required placeholder="{{ _('如：个、斤、包') }}">
-            </div>
-        </div>
-
-        <div class="form-row">
-            <div class="form-group">
-                <label for="productSpecification">{{ _('规格') }}</label>
-                <input type="text" id="productSpecification" name="specification" placeholder="{{ _('如：500g、2个装') }}">
-            </div>
-            <div class="form-group">
-                <label for="initialStock">{{ _('初始库存') }}</label>
-                <input type="number" id="initialStock" name="initial_stock" min="0" value="0">
+                <label for="editProductUnit">{{ _('单位') }} *</label>
+                <input type="text" id="editProductUnit" name="unit" required placeholder="{{ _('如：个、斤、包') }}">
             </div>
         </div>
 
         <div class="form-row">
             <div class="form-group">
-                <label for="minStockWarning">{{ _('最小库存警告') }}</label>
-                <input type="number" id="minStockWarning" name="min_stock_warning" min="0" value="10">
+                <label for="editProductSpecification">{{ _('规格') }}</label>
+                <input type="text" id="editProductSpecification" name="specification" placeholder="{{ _('如：500g、2个装') }}">
             </div>
             <div class="form-group">
-                <label for="productStatus">{{ _('状态') }}</label>
-                <select id="productStatus" name="status">
+                <label for="editInitialStock">{{ _('初始库存') }}</label>
+                <input type="number" id="editInitialStock" name="initial_stock" min="0" value="0">
+            </div>
+        </div>
+
+        <div class="form-row">
+            <div class="form-group">
+                <label for="editMinStockWarning">{{ _('最小库存警告') }}</label>
+                <input type="number" id="editMinStockWarning" name="min_stock_warning" min="0" value="10">
+            </div>
+            <div class="form-group">
+                <label for="editProductStatus">{{ _('状态') }}</label>
+                <select id="editProductStatus" name="status">
                     <option value="active">{{ _('正常') }}</option>
                     <option value="inactive">{{ _('停用') }}</option>
                 </select>
@@ -61,13 +61,30 @@
         </div>
 
         <div class="form-group">
-            <label for="productDescription">{{ _('产品描述') }}</label>
-            <textarea id="productDescription" name="description" rows="3" placeholder="{{ _('产品关键词、特点等') }}"></textarea>
+            <label for="editProductDescription">{{ _('产品描述') }}</label>
+            <textarea id="editProductDescription" name="description" rows="3" placeholder="{{ _('产品关键词、特点等') }}"></textarea>
         </div>
 
         <div class="form-group">
-            <label for="productImage">{{ _('产品图片URL') }}</label>
-            <input type="url" id="productImage" name="image_url" placeholder="http://example.com/image.jpg">
+            <label for="editProductImage">{{ _('产品图片URL') }}</label>
+            <input type="url" id="editProductImage" name="image_url" placeholder="http://example.com/image.jpg">
+        </div>
+
+        <!-- 条形码信息显示区域 -->
+        <div id="editProductBarcodeSection" class="barcode-section" style="display: none;">
+            <h4>{{ _('条形码信息') }}</h4>
+            <div class="barcode-display">
+                <div class="barcode-info-row">
+                    <span><strong>{{ _('条形码') }}：</strong></span>
+                    <span id="editProductBarcode">-</span>
+                </div>
+                <div class="barcode-image-container">
+                    <img id="editProductBarcodeImage" src="" alt="{{ _('条形码图片') }}" style="max-width: 200px; height: auto;">
+                </div>
+                <div class="barcode-actions">
+                    <button type="button" class="secondary-btn" onclick="admin.regenerateBarcode()">{{ _('重新生成条形码') }}</button>
+                </div>
+            </div>
         </div>
 
         <div class="form-actions">
@@ -75,6 +92,19 @@
             <button type="submit" class="primary-btn">{{ _('保存') }}</button>
         </div>
     </form>
+</div>
+
+<!-- 产品详情查看模态框 -->
+<div id="productDetailModal" class="modal-template">
+    <h2>{{ _('产品详情') }}</h2>
+    <div id="productDetailContent" class="product-detail-content">
+        <!-- 产品详情将在这里显示 -->
+    </div>
+    <div class="form-actions">
+        <button type="button" class="secondary-btn" onclick="admin.closeModal()">{{ _('关闭') }}</button>
+        <button type="button" class="primary-btn" onclick="admin.downloadBarcode()">{{ _('下载条形码') }}</button>
+        <button type="button" class="secondary-btn" onclick="admin.printBarcode()">{{ _('打印条形码') }}</button>
+    </div>
 </div>
 
 <!-- 库存调整模态框 -->
@@ -211,104 +241,156 @@
     </form>
 </div>
 
-<style>
-.modal-template {
-    display: none;
-}
+<!-- 添加存储区域模态框 -->
+<div id="addStorageAreaModal" class="modal" style="display: none;">
+    <div class="modal-content">
+        <span class="close">&times;</span>
+        <h2>{{ _('添加存储区域') }}</h2>
+        <form id="addStorageAreaForm" class="modal-form">
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="storageAreaId">{{ _('区域ID') }} *</label>
+                    <input type="text" id="storageAreaId" name="area_id" required maxlength="1" placeholder="{{ _('如：F、G等') }}">
+                    <small class="form-help">{{ _('只允许单个字母') }}</small>
+                </div>
+                <div class="form-group">
+                    <label for="storageAreaName">{{ _('区域名称') }} *</label>
+                    <input type="text" id="storageAreaName" name="area_name" required placeholder="{{ _('如：F区、冷藏室等') }}">
+                </div>
+            </div>
 
-.form-row {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 15px;
-    margin-bottom: 15px;
-}
+            <div class="form-group">
+                <label for="storageAreaDescription">{{ _('位置描述') }}</label>
+                <textarea id="storageAreaDescription" name="description" rows="3" placeholder="{{ _('如：1楼冰箱A、2楼冷藏室B区等详细位置信息') }}"></textarea>
+                <small class="form-help">{{ _('请详细描述存储区域的具体位置') }}</small>
+            </div>
 
-.form-group {
-    margin-bottom: 15px;
-}
+            <div class="form-group">
+                <label for="storageAreaCapacity">{{ _('容量') }}</label>
+                <input type="number" id="storageAreaCapacity" name="capacity" min="1" value="1000" placeholder="{{ _('预计可存储产品数量') }}">
+                <small class="form-help">{{ _('可选，用于容量规划') }}</small>
+            </div>
 
-.form-group label {
-    display: block;
-    margin-bottom: 5px;
-    font-weight: 500;
-    color: #333;
-}
+            <div class="form-actions">
+                <button type="button" class="secondary-btn" onclick="admin.closeModal('addStorageAreaModal')">{{ _('取消') }}</button>
+                <button type="submit" class="primary-btn">{{ _('添加区域') }}</button>
+            </div>
+        </form>
+    </div>
+</div>
 
-.form-group input,
-.form-group select,
-.form-group textarea {
-    width: 100%;
-    padding: 8px 12px;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    font-size: 14px;
-}
+<!-- 编辑存储区域模态框 -->
+<div id="editStorageAreaModal" class="modal" style="display: none;">
+    <div class="modal-content">
+        <span class="close">&times;</span>
+        <h2>{{ _('编辑存储区域') }}</h2>
+        <form id="editStorageAreaForm" class="modal-form">
+            <input type="hidden" id="editStorageAreaId" name="area_id">
 
-.form-group textarea {
-    resize: vertical;
-}
+            <div class="form-group">
+                <label for="editStorageAreaName">{{ _('区域名称') }} *</label>
+                <input type="text" id="editStorageAreaName" name="area_name" required placeholder="{{ _('如：F区、冷藏室等') }}">
+            </div>
 
-.form-help {
-    display: block;
-    margin-top: 5px;
-    font-size: 12px;
-    color: #6c757d;
-}
+            <div class="form-group">
+                <label for="editStorageAreaDescription">{{ _('位置描述') }}</label>
+                <textarea id="editStorageAreaDescription" name="description" rows="3" placeholder="{{ _('如：1楼冰箱A、2楼冷藏室B区等详细位置信息') }}"></textarea>
+                <small class="form-help">{{ _('请详细描述存储区域的具体位置') }}</small>
+            </div>
 
-.form-actions {
-    display: flex;
-    justify-content: flex-end;
-    gap: 10px;
-    margin-top: 20px;
-    padding-top: 20px;
-    border-top: 1px solid #e9ecef;
-}
+            <div class="form-group">
+                <label for="editStorageAreaCapacity">{{ _('容量') }}</label>
+                <input type="number" id="editStorageAreaCapacity" name="capacity" min="1" placeholder="{{ _('预计可存储产品数量') }}">
+                <small class="form-help">{{ _('可选，用于容量规划') }}</small>
+            </div>
 
-.product-info {
-    background: #f8f9fa;
-    padding: 15px;
-    border-radius: 5px;
-    margin-bottom: 20px;
-}
+            <div class="form-actions">
+                <button type="button" class="secondary-btn" onclick="admin.closeModal('editStorageAreaModal')">{{ _('取消') }}</button>
+                <button type="submit" class="primary-btn">{{ _('保存更改') }}</button>
+            </div>
+        </form>
+    </div>
+</div>
 
-.stock-input-group {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-}
+<!-- 存储区域产品详情模态框 -->
+<div id="storageAreaProductsModal" class="modal" style="display: none;">
+    <div class="modal-content large-modal">
+        <span class="close">&times;</span>
+        <div class="modal-header">
+            <h2 id="storageAreaProductsTitle">{{ _('存储区域产品详情') }}</h2>
+            <div class="area-summary">
+                <span id="areaNameDisplay" class="area-name"></span>
+                <span id="productCountDisplay" class="product-count"></span>
+            </div>
+        </div>
 
-.stock-btn {
-    width: 40px;
-    height: 40px;
-    border: 1px solid #ddd;
-    background: #f8f9fa;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 18px;
-    font-weight: bold;
-}
+        <div class="modal-body">
+            <!-- 搜索和筛选区域 -->
+            <div class="products-controls">
+                <div class="search-section">
+                    <input type="text" id="productSearchInput" placeholder="{{ _('搜索产品名称、条形码或产品ID...') }}" class="search-input">
+                    <button type="button" id="searchProductsBtn" class="primary-btn">{{ _('搜索') }}</button>
+                    <button type="button" id="clearSearchBtn" class="secondary-btn">{{ _('清除') }}</button>
+                </div>
+            </div>
 
-.stock-btn:hover {
-    background: #e9ecef;
-}
+            <!-- 产品列表区域 -->
+            <div class="products-list-container">
+                <div id="productsLoadingIndicator" class="loading-indicator" style="display: none;">
+                    <p>{{ _('正在加载产品数据...') }}</p>
+                </div>
 
-.stock-btn.increase {
-    color: #28a745;
-}
+                <div id="productsTableContainer" class="table-container">
+                    <table id="productsTable" class="data-table">
+                        <thead>
+                            <tr>
+                                <th>{{ _('产品ID') }}</th>
+                                <th>{{ _('产品名称') }}</th>
+                                <th>{{ _('条形码') }}</th>
+                                <th>{{ _('类别') }}</th>
+                                <th>{{ _('当前库存') }}</th>
+                                <th>{{ _('单位') }}</th>
+                                <th>{{ _('价格') }}</th>
+                                <th>{{ _('状态') }}</th>
+                            </tr>
+                        </thead>
+                        <tbody id="productsTableBody">
+                            <!-- 产品数据将通过JavaScript动态加载 -->
+                        </tbody>
+                    </table>
+                </div>
 
-.stock-btn.decrease {
-    color: #dc3545;
-}
+                <div id="productsEmptyState" class="empty-state" style="display: none;">
+                    <div class="empty-icon">📦</div>
+                    <h3>{{ _('暂无产品数据') }}</h3>
+                    <p>{{ _('该存储区域目前没有产品，或者没有符合搜索条件的产品。') }}</p>
+                </div>
 
-#stockChange {
-    text-align: center;
-    font-weight: bold;
-    max-width: 100px;
-}
+                <div id="productsErrorState" class="error-state" style="display: none;">
+                    <div class="error-icon">⚠️</div>
+                    <h3>{{ _('加载失败') }}</h3>
+                    <p id="productsErrorMessage">{{ _('无法加载产品数据，请稍后重试。') }}</p>
+                    <button type="button" id="retryLoadProductsBtn" class="primary-btn">{{ _('重试') }}</button>
+                </div>
+            </div>
 
-@media (max-width: 768px) {
-    .form-row {
-        grid-template-columns: 1fr;
-    }
-}
-</style>
+            <!-- 分页控制 -->
+            <div id="productsPagination" class="pagination-container" style="display: none;">
+                <div class="pagination-info">
+                    <span id="paginationInfo"></span>
+                </div>
+                <div class="pagination-controls">
+                    <button type="button" id="prevPageBtn" class="pagination-btn">{{ _('上一页') }}</button>
+                    <span id="pageNumbers" class="page-numbers"></span>
+                    <button type="button" id="nextPageBtn" class="pagination-btn">{{ _('下一页') }}</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal-footer">
+            <button type="button" class="secondary-btn" onclick="admin.closeModal('storageAreaProductsModal')">{{ _('关闭') }}</button>
+        </div>
+    </div>
+</div>
+
+

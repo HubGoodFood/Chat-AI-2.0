@@ -125,15 +125,33 @@ class StorageAreaManager:
     def get_area_ids(self, include_inactive: bool = False) -> List[str]:
         """
         获取所有存储区域ID列表
-        
+
         Args:
             include_inactive: 是否包含非活跃区域
-            
+
         Returns:
             List[str]: 存储区域ID列表
         """
         areas = self.get_all_areas(include_inactive)
         return [area["area_id"] for area in areas]
+
+    def get_area_by_id(self, area_id: str) -> Optional[Dict]:
+        """
+        根据ID获取存储区域详情
+
+        Args:
+            area_id: 区域ID
+
+        Returns:
+            Optional[Dict]: 存储区域信息，如果不存在则返回None
+        """
+        try:
+            areas_data = self._load_storage_areas()
+            area_info = areas_data["areas"].get(area_id)
+            return area_info if area_info else None
+        except Exception as e:
+            print(f"获取存储区域详情失败: {e}")
+            return None
     
     def add_area(self, area_id: str, area_name: str, description: str = "", 
                  capacity: int = 1000, operator: str = "system") -> bool:

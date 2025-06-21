@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """
 操作日志记录模块
 """
@@ -5,6 +6,10 @@ import json
 import os
 from datetime import datetime
 from typing import Dict, List, Optional
+from ..utils.logger_config import get_logger
+
+# 初始化日志记录器
+logger = get_logger('operation_logger')
 
 
 class OperationLogger:
@@ -29,7 +34,7 @@ class OperationLogger:
             with open(self.log_file, 'r', encoding='utf-8') as f:
                 return json.load(f)
         except Exception as e:
-            print(f"加载日志数据失败: {e}")
+            logger.error(f"加载日志数据失败: {e}")
             return {"created_at": datetime.now().isoformat(), "logs": []}
     
     def _save_logs(self, log_data: Dict):
@@ -38,7 +43,7 @@ class OperationLogger:
             with open(self.log_file, 'w', encoding='utf-8') as f:
                 json.dump(log_data, f, ensure_ascii=False, indent=2)
         except Exception as e:
-            print(f"保存日志数据失败: {e}")
+            logger.error(f"保存日志数据失败: {e}")
     
     def log_operation(self, operator: str, operation_type: str, target_type: str, 
                      target_id: str, details: Dict = None, result: str = "success"):
@@ -68,7 +73,7 @@ class OperationLogger:
             self._save_logs(log_data)
             
         except Exception as e:
-            print(f"记录操作日志失败: {e}")
+            logger.error(f"记录操作日志失败: {e}")
     
     def get_logs(self, limit: int = 100, operator: str = None, 
                 operation_type: str = None, target_type: str = None) -> List[Dict]:
@@ -92,7 +97,7 @@ class OperationLogger:
             return logs[:limit]
             
         except Exception as e:
-            print(f"获取操作日志失败: {e}")
+            logger.error(f"获取操作日志失败: {e}")
             return []
     
     def get_operation_statistics(self, days: int = 7) -> Dict:
@@ -145,7 +150,7 @@ class OperationLogger:
             return stats
             
         except Exception as e:
-            print(f"获取操作统计失败: {e}")
+            logger.error(f"获取操作统计失败: {e}")
             return {}
     
     def clear_old_logs(self, days: int = 30):
@@ -170,7 +175,7 @@ class OperationLogger:
             return len(logs) - len(new_logs)  # 返回清理的日志数量
             
         except Exception as e:
-            print(f"清理旧日志失败: {e}")
+            logger.error(f"清理旧日志失败: {e}")
             return 0
     
     def export_logs(self, start_date: str = None, end_date: str = None) -> List[Dict]:
@@ -190,7 +195,7 @@ class OperationLogger:
             return logs
             
         except Exception as e:
-            print(f"导出日志失败: {e}")
+            logger.error(f"导出日志失败: {e}")
             return []
 
 

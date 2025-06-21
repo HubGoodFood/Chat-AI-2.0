@@ -181,6 +181,12 @@ class AdminDashboard {
             case 'inventory-analysis':
                 this.loadInventoryAnalysisPage();
                 break;
+            case 'pickup-locations':
+                this.loadPickupLocationsPage();
+                break;
+            case 'storage-areas':
+                this.loadStorageAreasPage();
+                break;
             case 'feedback':
                 this.loadFeedbackData();
                 break;
@@ -321,6 +327,11 @@ class AdminDashboard {
             const statusText = product.status === 'active' ? _('正常') : _('停用');
             const lowStock = product.current_stock <= product.min_stock_warning;
             
+            // 条形码显示处理
+            const barcodeDisplay = product.barcode ?
+                `<span class="barcode-number" title="点击查看详情" onclick="admin.viewProductDetail('${product.product_id}')" style="cursor: pointer; color: #3498db;">${product.barcode}</span>` :
+                `<span class="no-barcode" style="color: #e74c3c;">未生成</span>`;
+
             html += `
                 <tr ${lowStock ? 'class="low-stock-row"' : ''}>
                     <td>
@@ -328,6 +339,7 @@ class AdminDashboard {
                         ${lowStock ? '<span class="low-stock-warning">⚠️</span>' : ''}
                     </td>
                     <td>${product.category}</td>
+                    <td>${barcodeDisplay}</td>
                     <td>${product.price}</td>
                     <td>
                         <span class="stock-count ${lowStock ? 'low-stock' : ''}">${product.current_stock}</span>
@@ -335,6 +347,7 @@ class AdminDashboard {
                     </td>
                     <td><span class="${statusClass}">${statusText}</span></td>
                     <td>
+                        <button class="secondary-btn" onclick="admin.viewProductDetail('${product.product_id}')">${_('详情')}</button>
                         <button class="secondary-btn" onclick="admin.editProduct('${product.product_id}')">${_('编辑')}</button>
                         <button class="secondary-btn" onclick="admin.adjustStock('${product.product_id}')">${_('调库存')}</button>
                         <button class="danger-btn" onclick="admin.deleteProduct('${product.product_id}')">${_('删除')}</button>
@@ -468,8 +481,14 @@ class AdminDashboard {
         }
     }
 
-    closeModal() {
-        document.getElementById('modal').style.display = 'none';
+    closeModal(modalId = 'modal') {
+        const modal = document.getElementById(modalId);
+        if (modal) {
+            modal.style.display = 'none';
+            console.log('模态框已关闭:', modalId);
+        } else {
+            console.error('找不到模态框:', modalId);
+        }
     }
 
     showError(message) {
@@ -583,25 +602,146 @@ class AdminDashboard {
         document.getElementById('productForm').reset();
     }
 
+    async viewProductDetail(productId) {
+        try {
+            const response = await fetch(`/api/admin/inventory/${productId}`);
+            const result = await response.json();
+
+            if (result.success) {
+                const product = result.data;
+                this.currentProductId = productId; // 保存当前产品ID用于下载等操作
+
+                this.showModalTemplate('productDetailModal');
+
+                // 构建产品详情HTML
+                const detailHtml = `
+                    <div class="product-detail-grid">
+                        <div class="product-detail-section">
+                            <h4>${_('基本信息')}</h4>
+                            <div class="detail-item">
+                                <span class="detail-label">${_('产品名称')}：</span>
+                                <span class="detail-value">${product.product_name}</span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="detail-label">${_('产品分类')}：</span>
+                                <span class="detail-value">${product.category}</span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="detail-label">${_('规格')}：</span>
+                                <span class="detail-value">${product.specification || '-'}</span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="detail-label">${_('价格')}：</span>
+                                <span class="detail-value">${product.price}</span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="detail-label">${_('单位')}：</span>
+                                <span class="detail-value">${product.unit}</span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="detail-label">${_('存储区域')}：</span>
+                                <span class="detail-value">${product.storage_area || '-'}</span>
+                            </div>
+                        </div>
+
+                        <div class="product-detail-section">
+                            <h4>${_('库存信息')}</h4>
+                            <div class="detail-item">
+                                <span class="detail-label">${_('当前库存')}：</span>
+                                <span class="detail-value">${product.current_stock} ${product.unit}</span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="detail-label">${_('最小库存警告')}：</span>
+                                <span class="detail-value">${product.min_stock_warning} ${product.unit}</span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="detail-label">${_('状态')}：</span>
+                                <span class="detail-value">${product.status === 'active' ? _('正常') : _('停用')}</span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="detail-label">${_('创建时间')}：</span>
+                                <span class="detail-value">${new Date(product.created_at).toLocaleString()}</span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="detail-label">${_('更新时间')}：</span>
+                                <span class="detail-value">${new Date(product.updated_at).toLocaleString()}</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="product-detail-section">
+                        <h4>${_('条形码信息')}</h4>
+                        <div class="barcode-display">
+                            ${product.barcode ? `
+                                <div class="barcode-info-row">
+                                    <span><strong>${_('条形码')}：</strong></span>
+                                    <span class="barcode-number">${product.barcode}</span>
+                                </div>
+                                ${product.barcode_image ? `
+                                    <div class="barcode-image-container">
+                                        <img src="/static/${product.barcode_image}" alt="${_('条形码图片')}" style="max-width: 300px; height: auto;">
+                                    </div>
+                                ` : ''}
+                            ` : `
+                                <div class="no-barcode-info">
+                                    <p style="color: #e74c3c; font-style: italic;">${_('该产品尚未生成条形码')}</p>
+                                    <button class="primary-btn" onclick="admin.generateBarcodeForProduct('${productId}')">${_('生成条形码')}</button>
+                                </div>
+                            `}
+                        </div>
+                    </div>
+
+                    ${product.description ? `
+                        <div class="product-detail-section">
+                            <h4>${_('产品描述')}</h4>
+                            <p>${product.description}</p>
+                        </div>
+                    ` : ''}
+                `;
+
+                document.getElementById('productDetailContent').innerHTML = detailHtml;
+            } else {
+                this.showError(result.error || '获取产品详情失败');
+            }
+        } catch (error) {
+            console.error('获取产品详情失败:', error);
+            this.showError('网络错误');
+        }
+    }
+
     async editProduct(productId) {
         try {
             const response = await fetch(`/api/admin/inventory/${productId}`);
             const result = await response.json();
 
             if (result.success) {
+                const product = result.data;
                 this.showModalTemplate('productModal');
                 document.getElementById('productModalTitle').textContent = '编辑产品';
+                document.getElementById('editProductName').value = product.product_name;
+                document.getElementById('editProductCategory').value = product.category;
+                document.getElementById('editProductPrice').value = product.price;
+                document.getElementById('editProductUnit').value = product.unit;
+                document.getElementById('editProductSpecification').value = product.specification;
+                document.getElementById('editMinStockWarning').value = product.min_stock_warning;
+                document.getElementById('editProductStatus').value = product.status;
+                document.getElementById('editProductDescription').value = product.description;
+                document.getElementById('editProductImage').value = product.image_url;
 
-                const product = result.data;
-                document.getElementById('productName').value = product.product_name;
-                document.getElementById('productCategory').value = product.category;
-                document.getElementById('productPrice').value = product.price;
-                document.getElementById('productUnit').value = product.unit;
-                document.getElementById('productSpecification').value = product.specification;
-                document.getElementById('minStockWarning').value = product.min_stock_warning;
-                document.getElementById('productStatus').value = product.status;
-                document.getElementById('productDescription').value = product.description;
-                document.getElementById('productImage').value = product.image_url;
+                // 显示条形码信息
+                const barcodeSection = document.getElementById('editProductBarcodeSection');
+                if (product.barcode) {
+                    document.getElementById('editProductBarcode').textContent = product.barcode;
+                    if (product.barcode_image) {
+                        document.getElementById('editProductBarcodeImage').src = `/static/${product.barcode_image}`;
+                        document.getElementById('editProductBarcodeImage').style.display = 'block';
+                    } else {
+                        document.getElementById('editProductBarcodeImage').style.display = 'none';
+                    }
+                    barcodeSection.style.display = 'block';
+                } else {
+                    barcodeSection.style.display = 'none';
+                }
 
                 // 存储产品ID用于更新
                 document.getElementById('productForm').dataset.productId = productId;
@@ -1092,6 +1232,278 @@ class AdminDashboard {
         }
     }
 
+    // ==================== 条形码相关功能方法 ====================
+
+    async generateBarcodeForProduct(productId) {
+        try {
+            const response = await fetch(`/api/admin/inventory/${productId}/barcode`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
+
+            const result = await response.json();
+
+            if (result.success) {
+                this.showSuccess('条形码生成成功！');
+                // 重新加载产品详情
+                this.viewProductDetail(productId);
+            } else {
+                this.showError(result.error || '生成条形码失败');
+            }
+        } catch (error) {
+            console.error('生成条形码失败:', error);
+            this.showError('网络错误');
+        }
+    }
+
+    async regenerateBarcode() {
+        const productId = document.getElementById('productForm').dataset.productId;
+        if (!productId) {
+            this.showError('无法获取产品ID');
+            return;
+        }
+
+        if (confirm('确定要重新生成条形码吗？这将替换现有的条形码。')) {
+            try {
+                const response = await fetch(`/api/admin/inventory/${productId}/barcode/regenerate`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    this.showSuccess('条形码重新生成成功！');
+                    // 重新加载编辑页面
+                    this.editProduct(productId);
+                } else {
+                    this.showError(result.error || '重新生成条形码失败');
+                }
+            } catch (error) {
+                console.error('重新生成条形码失败:', error);
+                this.showError('网络错误');
+            }
+        }
+    }
+
+    downloadBarcode() {
+        if (!this.currentProductId) {
+            this.showError('无法获取产品信息');
+            return;
+        }
+
+        // 创建下载链接
+        const downloadUrl = `/api/admin/inventory/${this.currentProductId}/barcode/download`;
+        const link = document.createElement('a');
+        link.href = downloadUrl;
+        link.download = `barcode_${this.currentProductId}.png`;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    }
+
+    printBarcode() {
+        if (!this.currentProductId) {
+            this.showError('无法获取产品信息');
+            return;
+        }
+
+        // 打开新窗口进行打印
+        const printUrl = `/api/admin/inventory/${this.currentProductId}/barcode/print`;
+        const printWindow = window.open(printUrl, '_blank', 'width=600,height=400');
+
+        if (printWindow) {
+            printWindow.onload = function() {
+                printWindow.print();
+            };
+        } else {
+            this.showError('无法打开打印窗口，请检查浏览器弹窗设置');
+        }
+    }
+
+    // ==================== 批量条形码生成功能 ====================
+
+    async checkBarcodesStatus() {
+        try {
+            const response = await fetch('/api/admin/inventory/barcodes/status');
+            const result = await response.json();
+
+            if (result.success) {
+                return result;
+            } else {
+                this.showError(result.message || '检查条形码状态失败');
+                return null;
+            }
+        } catch (error) {
+            console.error('检查条形码状态失败:', error);
+            this.showError('网络错误');
+            return null;
+        }
+    }
+
+    async showBatchBarcodeGenerationModal() {
+        // 首先检查条形码状态
+        const statusResult = await this.checkBarcodesStatus();
+
+        if (!statusResult) {
+            return;
+        }
+
+        const {
+            total_products,
+            products_with_barcode,
+            products_without_barcode,
+            products_need_regeneration,
+            products_to_process
+        } = statusResult;
+
+        let modalContent = `
+            <div class="batch-barcode-info">
+                <h3>📊 条形码状态统计</h3>
+                <div class="stats-grid">
+                    <div class="stat-item">
+                        <span class="stat-label">总产品数:</span>
+                        <span class="stat-value">${total_products}</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">已有条形码:</span>
+                        <span class="stat-value text-success">${products_with_barcode}</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">缺少条形码:</span>
+                        <span class="stat-value text-warning">${products_without_barcode}</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">需要重新生成:</span>
+                        <span class="stat-value text-danger">${products_need_regeneration}</span>
+                    </div>
+                </div>
+            </div>
+        `;
+
+        if (products_to_process.length > 0) {
+            modalContent += `
+                <div class="products-to-process">
+                    <h4>需要处理的产品 (${products_to_process.length} 个):</h4>
+                    <div class="product-list" style="max-height: 200px; overflow-y: auto;">
+                        ${products_to_process.map(product => `
+                            <div class="product-item">
+                                <span class="product-name">${product.product_name}</span>
+                                <span class="product-reason text-muted">(${product.reason})</span>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+                <div class="batch-actions">
+                    <button class="primary-btn" onclick="admin.batchGenerateBarcodes()">
+                        🔄 批量生成条形码
+                    </button>
+                    <button class="secondary-btn" onclick="admin.closeModal()">
+                        取消
+                    </button>
+                </div>
+            `;
+        } else {
+            modalContent += `
+                <div class="no-action-needed">
+                    <p class="text-success">✅ 所有产品都已有条形码，无需生成。</p>
+                    <button class="secondary-btn" onclick="admin.closeModal()">
+                        关闭
+                    </button>
+                </div>
+            `;
+        }
+
+        this.showModal('批量条形码生成', modalContent);
+    }
+
+    async batchGenerateBarcodes(productIds = null) {
+        try {
+            // 显示进度提示
+            this.showModal('批量生成条形码', `
+                <div class="progress-info">
+                    <div class="loading-spinner"></div>
+                    <p>正在批量生成条形码，请稍候...</p>
+                    <p class="text-muted">这可能需要一些时间，请不要关闭页面。</p>
+                </div>
+            `);
+
+            const requestBody = productIds ? { product_ids: productIds } : {};
+
+            const response = await fetch('/api/admin/inventory/barcodes/batch-generate', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(requestBody)
+            });
+
+            const result = await response.json();
+
+            if (result.success) {
+                const { successfully_generated, failed_generations, total_requested, errors } = result;
+
+                let resultContent = `
+                    <div class="batch-result">
+                        <h3>✅ 批量生成完成</h3>
+                        <div class="result-stats">
+                            <div class="stat-item">
+                                <span class="stat-label">处理总数:</span>
+                                <span class="stat-value">${total_requested}</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-label">成功生成:</span>
+                                <span class="stat-value text-success">${successfully_generated}</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-label">生成失败:</span>
+                                <span class="stat-value text-danger">${failed_generations}</span>
+                            </div>
+                        </div>
+                `;
+
+                if (errors && errors.length > 0) {
+                    resultContent += `
+                        <div class="error-details">
+                            <h4>错误详情:</h4>
+                            <ul class="error-list">
+                                ${errors.map(error => `<li>${error}</li>`).join('')}
+                            </ul>
+                        </div>
+                    `;
+                }
+
+                resultContent += `
+                        <div class="result-actions">
+                            <button class="primary-btn" onclick="admin.closeModal(); admin.loadInventoryPage();">
+                                刷新产品列表
+                            </button>
+                            <button class="secondary-btn" onclick="admin.closeModal()">
+                                关闭
+                            </button>
+                        </div>
+                    </div>
+                `;
+
+                this.showModal('批量生成结果', resultContent);
+
+                // 显示成功消息
+                if (successfully_generated > 0) {
+                    this.showSuccess(`成功为 ${successfully_generated} 个产品生成了条形码！`);
+                }
+            } else {
+                this.showError(result.message || '批量生成条形码失败');
+            }
+        } catch (error) {
+            console.error('批量生成条形码失败:', error);
+            this.showError('网络错误');
+        }
+    }
+
     // 系统维护方法
     clearOldLogs() {
         if (confirm('确定要清理30天前的旧日志吗？此操作不可恢复。')) {
@@ -1161,7 +1573,7 @@ class AdminDashboard {
         });
 
         // 产品信息变化时实时生成条形码预览
-        ['productName', 'productCategory'].forEach(id => {
+        ['addProductName', 'addProductCategory'].forEach(id => {
             document.getElementById(id)?.addEventListener('input', () => {
                 this.updateBarcodePreview();
             });
@@ -1221,6 +1633,101 @@ class AdminDashboard {
         document.getElementById('categoryAnalysisFilter')?.addEventListener('change', () => {
             this.filterAnalysisChanges();
         });
+
+        // 取货点管理页面事件
+        document.getElementById('addPickupLocationBtn')?.addEventListener('click', () => {
+            this.showAddPickupLocationModal();
+        });
+
+        document.getElementById('addPickupLocationForm')?.addEventListener('submit', (e) => {
+            e.preventDefault();
+            this.savePickupLocation();
+        });
+
+        document.getElementById('editPickupLocationForm')?.addEventListener('submit', (e) => {
+            e.preventDefault();
+            this.updatePickupLocation();
+        });
+
+        // 取货点模态框关闭按钮事件
+        document.querySelectorAll('#addPickupLocationModal .close, #editPickupLocationModal .close').forEach(closeBtn => {
+            closeBtn.addEventListener('click', () => {
+                const modal = closeBtn.closest('.modal');
+                if (modal) {
+                    this.closeModal(modal.id);
+                }
+            });
+        });
+
+        // 点击模态框外部关闭
+        ['addPickupLocationModal', 'editPickupLocationModal'].forEach(modalId => {
+            document.getElementById(modalId)?.addEventListener('click', (e) => {
+                if (e.target.id === modalId) {
+                    this.closeModal(modalId);
+                }
+            });
+        });
+
+        // 存储区域管理页面事件
+        document.getElementById('addStorageAreaBtn')?.addEventListener('click', () => {
+            this.showAddStorageAreaModal();
+        });
+
+        document.getElementById('addStorageAreaForm')?.addEventListener('submit', (e) => {
+            e.preventDefault();
+            this.saveStorageArea();
+        });
+
+        document.getElementById('editStorageAreaForm')?.addEventListener('submit', (e) => {
+            e.preventDefault();
+            this.updateStorageArea();
+        });
+
+        // 存储区域模态框关闭按钮事件
+        document.querySelectorAll('#addStorageAreaModal .close, #editStorageAreaModal .close').forEach(closeBtn => {
+            closeBtn.addEventListener('click', () => {
+                const modal = closeBtn.closest('.modal');
+                if (modal) {
+                    this.closeModal(modal.id);
+                }
+            });
+        });
+
+        // 点击模态框外部关闭
+        ['addStorageAreaModal', 'editStorageAreaModal', 'storageAreaProductsModal'].forEach(modalId => {
+            document.getElementById(modalId)?.addEventListener('click', (e) => {
+                if (e.target.id === modalId) {
+                    this.closeModal(modalId);
+                }
+            });
+        });
+
+        // 存储区域产品详情模态框事件
+        document.getElementById('searchProductsBtn')?.addEventListener('click', () => {
+            this.searchStorageAreaProducts();
+        });
+
+        document.getElementById('clearSearchBtn')?.addEventListener('click', () => {
+            document.getElementById('productSearchInput').value = '';
+            this.searchStorageAreaProducts();
+        });
+
+        document.getElementById('productSearchInput')?.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                this.searchStorageAreaProducts();
+            }
+        });
+
+        document.getElementById('retryLoadProductsBtn')?.addEventListener('click', () => {
+            this.loadStorageAreaProducts(this.currentAreaId);
+        });
+
+        // 产品详情模态框关闭按钮事件
+        document.querySelectorAll('#storageAreaProductsModal .close').forEach(closeBtn => {
+            closeBtn.addEventListener('click', () => {
+                this.closeModal('storageAreaProductsModal');
+            });
+        });
     }
 
     // ==================== 产品入库页面方法 ====================
@@ -1231,11 +1738,15 @@ class AdminDashboard {
         document.getElementById('addProductForm')?.reset();
         // 清空条形码预览
         this.clearBarcodePreview();
+        // 加载存储区域选项
+        this.loadStorageAreaOptions();
+        // 加载存储区域信息显示
+        this.loadStorageAreaInfo();
     }
 
     updateBarcodePreview() {
-        const productName = document.getElementById('productName')?.value;
-        const category = document.getElementById('productCategory')?.value;
+        const productName = document.getElementById('addProductName')?.value;
+        const category = document.getElementById('addProductCategory')?.value;
 
         if (productName && category) {
             // 模拟条形码生成（实际应该调用API）
@@ -1306,6 +1817,61 @@ class AdminDashboard {
         } catch (error) {
             console.error('添加产品失败:', error);
             this.showError('网络错误');
+        }
+    }
+
+    async loadStorageAreaOptions() {
+        try {
+            const response = await fetch('/api/admin/inventory/storage-areas');
+            const result = await response.json();
+
+            if (result.success) {
+                const select = document.getElementById('storageArea');
+                if (select) {
+                    // 清空现有选项
+                    select.innerHTML = '<option value="">请选择存储区域</option>';
+
+                    // 添加动态选项
+                    result.data.forEach(area => {
+                        if (area.status === 'active') {
+                            const option = document.createElement('option');
+                            option.value = area.area_id;
+                            option.textContent = `${area.area_name} - ${area.description || '存储区域'}`;
+                            select.appendChild(option);
+                        }
+                    });
+                }
+            }
+        } catch (error) {
+            console.error('加载存储区域选项失败:', error);
+        }
+    }
+
+    async loadStorageAreaInfo() {
+        try {
+            const response = await fetch('/api/admin/inventory/storage-areas');
+            const result = await response.json();
+
+            if (result.success) {
+                const infoDiv = document.getElementById('storageAreaInfo');
+                if (infoDiv) {
+                    let html = '';
+                    result.data.forEach(area => {
+                        if (area.status === 'active') {
+                            html += `
+                                <div class="area-item">
+                                    <span class="area-label">${area.area_name}</span>
+                                    <span class="area-desc">${area.description || '存储区域'}</span>
+                                    <span class="area-count">${area.product_count || 0}个产品</span>
+                                </div>
+                            `;
+                        }
+                    });
+                    infoDiv.innerHTML = html;
+                }
+            }
+        } catch (error) {
+            console.error('加载存储区域信息失败:', error);
         }
     }
 
@@ -2142,6 +2708,782 @@ class AdminDashboard {
         } catch (error) {
             console.error('导出Excel失败:', error);
             this.showError('网络错误');
+        }
+    }
+
+    // ==================== 取货点管理页面方法 ====================
+
+    loadPickupLocationsPage() {
+        console.log('加载取货点管理页面');
+        this.loadPickupLocations();
+    }
+
+    async loadPickupLocations() {
+        try {
+            const response = await fetch('/api/admin/inventory/pickup-locations?include_inactive=true');
+            const result = await response.json();
+
+            if (result.success) {
+                this.pickupLocationsData = result.data;
+                this.renderPickupLocationsGrid(result.data);
+                this.updatePickupLocationsStats(result.data);
+            } else {
+                this.showError('加载取货点列表失败: ' + result.error);
+            }
+        } catch (error) {
+            console.error('加载取货点列表失败:', error);
+            this.showError('网络错误，请稍后重试');
+        }
+    }
+
+    renderPickupLocationsGrid(locations) {
+        const grid = document.getElementById('pickupLocationsGrid');
+
+        if (locations.length === 0) {
+            grid.innerHTML = `
+                <div class="no-data-placeholder">
+                    <div class="no-data-icon">📍</div>
+                    <p>${_('暂无取货点数据')}</p>
+                </div>
+            `;
+            return;
+        }
+
+        let html = '';
+        locations.forEach(location => {
+            const statusClass = location.status === 'active' ? 'status-active' : 'status-inactive';
+            const statusText = location.status === 'active' ? _('活跃') : _('停用');
+
+            html += `
+                <div class="pickup-location-card">
+                    <div class="card-header">
+                        <h4>${location.location_name}</h4>
+                        <span class="status-badge ${statusClass}">${statusText}</span>
+                    </div>
+                    <div class="card-body">
+                        <div class="location-info">
+                            <div class="info-item">
+                                <span class="icon">📍</span>
+                                <span class="text">${location.address}</span>
+                            </div>
+                            ${location.phone ? `
+                                <div class="info-item">
+                                    <span class="icon">📞</span>
+                                    <span class="text">${location.phone}</span>
+                                </div>
+                            ` : ''}
+                            ${location.contact_person ? `
+                                <div class="info-item">
+                                    <span class="icon">👤</span>
+                                    <span class="text">${location.contact_person}</span>
+                                </div>
+                            ` : ''}
+                            ${location.business_hours && location.business_hours !== '请关注群内通知' ? `
+                                <div class="info-item">
+                                    <span class="icon">🕒</span>
+                                    <span class="text">${location.business_hours}</span>
+                                </div>
+                            ` : ''}
+                            ${location.description ? `
+                                <div class="info-item description">
+                                    <span class="text">${location.description}</span>
+                                </div>
+                            ` : ''}
+                        </div>
+                    </div>
+                    <div class="card-footer">
+                        <div class="card-actions">
+                            <button class="secondary-btn" onclick="admin.editPickupLocation('${location.location_id}')">
+                                ✏️ ${_('编辑')}
+                            </button>
+                            ${location.status === 'active' ? `
+                                <button class="danger-btn" onclick="admin.deactivatePickupLocation('${location.location_id}')">
+                                    ❌ ${_('停用')}
+                                </button>
+                            ` : ''}
+                        </div>
+                        <div class="card-meta">
+                            <small>ID: ${location.location_id} | ${_('创建时间')}: ${this.formatDateTime(location.created_at)}</small>
+                        </div>
+                    </div>
+                </div>
+            `;
+        });
+
+        grid.innerHTML = html;
+    }
+
+    updatePickupLocationsStats(locations) {
+        const total = locations.length;
+        const active = locations.filter(loc => loc.status === 'active').length;
+        const inactive = total - active;
+
+        document.getElementById('totalPickupLocations').textContent = total;
+        document.getElementById('activePickupLocations').textContent = active;
+        document.getElementById('inactivePickupLocations').textContent = inactive;
+    }
+
+    showAddPickupLocationModal() {
+        const modal = document.getElementById('addPickupLocationModal');
+        modal.style.display = 'block';
+
+        // 重置表单
+        document.getElementById('addPickupLocationForm').reset();
+        document.getElementById('pickupBusinessHours').value = _('请关注群内通知');
+    }
+
+    async savePickupLocation() {
+        try {
+            const locationData = {
+                location_id: document.getElementById('pickupLocationId').value.trim(),
+                location_name: document.getElementById('pickupLocationName').value.trim(),
+                address: document.getElementById('pickupAddress').value.trim(),
+                phone: document.getElementById('pickupPhone').value.trim(),
+                contact_person: document.getElementById('pickupContactPerson').value.trim(),
+                business_hours: document.getElementById('pickupBusinessHours').value.trim(),
+                description: document.getElementById('pickupDescription').value.trim()
+            };
+
+            // 验证必填字段
+            if (!locationData.location_id || !locationData.location_name || !locationData.address) {
+                this.showError('请填写所有必填字段');
+                return;
+            }
+
+            const response = await fetch('/api/admin/inventory/pickup-locations', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(locationData)
+            });
+
+            const result = await response.json();
+
+            if (result.success) {
+                this.showSuccess(_('取货点添加成功'));
+                this.closeModal('addPickupLocationModal');
+                this.loadPickupLocations();
+            } else {
+                this.showError('添加失败: ' + result.error);
+            }
+        } catch (error) {
+            console.error('添加取货点失败:', error);
+            this.showError('网络错误，请稍后重试');
+        }
+    }
+
+    async editPickupLocation(locationId) {
+        try {
+            const response = await fetch(`/api/admin/inventory/pickup-locations/${locationId}`);
+            const result = await response.json();
+
+            if (result.success) {
+                const location = result.data;
+
+                // 填充编辑表单
+                document.getElementById('editPickupLocationId').value = location.location_id;
+                document.getElementById('editPickupLocationName').value = location.location_name;
+                document.getElementById('editPickupAddress').value = location.address;
+                document.getElementById('editPickupPhone').value = location.phone || '';
+                document.getElementById('editPickupContactPerson').value = location.contact_person || '';
+                document.getElementById('editPickupBusinessHours').value = location.business_hours || '';
+                document.getElementById('editPickupDescription').value = location.description || '';
+                document.getElementById('editPickupStatus').value = location.status;
+
+                // 显示编辑模态框
+                document.getElementById('editPickupLocationModal').style.display = 'block';
+            } else {
+                this.showError('获取取货点信息失败: ' + result.error);
+            }
+        } catch (error) {
+            console.error('获取取货点信息失败:', error);
+            this.showError('网络错误，请稍后重试');
+        }
+    }
+
+    async updatePickupLocation() {
+        try {
+            const locationId = document.getElementById('editPickupLocationId').value;
+
+            const locationData = {
+                location_name: document.getElementById('editPickupLocationName').value.trim(),
+                address: document.getElementById('editPickupAddress').value.trim(),
+                phone: document.getElementById('editPickupPhone').value.trim(),
+                contact_person: document.getElementById('editPickupContactPerson').value.trim(),
+                business_hours: document.getElementById('editPickupBusinessHours').value.trim(),
+                description: document.getElementById('editPickupDescription').value.trim(),
+                status: document.getElementById('editPickupStatus').value
+            };
+
+            // 验证必填字段
+            if (!locationData.location_name || !locationData.address) {
+                this.showError('请填写所有必填字段');
+                return;
+            }
+
+            const response = await fetch(`/api/admin/inventory/pickup-locations/${locationId}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(locationData)
+            });
+
+            const result = await response.json();
+
+            if (result.success) {
+                this.showSuccess(_('取货点更新成功'));
+                this.closeModal('editPickupLocationModal');
+                this.loadPickupLocations();
+            } else {
+                this.showError('更新失败: ' + result.error);
+            }
+        } catch (error) {
+            console.error('更新取货点失败:', error);
+            this.showError('网络错误，请稍后重试');
+        }
+    }
+
+    async deactivatePickupLocation(locationId) {
+        if (!confirm(_('确定要停用这个取货点吗？'))) {
+            return;
+        }
+
+        try {
+            const response = await fetch(`/api/admin/inventory/pickup-locations/${locationId}`, {
+                method: 'DELETE'
+            });
+
+            const result = await response.json();
+
+            if (result.success) {
+                this.showSuccess(_('取货点已停用'));
+                this.loadPickupLocations();
+            } else {
+                this.showError('停用失败: ' + result.error);
+            }
+        } catch (error) {
+            console.error('停用取货点失败:', error);
+            this.showError('网络错误，请稍后重试');
+        }
+    }
+
+    formatDateTime(dateString) {
+        if (!dateString) return '';
+        const date = new Date(dateString);
+        return date.toLocaleString('zh-CN');
+    }
+
+    // ==================== 存储区域管理页面方法 ====================
+
+    loadStorageAreasPage() {
+        console.log('加载存储区域管理页面');
+        this.loadStorageAreas();
+    }
+
+    async loadStorageAreas() {
+        try {
+            const response = await fetch('/api/admin/inventory/storage-areas?include_inactive=true');
+            const result = await response.json();
+
+            if (result.success) {
+                this.storageAreasData = result.data;
+                this.renderStorageAreasGrid(result.data);
+                this.updateStorageAreasStats(result.data);
+            } else {
+                this.showError('加载存储区域列表失败: ' + result.error);
+            }
+        } catch (error) {
+            console.error('加载存储区域列表失败:', error);
+            this.showError('网络错误，请稍后重试');
+        }
+    }
+
+    renderStorageAreasGrid(areas) {
+        const grid = document.getElementById('storageAreasGrid');
+
+        if (areas.length === 0) {
+            grid.innerHTML = '<div class="no-data">暂无存储区域数据</div>';
+            return;
+        }
+
+        let html = '';
+        areas.forEach(area => {
+            const statusClass = area.status === 'active' ? 'status-active' : 'status-inactive';
+            const statusText = area.status === 'active' ? _('活跃') : _('停用');
+
+            html += `
+                <div class="storage-area-card">
+                    <div class="card-header">
+                        <div class="area-title">
+                            <h3>${area.area_name}</h3>
+                            <span class="area-id">ID: ${area.area_id}</span>
+                        </div>
+                        <div class="area-status">
+                            <span class="${statusClass}">${statusText}</span>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="area-info">
+                            ${area.description ? `
+                                <div class="info-item description">
+                                    <span class="label">${_('位置描述')}:</span>
+                                    <span class="text">${area.description}</span>
+                                </div>
+                            ` : ''}
+                            <div class="info-item capacity">
+                                <span class="label">${_('容量')}:</span>
+                                <span class="text">${area.capacity || 1000}</span>
+                            </div>
+                            <div class="info-item product-count">
+                                <span class="label">${_('当前产品数')}:</span>
+                                <span class="text highlight">${area.product_count || 0}</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-footer">
+                        <div class="card-actions">
+                            <button class="info-btn" onclick="admin.viewStorageAreaProducts('${area.area_id}')">
+                                👁️ ${_('查看产品')}
+                            </button>
+                            <button class="secondary-btn" onclick="admin.editStorageArea('${area.area_id}')">
+                                ✏️ ${_('编辑')}
+                            </button>
+                            ${area.status === 'active' ? `
+                                <button class="danger-btn" onclick="admin.deactivateStorageArea('${area.area_id}')">
+                                    ❌ ${_('停用')}
+                                </button>
+                            ` : ''}
+                        </div>
+                        <div class="card-meta">
+                            <small>${_('创建时间')}: ${this.formatDateTime(area.created_at)}</small>
+                        </div>
+                    </div>
+                </div>
+            `;
+        });
+
+        grid.innerHTML = html;
+    }
+
+    updateStorageAreasStats(areas) {
+        const total = areas.length;
+        const active = areas.filter(area => area.status === 'active').length;
+        const inactive = total - active;
+        const totalProducts = areas.reduce((sum, area) => sum + (area.product_count || 0), 0);
+
+        document.getElementById('totalStorageAreas').textContent = total;
+        document.getElementById('activeStorageAreas').textContent = active;
+        document.getElementById('inactiveStorageAreas').textContent = inactive;
+        document.getElementById('totalProductsInAreas').textContent = totalProducts;
+    }
+
+    showAddStorageAreaModal() {
+        const modal = document.getElementById('addStorageAreaModal');
+        if (modal) {
+            modal.style.display = 'block';
+            modal.style.zIndex = '1001';
+            console.log('添加存储区域模态框已显示');
+
+            // 重置表单
+            const form = document.getElementById('addStorageAreaForm');
+            if (form) {
+                form.reset();
+            }
+        } else {
+            console.error('找不到添加存储区域模态框');
+        }
+    }
+
+    async saveStorageArea() {
+        try {
+            const areaData = {
+                area_id: document.getElementById('storageAreaId').value.trim().toUpperCase(),
+                area_name: document.getElementById('storageAreaName').value.trim(),
+                description: document.getElementById('storageAreaDescription').value.trim(),
+                capacity: parseInt(document.getElementById('storageAreaCapacity').value) || 1000
+            };
+
+            // 验证必填字段
+            if (!areaData.area_id || !areaData.area_name) {
+                this.showError('请填写所有必填字段');
+                return;
+            }
+
+            // 验证区域ID格式
+            if (!/^[A-Z]$/.test(areaData.area_id)) {
+                this.showError('区域ID只能是单个字母');
+                return;
+            }
+
+            const response = await fetch('/api/admin/inventory/storage-areas', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(areaData)
+            });
+
+            const result = await response.json();
+
+            if (result.success) {
+                this.showSuccess(_('存储区域添加成功'));
+                this.closeModal('addStorageAreaModal');
+                this.loadStorageAreas();
+            } else {
+                this.showError('添加失败: ' + result.error);
+            }
+        } catch (error) {
+            console.error('添加存储区域失败:', error);
+            this.showError('网络错误，请稍后重试');
+        }
+    }
+
+    async editStorageArea(areaId) {
+        try {
+            console.log('开始编辑存储区域:', areaId);
+            const response = await fetch(`/api/admin/inventory/storage-areas/${areaId}`);
+            const result = await response.json();
+
+            if (result.success) {
+                const area = result.data;
+                console.log('获取到存储区域数据:', area);
+
+                // 确保模态框元素存在
+                const modal = document.getElementById('editStorageAreaModal');
+                if (!modal) {
+                    console.error('编辑模态框元素不存在');
+                    this.showError('模态框初始化失败');
+                    return;
+                }
+
+                // 填充编辑表单
+                const idField = document.getElementById('editStorageAreaId');
+                const nameField = document.getElementById('editStorageAreaName');
+                const descField = document.getElementById('editStorageAreaDescription');
+                const capacityField = document.getElementById('editStorageAreaCapacity');
+
+                if (!idField || !nameField || !descField || !capacityField) {
+                    console.error('表单字段不完整');
+                    this.showError('表单初始化失败');
+                    return;
+                }
+
+                idField.value = area.area_id;
+                nameField.value = area.area_name || '';
+                descField.value = area.description || '';
+                capacityField.value = area.capacity || 1000;
+
+                console.log('表单数据已填充');
+
+                // 显示编辑模态框
+                modal.style.display = 'block';
+                modal.style.zIndex = '1001';
+
+                // 确保模态框在最前面
+                setTimeout(() => {
+                    modal.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }, 100);
+
+                console.log('编辑模态框已显示');
+            } else {
+                this.showError('获取存储区域信息失败: ' + result.error);
+            }
+        } catch (error) {
+            console.error('获取存储区域信息失败:', error);
+            this.showError('网络错误，请稍后重试');
+        }
+    }
+
+    async updateStorageArea() {
+        try {
+            const areaId = document.getElementById('editStorageAreaId').value;
+
+            const areaData = {
+                area_name: document.getElementById('editStorageAreaName').value.trim(),
+                description: document.getElementById('editStorageAreaDescription').value.trim(),
+                capacity: parseInt(document.getElementById('editStorageAreaCapacity').value) || 1000
+            };
+
+            // 验证必填字段
+            if (!areaData.area_name) {
+                this.showError('请填写区域名称');
+                return;
+            }
+
+            const response = await fetch(`/api/admin/inventory/storage-areas/${areaId}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(areaData)
+            });
+
+            const result = await response.json();
+
+            if (result.success) {
+                this.showSuccess(_('存储区域更新成功'));
+                this.closeModal('editStorageAreaModal');
+                this.loadStorageAreas();
+            } else {
+                this.showError('更新失败: ' + result.error);
+            }
+        } catch (error) {
+            console.error('更新存储区域失败:', error);
+            this.showError('网络错误，请稍后重试');
+        }
+    }
+
+    async deactivateStorageArea(areaId) {
+        if (!confirm(_('确定要停用这个存储区域吗？'))) {
+            return;
+        }
+
+        try {
+            const response = await fetch(`/api/admin/inventory/storage-areas/${areaId}`, {
+                method: 'DELETE'
+            });
+
+            const result = await response.json();
+
+            if (result.success) {
+                this.showSuccess(_('存储区域已停用'));
+                this.loadStorageAreas();
+            } else {
+                this.showError('停用失败: ' + result.error);
+            }
+        } catch (error) {
+            console.error('停用存储区域失败:', error);
+            this.showError('网络错误，请稍后重试');
+        }
+    }
+
+    // ==================== 存储区域产品详情功能 ====================
+
+    async viewStorageAreaProducts(areaId) {
+        try {
+            console.log('查看存储区域产品:', areaId);
+            this.currentAreaId = areaId;
+            this.currentPage = 1;
+            this.currentSearch = '';
+
+            // 显示模态框
+            const modal = document.getElementById('storageAreaProductsModal');
+            if (modal) {
+                modal.style.display = 'block';
+                modal.style.zIndex = '1001';
+            }
+
+            // 加载产品数据
+            await this.loadStorageAreaProducts(areaId);
+
+        } catch (error) {
+            console.error('查看存储区域产品失败:', error);
+            this.showError('无法加载产品数据');
+        }
+    }
+
+    async loadStorageAreaProducts(areaId, page = 1, search = '') {
+        try {
+            // 显示加载状态
+            this.showProductsLoading(true);
+            this.hideProductsStates();
+
+            const params = new URLSearchParams({
+                page: page,
+                per_page: 20,
+                search: search
+            });
+
+            const response = await fetch(`/api/admin/inventory/storage-areas/${areaId}/products?${params}`);
+            const result = await response.json();
+
+            if (result.success) {
+                const data = result.data;
+
+                // 更新标题和统计信息
+                this.updateProductsModalHeader(data.area_info, data.total);
+
+                // 显示产品列表
+                this.displayProductsList(data.products);
+
+                // 更新分页
+                this.updateProductsPagination(data);
+
+                // 隐藏加载状态
+                this.showProductsLoading(false);
+
+                // 如果没有产品，显示空状态
+                if (data.products.length === 0) {
+                    this.showProductsEmptyState();
+                }
+
+            } else {
+                this.showProductsError(result.error);
+            }
+
+        } catch (error) {
+            console.error('加载存储区域产品失败:', error);
+            this.showProductsError('网络错误，请稍后重试');
+        }
+    }
+
+    updateProductsModalHeader(areaInfo, totalProducts) {
+        const titleElement = document.getElementById('storageAreaProductsTitle');
+        const areaNameElement = document.getElementById('areaNameDisplay');
+        const productCountElement = document.getElementById('productCountDisplay');
+
+        if (titleElement && areaInfo) {
+            titleElement.textContent = `${areaInfo.area_name} - ${_('产品详情')}`;
+        }
+
+        if (areaNameElement && areaInfo) {
+            areaNameElement.textContent = `${areaInfo.area_name} (${areaInfo.area_id})`;
+        }
+
+        if (productCountElement) {
+            productCountElement.textContent = `${_('共')} ${totalProducts} ${_('个产品')}`;
+        }
+    }
+
+    displayProductsList(products) {
+        const tbody = document.getElementById('productsTableBody');
+        if (!tbody) return;
+
+        let html = '';
+        products.forEach(product => {
+            const statusClass = product.status === 'active' ? 'status-active' : 'status-inactive';
+            const statusText = product.status === 'active' ? _('正常') : _('停用');
+
+            html += `
+                <tr>
+                    <td>${product.product_id}</td>
+                    <td class="product-name">${product.product_name}</td>
+                    <td class="barcode">${product.barcode || '-'}</td>
+                    <td>${product.category || '-'}</td>
+                    <td class="stock-count ${product.current_stock <= product.min_stock_warning ? 'low-stock' : ''}">
+                        ${product.current_stock}
+                    </td>
+                    <td>${product.unit}</td>
+                    <td class="price">¥${parseFloat(product.price).toFixed(2)}</td>
+                    <td><span class="${statusClass}">${statusText}</span></td>
+                </tr>
+            `;
+        });
+
+        tbody.innerHTML = html;
+
+        // 显示表格容器
+        const tableContainer = document.getElementById('productsTableContainer');
+        if (tableContainer) {
+            tableContainer.style.display = 'block';
+        }
+    }
+
+    updateProductsPagination(data) {
+        const paginationContainer = document.getElementById('productsPagination');
+        const paginationInfo = document.getElementById('paginationInfo');
+        const pageNumbers = document.getElementById('pageNumbers');
+        const prevBtn = document.getElementById('prevPageBtn');
+        const nextBtn = document.getElementById('nextPageBtn');
+
+        if (!paginationContainer) return;
+
+        if (data.total_pages <= 1) {
+            paginationContainer.style.display = 'none';
+            return;
+        }
+
+        paginationContainer.style.display = 'flex';
+
+        // 更新分页信息
+        if (paginationInfo) {
+            const start = (data.page - 1) * data.per_page + 1;
+            const end = Math.min(data.page * data.per_page, data.total);
+            paginationInfo.textContent = `${_('显示')} ${start}-${end} ${_('条，共')} ${data.total} ${_('条')}`;
+        }
+
+        // 更新页码
+        if (pageNumbers) {
+            let pagesHtml = '';
+            const maxPages = 5;
+            let startPage = Math.max(1, data.page - Math.floor(maxPages / 2));
+            let endPage = Math.min(data.total_pages, startPage + maxPages - 1);
+
+            if (endPage - startPage + 1 < maxPages) {
+                startPage = Math.max(1, endPage - maxPages + 1);
+            }
+
+            for (let i = startPage; i <= endPage; i++) {
+                const activeClass = i === data.page ? 'active' : '';
+                pagesHtml += `<button class="page-btn ${activeClass}" onclick="admin.goToProductsPage(${i})">${i}</button>`;
+            }
+            pageNumbers.innerHTML = pagesHtml;
+        }
+
+        // 更新上一页/下一页按钮
+        if (prevBtn) {
+            prevBtn.disabled = data.page <= 1;
+            prevBtn.onclick = () => this.goToProductsPage(data.page - 1);
+        }
+
+        if (nextBtn) {
+            nextBtn.disabled = data.page >= data.total_pages;
+            nextBtn.onclick = () => this.goToProductsPage(data.page + 1);
+        }
+    }
+
+    goToProductsPage(page) {
+        if (page < 1) return;
+        this.currentPage = page;
+        this.loadStorageAreaProducts(this.currentAreaId, page, this.currentSearch);
+    }
+
+    searchStorageAreaProducts() {
+        const searchInput = document.getElementById('productSearchInput');
+        if (searchInput) {
+            this.currentSearch = searchInput.value.trim();
+            this.currentPage = 1;
+            this.loadStorageAreaProducts(this.currentAreaId, 1, this.currentSearch);
+        }
+    }
+
+    showProductsLoading(show) {
+        const loadingIndicator = document.getElementById('productsLoadingIndicator');
+        if (loadingIndicator) {
+            loadingIndicator.style.display = show ? 'block' : 'none';
+        }
+    }
+
+    hideProductsStates() {
+        const states = ['productsTableContainer', 'productsEmptyState', 'productsErrorState', 'productsPagination'];
+        states.forEach(id => {
+            const element = document.getElementById(id);
+            if (element) {
+                element.style.display = 'none';
+            }
+        });
+    }
+
+    showProductsEmptyState() {
+        const emptyState = document.getElementById('productsEmptyState');
+        if (emptyState) {
+            emptyState.style.display = 'block';
+        }
+    }
+
+    showProductsError(message) {
+        this.showProductsLoading(false);
+        const errorState = document.getElementById('productsErrorState');
+        const errorMessage = document.getElementById('productsErrorMessage');
+
+        if (errorState) {
+            errorState.style.display = 'block';
+        }
+
+        if (errorMessage) {
+            errorMessage.textContent = message;
         }
     }
 }

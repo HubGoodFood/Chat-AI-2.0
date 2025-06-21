@@ -107,6 +107,51 @@
       "result": "success",
       "ip_address": "",
       "user_agent": ""
+    },
+    {
+      "log_id": "20250621184902_8",
+      "timestamp": "2025-06-21T18:49:02.419802",
+      "operator": "admin",
+      "operation_type": "update_stock",
+      "target_type": "inventory",
+      "target_id": "66",
+      "details": {
+        "quantity_change": 12,
+        "note": ""
+      },
+      "result": "failed",
+      "ip_address": "",
+      "user_agent": ""
+    },
+    {
+      "log_id": "20250621184919_9",
+      "timestamp": "2025-06-21T18:49:19.576540",
+      "operator": "admin",
+      "operation_type": "update_stock",
+      "target_type": "inventory",
+      "target_id": "66",
+      "details": {
+        "quantity_change": 25,
+        "note": ""
+      },
+      "result": "failed",
+      "ip_address": "",
+      "user_agent": ""
+    },
+    {
+      "log_id": "20250621185310_10",
+      "timestamp": "2025-06-21T18:53:10.515109",
+      "operator": "admin",
+      "operation_type": "update_stock",
+      "target_type": "inventory",
+      "target_id": "66",
+      "details": {
+        "quantity_change": 24,
+        "note": ""
+      },
+      "result": "success",
+      "ip_address": "",
+      "user_agent": ""
     }
   ]
 }

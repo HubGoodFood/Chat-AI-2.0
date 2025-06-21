@@ -1,5 +1,5 @@
 {
-  "last_updated": "2025-06-10T02:38:43.227871",
+  "last_updated": "2025-06-21T18:53:10.507548",
   "products": {
     "1": {
       "product_name": "农场素食散养走地萨松母鸡    ",
@@ -13,7 +13,7 @@
       "image_url": "",
       "status": "active",
       "created_at": "2025-06-09T02:34:23.516461",
-      "updated_at": "2025-06-10T00:20:38.680134",
+      "updated_at": "2025-06-21T18:39:13.982639",
       "stock_history": [
         {
           "action": "初始化",
@@ -82,10 +82,17 @@
           "timestamp": "2025-06-10T00:20:38.680134",
           "operator": "system",
           "note": "自动生成条形码: 880000019687"
+        },
+        {
+          "action": "重新生成条形码",
+          "quantity": 0,
+          "timestamp": "2025-06-21T18:39:13.982639",
+          "operator": "test_operator",
+          "note": "新条形码: 880000018396"
         }
       ],
-      "barcode": "880000019687",
-      "barcode_image": "barcodes/农场素食散养走地萨松母鸡_880000019687.png",
+      "barcode": "880000018396",
+      "barcode_image": "barcodes/农场素食散养走地萨松母鸡_880000018396.png",
       "storage_area": "B"
     },
     "2": {
@@ -100,7 +107,7 @@
       "image_url": "",
       "status": "active",
       "created_at": "2025-06-09T02:34:23.517458",
-      "updated_at": "2025-06-10T00:27:54.123690",
+      "updated_at": "2025-06-21T18:39:13.990373",
       "stock_history": [
         {
           "action": "初始化",
@@ -115,10 +122,17 @@
           "timestamp": "2025-06-10T00:27:54.123690",
           "operator": "system",
           "note": "自动生成条形码: 880000020572"
+        },
+        {
+          "action": "重新生成条形码",
+          "quantity": 0,
+          "timestamp": "2025-06-21T18:39:13.990373",
+          "operator": "test_operator",
+          "note": "新条形码: 880000020855"
         }
       ],
-      "barcode": "880000020572",
-      "barcode_image": "barcodes/农场新鲜童子公鸡_880000020572.png",
+      "barcode": "880000020855",
+      "barcode_image": "barcodes/农场新鲜童子公鸡_880000020855.png",
       "storage_area": "C"
     },
     "3": {
@@ -2162,6 +2176,41 @@
           "timestamp": "2025-06-10T02:38:39.158200",
           "operator": "admin",
           "note": "新增产品"
+        }
+      ]
+    },
+    "66": {
+      "product_name": "TestA",
+      "category": "禽类产品",
+      "specification": "",
+      "price": 132,
+      "unit": "斤",
+      "current_stock": 24,
+      "min_stock_warning": 0,
+      "description": "",
+      "image_url": "",
+      "barcode": "880000668174",
+      "barcode_image": "barcodes/TestA_880000668174.png",
+      "storage_area": "A",
+      "status": "active",
+      "created_at": "2025-06-21T18:47:49.264199",
+      "updated_at": "2025-06-21T18:53:10.507548",
+      "stock_history": [
+        {
+          "action": "新增产品",
+          "quantity": "0",
+          "timestamp": "2025-06-21T18:47:49.264199",
+          "operator": "admin",
+          "note": "新增产品"
+        },
+        {
+          "action": "增加库存",
+          "quantity": 24,
+          "old_stock": 0,
+          "new_stock": 24,
+          "timestamp": "2025-06-21T18:53:10.507548",
+          "operator": "admin",
+          "note": ""
         }
       ]
     }

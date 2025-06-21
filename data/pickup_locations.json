@@ -1,0 +1,54 @@
+{
+  "last_updated": "2025-06-21T18:07:17.313531",
+  "locations": {
+    "malden": {
+      "location_id": "malden",
+      "location_name": "Malden取货点",
+      "address": "273 Salem St, Malden, MA",
+      "phone": "781-480-4722",
+      "contact_person": "",
+      "business_hours": "请关注群内通知",
+      "description": "Malden地区主要取货点",
+      "status": "active",
+      "created_at": "2025-06-21T17:43:26.026290",
+      "updated_at": "2025-06-21T17:43:26.026290"
+    },
+    "chinatown": {
+      "location_id": "chinatown",
+      "location_name": "Chinatown取货点",
+      "address": "25 Chauncy St, Boston, MA 02110",
+      "phone": "718-578-3389",
+      "contact_person": "",
+      "business_hours": "请关注群内通知",
+      "description": "波士顿中国城取货点",
+      "status": "active",
+      "created_at": "2025-06-21T17:43:26.026290",
+      "updated_at": "2025-06-21T17:43:26.026290"
+    },
+    "quincy": {
+      "location_id": "quincy",
+      "location_name": "Quincy取货点",
+      "address": "待补充具体地址",
+      "phone": "待补充联系电话",
+      "contact_person": "",
+      "business_hours": "请关注群内通知",
+      "description": "Quincy地区取货点",
+      "status": "active",
+      "created_at": "2025-06-21T17:43:26.026290",
+      "updated_at": "2025-06-21T17:43:26.026290"
+    },
+    "lexington": {
+      "location_id": "lexington",
+      "location_name": "Lexington自取点",
+      "address": "11 Church Rd",
+      "phone": "",
+      "contact_person": "",
+      "business_hours": "请关注群内通知",
+      "description": "",
+      "status": "active",
+      "created_at": "2025-06-21T18:07:17.313531",
+      "updated_at": "2025-06-21T18:07:17.313531",
+      "created_by": "admin"
+    }
+  }
+}

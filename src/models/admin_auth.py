@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """
 管理员认证模块
 """
@@ -7,6 +8,10 @@ import json
 import os
 from datetime import datetime, timedelta
 from typing import Optional, Dict
+from ..utils.logger_config import get_logger
+
+# 初始化日志记录器
+logger = get_logger('admin_auth')
 
 
 class AdminAuth:
@@ -65,7 +70,7 @@ class AdminAuth:
             
             return None
         except Exception as e:
-            print(f"登录错误: {e}")
+            logger.error(f"登录错误: {e}")
             return None
     
     def verify_session(self, session_token: str) -> bool:
@@ -116,7 +121,7 @@ class AdminAuth:
             
             return False
         except Exception as e:
-            print(f"修改密码错误: {e}")
+            logger.error(f"修改密码错误: {e}")
             return False
     
     def cleanup_expired_sessions(self):

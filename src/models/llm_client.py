@@ -108,13 +108,21 @@ class LLMClient:
             AI回复
         """
         try:
+            try:
+                print(f"[LLM] 开始处理用户消息: {user_message}")
+            except UnicodeEncodeError:
+                print("[LLM] 开始处理用户消息 (包含特殊字符)")
+            print(f"[LLM] API URL: {self.api_url}")
+            print(f"[LLM] 模型: {self.model}")
+
             # 构建消息列表
             messages = [{"role": "system", "content": self.system_prompt}]
-            
+
             # 添加对话历史
             if conversation_history:
                 messages.extend(conversation_history[-6:])  # 保留最近6轮对话
-            
+                print(f"[LLM] 添加对话历史: {len(conversation_history[-6:])} 条消息")
+
             # 构建用户消息
             user_content = user_message
             if context_info:
@@ -124,15 +132,20 @@ class LLMClient:
 {context_info}
 
 请基于以上信息回答用户问题。"""
-            
+                try:
+                    print(f"[LLM] 添加上下文信息: {context_info[:100]}...")
+                except UnicodeEncodeError:
+                    print("[LLM] 添加上下文信息 (包含特殊字符)")
+
             messages.append({"role": "user", "content": user_content})
-            
+            print(f"[LLM] 消息列表构建完成，总消息数: {len(messages)}")
+
             # 调用API
             headers = {
                 "Authorization": f"Bearer {self.api_key}",
                 "Content-Type": "application/json"
             }
-            
+
             data = {
                 "model": self.model,
                 "messages": messages,
@@ -140,22 +153,50 @@ class LLMClient:
                 "max_tokens": 1000,
                 "stream": False
             }
+
+            print(f"[LLM] 准备发送API请求...")
             
-            response = requests.post(self.api_url, headers=headers, json=data, timeout=30)
-            response.raise_for_status()
-            
+            # 添加重试机制
+            max_retries = 2
+            for attempt in range(max_retries):
+                try:
+                    print(f"[LLM] 发送API请求 (尝试 {attempt + 1}/{max_retries + 1})")
+                    response = requests.post(self.api_url, headers=headers, json=data, timeout=30)
+                    print(f"[LLM] API响应状态码: {response.status_code}")
+                    response.raise_for_status()
+                    break
+                except requests.exceptions.RequestException as e:
+                    print(f"[LLM] API请求异常: {e}")
+                    if attempt == max_retries - 1:
+                        raise e
+                    print(f"[LLM] API调用失败，重试中... (尝试 {attempt + 1}/{max_retries})")
+                    import time
+                    time.sleep(1)
+
             result = response.json()
-            
+            print(f"[LLM] API响应解析成功")
+
             if 'choices' in result and len(result['choices']) > 0:
-                return result['choices'][0]['message']['content'].strip()
+                ai_response = result['choices'][0]['message']['content'].strip()
+                try:
+                    print(f"[LLM] AI回复生成成功: {ai_response[:50]}...")
+                except UnicodeEncodeError:
+                    print("[LLM] AI回复生成成功 (包含特殊字符)")
+                return ai_response
             else:
+                print(f"[LLM] API响应格式异常: {result}")
                 return "抱歉，我现在无法回答您的问题，请稍后再试或联系人工客服。"
                 
         except requests.exceptions.RequestException as e:
             print(f"API请求错误: {e}")
+            print(f"请求URL: {self.api_url}")
+            print(f"请求数据: {data}")
             return "抱歉，网络连接出现问题，请稍后再试。"
         except Exception as e:
             print(f"处理错误: {e}")
+            print(f"错误类型: {type(e)}")
+            import traceback
+            print(f"错误堆栈: {traceback.format_exc()}")
             return "抱歉，处理您的请求时出现错误，请稍后再试。"
     
     def format_product_info(self, products: List[Dict]) -> str:

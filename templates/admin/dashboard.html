@@ -22,6 +22,8 @@
                     <a href="#inventory-add-product" class="menu-item" data-section="inventory-add-product">📦 {{ _('产品入库') }}</a>
                     <a href="#inventory-counts" class="menu-item" data-section="inventory-counts">📊 {{ _('库存盘点') }}</a>
                     <a href="#inventory-analysis" class="menu-item" data-section="inventory-analysis">📈 {{ _('数据对比分析') }}</a>
+                    <a href="#storage-areas" class="menu-item" data-section="storage-areas">🏢 {{ _('存储区域管理') }}</a>
+                    <a href="#pickup-locations" class="menu-item" data-section="pickup-locations">📍 {{ _('取货点管理') }}</a>
                 </li>
                 <li><a href="#feedback" class="menu-item" data-section="feedback">💬 {{ _('反馈管理') }}</a></li>
                 <li><a href="#logs" class="menu-item" data-section="logs">📋 {{ _('操作日志') }}</a></li>
@@ -108,7 +110,12 @@
             <section id="inventorySection" class="content-section">
                 <div class="section-header">
                     <h1>📦 {{ _('库存管理') }}</h1>
-                    <button id="addProductBtn" class="primary-btn">+ {{ _('添加产品') }}</button>
+                    <div class="header-actions">
+                        <button id="batchBarcodeBtn" class="secondary-btn" onclick="admin.showBatchBarcodeGenerationModal()">
+                            🏷️ {{ _('批量生成条形码') }}
+                        </button>
+                        <button id="addProductBtn" class="primary-btn">+ {{ _('添加产品') }}</button>
+                    </div>
                 </div>
 
                 <div class="inventory-controls">
@@ -135,6 +142,7 @@
                             <tr>
                                 <th>{{ _('产品名称') }}</th>
                                 <th>{{ _('分类') }}</th>
+                                <th>{{ _('条形码') }}</th>
                                 <th>{{ _('价格') }}</th>
                                 <th>{{ _('当前库存') }}</th>
                                 <th>{{ _('状态') }}</th>
@@ -143,7 +151,7 @@
                         </thead>
                         <tbody id="inventoryTableBody">
                             <tr>
-                                <td colspan="6" class="loading">{{ _('正在加载库存数据...') }}</td>
+                                <td colspan="7" class="loading">{{ _('正在加载库存数据...') }}</td>
                             </tr>
                         </tbody>
                     </table>
@@ -318,15 +326,15 @@
                         <form id="changePasswordForm">
                             <div class="form-group">
                                 <label for="oldPassword">{{ _('当前密码') }}</label>
-                                <input type="password" id="oldPassword" required>
+                                <input type="password" id="oldPassword" autocomplete="current-password" required>
                             </div>
                             <div class="form-group">
                                 <label for="newPassword">{{ _('新密码') }}</label>
-                                <input type="password" id="newPassword" required>
+                                <input type="password" id="newPassword" autocomplete="new-password" required>
                             </div>
                             <div class="form-group">
                                 <label for="confirmPassword">{{ _('确认新密码') }}</label>
-                                <input type="password" id="confirmPassword" required>
+                                <input type="password" id="confirmPassword" autocomplete="new-password" required>
                             </div>
                             <button type="submit" class="primary-btn">{{ _('修改密码') }}</button>
                         </form>
@@ -369,12 +377,12 @@
                             <form id="addProductForm" class="product-form">
                                 <div class="form-row">
                                     <div class="form-group">
-                                        <label for="productName">{{ _('产品名称') }} *</label>
-                                        <input type="text" id="productName" name="product_name" required>
+                                        <label for="addProductName">{{ _('产品名称') }} *</label>
+                                        <input type="text" id="addProductName" name="product_name" required>
                                     </div>
                                     <div class="form-group">
-                                        <label for="productCategory">{{ _('产品分类') }} *</label>
-                                        <select id="productCategory" name="category" required>
+                                        <label for="addProductCategory">{{ _('产品分类') }} *</label>
+                                        <select id="addProductCategory" name="category" required>
                                             <option value="">{{ _('请选择分类') }}</option>
                                             <option value="水果">{{ _('时令水果') }}</option>
                                             <option value="蔬菜">{{ _('新鲜蔬菜') }}</option>
@@ -388,12 +396,12 @@
 
                                 <div class="form-row">
                                     <div class="form-group">
-                                        <label for="productPrice">{{ _('价格') }} *</label>
-                                        <input type="text" id="productPrice" name="price" placeholder="{{ _('例：15元/斤') }}" required>
+                                        <label for="addProductPrice">{{ _('价格') }} *</label>
+                                        <input type="text" id="addProductPrice" name="price" placeholder="{{ _('例：15元/斤') }}" required>
                                     </div>
                                     <div class="form-group">
-                                        <label for="productUnit">{{ _('单位') }} *</label>
-                                        <select id="productUnit" name="unit" required>
+                                        <label for="addProductUnit">{{ _('单位') }} *</label>
+                                        <select id="addProductUnit" name="unit" required>
                                             <option value="">{{ _('请选择单位') }}</option>
                                             <option value="斤">{{ _('斤') }}</option>
                                             <option value="个">{{ _('个') }}</option>
@@ -406,8 +414,8 @@
 
                                 <div class="form-row">
                                     <div class="form-group">
-                                        <label for="productSpecification">{{ _('规格') }}</label>
-                                        <input type="text" id="productSpecification" name="specification" placeholder="{{ _('如：500g、2个装') }}">
+                                        <label for="addProductSpecification">{{ _('规格') }}</label>
+                                        <input type="text" id="addProductSpecification" name="specification" placeholder="{{ _('如：500g、2个装') }}">
                                     </div>
                                     <div class="form-group">
                                         <label for="storageArea">{{ _('存储区域') }} *</label>
@@ -424,23 +432,23 @@
 
                                 <div class="form-row">
                                     <div class="form-group">
-                                        <label for="initialStock">{{ _('初始库存') }}</label>
-                                        <input type="number" id="initialStock" name="initial_stock" min="0" value="0">
+                                        <label for="addInitialStock">{{ _('初始库存') }}</label>
+                                        <input type="number" id="addInitialStock" name="initial_stock" min="0" value="0">
                                     </div>
                                     <div class="form-group">
-                                        <label for="minStockWarning">{{ _('最小库存警告') }}</label>
-                                        <input type="number" id="minStockWarning" name="min_stock_warning" min="0" value="10">
+                                        <label for="addMinStockWarning">{{ _('最小库存警告') }}</label>
+                                        <input type="number" id="addMinStockWarning" name="min_stock_warning" min="0" value="10">
                                     </div>
                                 </div>
 
                                 <div class="form-group">
-                                    <label for="productDescription">{{ _('产品描述') }}</label>
-                                    <textarea id="productDescription" name="description" rows="3" placeholder="{{ _('产品关键词、特点等') }}"></textarea>
+                                    <label for="addProductDescription">{{ _('产品描述') }}</label>
+                                    <textarea id="addProductDescription" name="description" rows="3" placeholder="{{ _('产品关键词、特点等') }}"></textarea>
                                 </div>
 
                                 <div class="form-group">
-                                    <label for="productImageUrl">{{ _('产品图片URL') }}</label>
-                                    <input type="url" id="productImageUrl" name="image_url" placeholder="https://example.com/image.jpg">
+                                    <label for="addProductImageUrl">{{ _('产品图片URL') }}</label>
+                                    <input type="url" id="addProductImageUrl" name="image_url" placeholder="https://example.com/image.jpg">
                                 </div>
 
                                 <div class="form-actions">
@@ -760,6 +768,108 @@
                     </div>
                 </div>
             </section>
+
+            <!-- 存储区域管理页面 -->
+            <section id="storage-areasSection" class="content-section">
+                <div class="section-header">
+                    <div>
+                        <h1>🏢 {{ _('存储区域管理') }}</h1>
+                        <p>{{ _('管理所有存储区域信息，包括区域名称、位置描述和产品统计') }}</p>
+                    </div>
+                    <button id="addStorageAreaBtn" class="primary-btn">+ {{ _('添加存储区域') }}</button>
+                </div>
+
+                <!-- 统计信息 -->
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon">🏢</div>
+                        <div class="stat-info">
+                            <h3 id="totalStorageAreas">-</h3>
+                            <p>{{ _('总存储区域') }}</p>
+                        </div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-icon">✅</div>
+                        <div class="stat-info">
+                            <h3 id="activeStorageAreas">-</h3>
+                            <p>{{ _('活跃区域') }}</p>
+                        </div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-icon">📦</div>
+                        <div class="stat-info">
+                            <h3 id="totalProductsInAreas">-</h3>
+                            <p>{{ _('总产品数') }}</p>
+                        </div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-icon">❌</div>
+                        <div class="stat-info">
+                            <h3 id="inactiveStorageAreas">-</h3>
+                            <p>{{ _('停用区域') }}</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 存储区域列表 -->
+                <div class="storage-areas-container">
+                    <div class="storage-areas-grid" id="storageAreasGrid">
+                        <div class="loading-placeholder">
+                            <p>{{ _('正在加载存储区域数据...') }}</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 取货点管理页面 -->
+            <section id="pickup-locationsSection" class="content-section">
+                <div class="section-header">
+                    <div>
+                        <h1>📍 {{ _('取货点管理') }}</h1>
+                        <p>{{ _('管理所有取货点信息，包括地址、联系方式和营业时间') }}</p>
+                    </div>
+                    <button id="addPickupLocationBtn" class="primary-btn">+ {{ _('添加取货点') }}</button>
+                </div>
+
+                <!-- 统计信息 -->
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon">📍</div>
+                        <div class="stat-info">
+                            <h3 id="totalPickupLocations">-</h3>
+                            <p>{{ _('总取货点') }}</p>
+                        </div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-icon">✅</div>
+                        <div class="stat-info">
+                            <h3 id="activePickupLocations">-</h3>
+                            <p>{{ _('活跃取货点') }}</p>
+                        </div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-icon">❌</div>
+                        <div class="stat-info">
+                            <h3 id="inactivePickupLocations">-</h3>
+                            <p>{{ _('停用取货点') }}</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 取货点列表 -->
+                <div class="pickup-locations-container">
+                    <div class="pickup-locations-grid" id="pickupLocationsGrid">
+                        <div class="loading-placeholder">
+                            <p>{{ _('正在加载取货点数据...') }}</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
         </main>
     </div>
     
@@ -773,6 +883,108 @@
 
     <!-- 模态框模板 -->
     {% include 'admin/modals.html' %}
+
+    <!-- 取货点管理模态框 -->
+    <!-- 添加取货点模态框 -->
+    <div id="addPickupLocationModal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>{{ _('添加新取货点') }}</h2>
+            <form id="addPickupLocationForm" class="modal-form">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="pickupLocationId">{{ _('取货点ID') }} *</label>
+                        <input type="text" id="pickupLocationId" required>
+                        <small>{{ _('例如：malden, quincy, chinatown') }}</small>
+                    </div>
+                    <div class="form-group">
+                        <label for="pickupLocationName">{{ _('取货点名称') }} *</label>
+                        <input type="text" id="pickupLocationName" required>
+                        <small>{{ _('例如：Malden取货点') }}</small>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="pickupAddress">{{ _('地址') }} *</label>
+                    <input type="text" id="pickupAddress" required>
+                    <small>{{ _('完整的取货地址') }}</small>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="pickupPhone">{{ _('联系电话') }}</label>
+                        <input type="text" id="pickupPhone">
+                    </div>
+                    <div class="form-group">
+                        <label for="pickupContactPerson">{{ _('联系人') }}</label>
+                        <input type="text" id="pickupContactPerson">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="pickupBusinessHours">{{ _('营业时间') }}</label>
+                    <input type="text" id="pickupBusinessHours" value="{{ _('请关注群内通知') }}">
+                </div>
+                <div class="form-group">
+                    <label for="pickupDescription">{{ _('描述') }}</label>
+                    <textarea id="pickupDescription" rows="3"></textarea>
+                </div>
+                <div class="form-actions">
+                    <button type="submit" class="primary-btn">{{ _('添加取货点') }}</button>
+                    <button type="button" class="secondary-btn" onclick="admin.closeModal('addPickupLocationModal')">{{ _('取消') }}</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- 编辑取货点模态框 -->
+    <div id="editPickupLocationModal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>{{ _('编辑取货点') }}</h2>
+            <form id="editPickupLocationForm" class="modal-form">
+                <input type="hidden" id="editPickupLocationId">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="editPickupLocationName">{{ _('取货点名称') }} *</label>
+                        <input type="text" id="editPickupLocationName" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="editPickupStatus">{{ _('状态') }}</label>
+                        <select id="editPickupStatus">
+                            <option value="active">{{ _('活跃') }}</option>
+                            <option value="inactive">{{ _('停用') }}</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="editPickupAddress">{{ _('地址') }} *</label>
+                    <input type="text" id="editPickupAddress" required>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="editPickupPhone">{{ _('联系电话') }}</label>
+                        <input type="text" id="editPickupPhone">
+                    </div>
+                    <div class="form-group">
+                        <label for="editPickupContactPerson">{{ _('联系人') }}</label>
+                        <input type="text" id="editPickupContactPerson">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="editPickupBusinessHours">{{ _('营业时间') }}</label>
+                    <input type="text" id="editPickupBusinessHours">
+                </div>
+                <div class="form-group">
+                    <label for="editPickupDescription">{{ _('描述') }}</label>
+                    <textarea id="editPickupDescription" rows="3"></textarea>
+                </div>
+                <div class="form-actions">
+                    <button type="submit" class="primary-btn">{{ _('保存更改') }}</button>
+                    <button type="button" class="secondary-btn" onclick="admin.closeModal('editPickupLocationModal')">{{ _('取消') }}</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+
 
     <script>
         // JavaScript Translation Object
@@ -905,7 +1117,87 @@
             '反馈': '{{ _("反馈") }}',
             '管理员': '{{ _("管理员") }}',
             '数据导出': '{{ _("数据导出") }}',
-            '库存调整': '{{ _("库存调整") }}'
+            '库存调整': '{{ _("库存调整") }}',
+
+            // 取货点管理相关翻译
+            '取货点管理': '{{ _("取货点管理") }}',
+            '总取货点': '{{ _("总取货点") }}',
+            '活跃取货点': '{{ _("活跃取货点") }}',
+            '停用取货点': '{{ _("停用取货点") }}',
+            '添加取货点': '{{ _("添加取货点") }}',
+            '编辑取货点': '{{ _("编辑取货点") }}',
+            '取货点ID': '{{ _("取货点ID") }}',
+            '取货点名称': '{{ _("取货点名称") }}',
+            '地址': '{{ _("地址") }}',
+            '联系电话': '{{ _("联系电话") }}',
+            '联系人': '{{ _("联系人") }}',
+            '营业时间': '{{ _("营业时间") }}',
+            '描述': '{{ _("描述") }}',
+            '活跃': '{{ _("活跃") }}',
+            '停用': '{{ _("停用") }}',
+            '保存更改': '{{ _("保存更改") }}',
+            '取消': '{{ _("取消") }}',
+            '添加新取货点': '{{ _("添加新取货点") }}',
+            '暂无取货点数据': '{{ _("暂无取货点数据") }}',
+            '取货点添加成功': '{{ _("取货点添加成功") }}',
+            '取货点更新成功': '{{ _("取货点更新成功") }}',
+            '取货点已停用': '{{ _("取货点已停用") }}',
+            '确定要停用这个取货点吗？': '{{ _("确定要停用这个取货点吗？") }}',
+            '请关注群内通知': '{{ _("请关注群内通知") }}',
+
+            // 存储区域管理相关翻译
+            '存储区域管理': '{{ _("存储区域管理") }}',
+            '总存储区域': '{{ _("总存储区域") }}',
+            '活跃区域': '{{ _("活跃区域") }}',
+            '停用区域': '{{ _("停用区域") }}',
+            '总产品数': '{{ _("总产品数") }}',
+            '添加存储区域': '{{ _("添加存储区域") }}',
+            '编辑存储区域': '{{ _("编辑存储区域") }}',
+            '区域ID': '{{ _("区域ID") }}',
+            '区域名称': '{{ _("区域名称") }}',
+            '位置描述': '{{ _("位置描述") }}',
+            '容量': '{{ _("容量") }}',
+            '当前产品数': '{{ _("当前产品数") }}',
+            '添加区域': '{{ _("添加区域") }}',
+            '存储区域添加成功': '{{ _("存储区域添加成功") }}',
+            '存储区域更新成功': '{{ _("存储区域更新成功") }}',
+            '存储区域已停用': '{{ _("存储区域已停用") }}',
+            '确定要停用这个存储区域吗？': '{{ _("确定要停用这个存储区域吗？") }}',
+            '暂无存储区域数据': '{{ _("暂无存储区域数据") }}',
+            '只允许单个字母，如：F、G等': '{{ _("只允许单个字母，如：F、G等") }}',
+            '如：F区、冷藏室等': '{{ _("如：F区、冷藏室等") }}',
+            '如：1楼冰箱A、2楼冷藏室B区等详细位置信息': '{{ _("如：1楼冰箱A、2楼冷藏室B区等详细位置信息") }}',
+            '预计可存储产品数量（可选）': '{{ _("预计可存储产品数量（可选）") }}',
+            '正在加载存储区域数据...': '{{ _("正在加载存储区域数据...") }}',
+
+            // 产品详情相关翻译
+            '查看产品': '{{ _("查看产品") }}',
+            '产品详情': '{{ _("产品详情") }}',
+            '共': '{{ _("共") }}',
+            '个产品': '{{ _("个产品") }}',
+            '搜索产品名称、条形码或产品ID...': '{{ _("搜索产品名称、条形码或产品ID...") }}',
+            '搜索': '{{ _("搜索") }}',
+            '清除': '{{ _("清除") }}',
+            '正在加载产品数据...': '{{ _("正在加载产品数据...") }}',
+            '产品ID': '{{ _("产品ID") }}',
+            '产品名称': '{{ _("产品名称") }}',
+            '条形码': '{{ _("条形码") }}',
+            '类别': '{{ _("类别") }}',
+            '当前库存': '{{ _("当前库存") }}',
+            '单位': '{{ _("单位") }}',
+            '价格': '{{ _("价格") }}',
+            '状态': '{{ _("状态") }}',
+            '暂无产品数据': '{{ _("暂无产品数据") }}',
+            '该存储区域目前没有产品，或者没有符合搜索条件的产品。': '{{ _("该存储区域目前没有产品，或者没有符合搜索条件的产品。") }}',
+            '加载失败': '{{ _("加载失败") }}',
+            '无法加载产品数据，请稍后重试。': '{{ _("无法加载产品数据，请稍后重试。") }}',
+            '重试': '{{ _("重试") }}',
+            '关闭': '{{ _("关闭") }}',
+            '显示': '{{ _("显示") }}',
+            '条，共': '{{ _("条，共") }}',
+            '条': '{{ _("条") }}',
+            '上一页': '{{ _("上一页") }}',
+            '下一页': '{{ _("下一页") }}'
         };
 
         // Translation Function
