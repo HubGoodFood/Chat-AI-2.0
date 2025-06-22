@@ -17,7 +17,7 @@ def check_dependencies():
     logger.info("检查依赖包...")
 
     required_packages = [
-        'flask', 'pandas', 'requests', 'jieba', 'fuzzywuzzy'
+        'flask', 'pandas', 'requests', 'jieba', 'rapidfuzz'
     ]
 
     missing_packages = []

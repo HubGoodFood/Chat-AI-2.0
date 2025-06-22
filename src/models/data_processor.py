@@ -4,7 +4,7 @@
 import pandas as pd
 import json
 import jieba
-from fuzzywuzzy import fuzz
+from rapidfuzz import fuzz
 from typing import List, Dict, Any, Optional
 
 

@@ -3,8 +3,7 @@ pandas>=2.1.0
 requests==2.31.0
 python-dotenv==1.0.0
 jieba==0.42.1
-fuzzywuzzy==0.18.0
-python-levenshtein==0.21.1
+rapidfuzz>=3.0.0
 flask-limiter>=3.12
 flask-cors>=6.0.0
 flask-babel>=4.0.0

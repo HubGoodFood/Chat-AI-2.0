@@ -6,7 +6,7 @@ import logging
 import re
 import jieba
 from typing import List, Dict, Any, Optional, Tuple
-from fuzzywuzzy import fuzz, process
+from rapidfuzz import fuzz, process
 from sqlalchemy.orm import Session
 from sqlalchemy import and_, or_, func, text
 from ..database.database_config import db_config
