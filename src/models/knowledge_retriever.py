@@ -10,131 +10,271 @@ from .pickup_location_manager import PickupLocationManager
 
 
 class KnowledgeRetriever:
+    """
+    知识检索器类 - 智能客服系统的核心组件
+
+    负责处理用户问题的意图分析、信息检索和智能回答生成。
+    集成了产品数据处理、政策查询、LLM调用等功能，为用户提供准确的客服回答。
+
+    主要功能：
+    - 问题意图分析：识别用户询问的类型（价格、产地、配送等）
+    - 信息检索：从产品数据和政策数据中检索相关信息
+    - 智能回答：结合本地知识和LLM生成准确回答
+    - 上下文管理：维护对话历史和上下文信息
+
+    Attributes:
+        data_processor (DataProcessor): 数据处理器，负责产品和政策数据的加载和搜索
+        llm_client (LLMClient): LLM客户端，负责与AI模型的交互
+        pickup_location_manager (PickupLocationManager): 取货点管理器，动态管理取货地点信息
+        question_patterns (Dict): 问题类型关键词映射表，用于意图识别
+    """
+
     def __init__(self):
-        self.data_processor = DataProcessor()
-        self.llm_client = LLMClient()
-        self.pickup_location_manager = PickupLocationManager()
-        
-        # 问题类型关键词映射
+        """
+        初始化知识检索器
+
+        创建必要的组件实例并设置问题类型关键词映射表。
+        这些关键词用于分析用户问题的意图，帮助系统提供更准确的回答。
+        """
+        # 初始化核心组件
+        self.data_processor = DataProcessor()  # 数据处理器：处理产品和政策数据
+        self.llm_client = LLMClient()  # LLM客户端：与AI模型交互
+        self.pickup_location_manager = PickupLocationManager()  # 取货点管理器：动态管理取货地点
+
+        # 问题类型关键词映射表
+        # 用于识别用户问题的意图类型，每个类型包含相关的关键词列表
         self.question_patterns = {
-            'price': ['价格', '多少钱', '费用', '成本', '贵', '便宜', '价位'],
-            'origin': ['产地', '哪里产', '来源', '出产', '原产地'],
-            'nutrition': ['营养', '维生素', '蛋白质', '好处', '功效', '健康'],
-            'taste': ['口感', '味道', '好吃', '甜', '酸', '脆', '嫩'],
-            'storage': ['保存', '储存', '放置', '保鲜', '冷藏'],
-            'cooking': ['做法', '烹饪', '怎么做', '料理', '制作'],
-            'delivery': ['配送', '送货', '运费', '快递', '物流'],
-            'payment': ['付款', '支付', '付费', 'venmo', '现金'],
-            'pickup': ['取货', '自取', '提货', '领取'],
-            'return': ['退货', '换货', '退款', '质量问题', '不满意'],
-            'policy': ['政策', '规定', '规则', '制度', '条款']
+            'price': ['价格', '多少钱', '费用', '成本', '贵', '便宜', '价位'],  # 价格相关询问
+            'origin': ['产地', '哪里产', '来源', '出产', '原产地'],  # 产地相关询问
+            'nutrition': ['营养', '维生素', '蛋白质', '好处', '功效', '健康'],  # 营养价值询问
+            'taste': ['口感', '味道', '好吃', '甜', '酸', '脆', '嫩'],  # 口感味道询问
+            'storage': ['保存', '储存', '放置', '保鲜', '冷藏'],  # 储存方法询问
+            'cooking': ['做法', '烹饪', '怎么做', '料理', '制作'],  # 烹饪方法询问
+            'delivery': ['配送', '送货', '运费', '快递', '物流'],  # 配送服务询问
+            'payment': ['付款', '支付', '付费', 'venmo', '现金'],  # 付款方式询问
+            'pickup': ['取货', '自取', '提货', '领取'],  # 取货相关询问
+            'return': ['退货', '换货', '退款', '质量问题', '不满意'],  # 退换货询问
+            'policy': ['政策', '规定', '规则', '制度', '条款']  # 政策规定询问
         }
         
     def initialize(self):
-        """初始化数据"""
+        """
+        初始化知识检索器的数据
+
+        加载产品数据和政策数据，为后续的信息检索做准备。
+        这个方法应该在使用知识检索器之前调用。
+
+        Raises:
+            Exception: 如果数据加载失败
+        """
         self.data_processor.load_data()
-        
+
     def analyze_question_intent(self, question: str) -> Tuple[str, List[str]]:
-        """分析问题意图"""
-        question_lower = question.lower()
-        detected_intents = []
-        keywords = jieba.lcut(question)
-        
+        """
+        分析用户问题的意图类型
+
+        通过关键词匹配的方式识别用户问题的意图类型，帮助系统提供更准确的回答。
+        使用jieba分词工具对问题进行分词，然后与预定义的关键词模式进行匹配。
+
+        Args:
+            question (str): 用户输入的问题文本
+
+        Returns:
+            Tuple[str, List[str]]: 包含两个元素的元组
+                - str: 检测到的意图类型（如'price', 'delivery', 'general'等）
+                - List[str]: 问题的分词结果列表
+
+        Example:
+            >>> retriever = KnowledgeRetriever()
+            >>> intent, keywords = retriever.analyze_question_intent("苹果多少钱？")
+            >>> print(intent)  # 'price'
+            >>> print(keywords)  # ['苹果', '多少钱', '？']
+        """
+        question_lower = question.lower()  # 转换为小写以便匹配
+        detected_intents = []  # 存储检测到的意图类型
+        keywords = jieba.lcut(question)  # 使用jieba进行中文分词
+
+        # 遍历所有意图类型和对应的关键词模式
         for intent, patterns in self.question_patterns.items():
             for pattern in patterns:
                 if pattern in question_lower:
                     detected_intents.append(intent)
-                    break
-        
+                    break  # 找到匹配的关键词后跳出内层循环
+
         # 如果没有检测到特定意图，默认为一般查询
         if not detected_intents:
             detected_intents = ['general']
-            
+
+        # 返回第一个检测到的意图类型和分词结果
         return detected_intents[0] if detected_intents else 'general', keywords
     
     def extract_product_names(self, question: str) -> List[str]:
-        """从问题中提取可能的产品名称"""
-        # 获取所有产品名称
+        """
+        从用户问题中提取可能提到的产品名称
+
+        通过分词匹配的方式识别用户问题中提到的具体产品。
+        这个方法对于提供精准的产品信息回答非常重要。
+
+        Args:
+            question (str): 用户输入的问题文本
+
+        Returns:
+            List[str]: 在问题中找到的产品名称列表
+
+        Example:
+            >>> retriever = KnowledgeRetriever()
+            >>> products = retriever.extract_product_names("苹果和香蕉的价格是多少？")
+            >>> print(products)  # ['苹果', '香蕉']
+        """
+        # 检查产品数据是否已加载
         if self.data_processor.products_df is None:
             return []
-            
+
+        # 获取所有产品名称列表
         product_names = self.data_processor.products_df['ProductName'].tolist()
         found_products = []
-        
+
+        # 遍历所有产品名称，检查是否在问题中被提到
         for product_name in product_names:
-            # 检查产品名称是否在问题中
+            # 对产品名称进行分词，检查是否有词汇在问题中出现
             if any(word in question for word in jieba.lcut(product_name)):
                 found_products.append(product_name)
-        
+
         return found_products
-    
+
     def retrieve_information(self, question: str) -> Dict[str, Any]:
-        """检索相关信息"""
+        """
+        检索与用户问题相关的所有信息
+
+        这是知识检索的核心方法，整合了意图分析、产品搜索、政策查询等功能。
+        返回的信息将用于生成最终的回答。
+
+        Args:
+            question (str): 用户输入的问题文本
+
+        Returns:
+            Dict[str, Any]: 包含检索结果的字典，包含以下键：
+                - intent (str): 问题意图类型
+                - keywords (List[str]): 问题关键词列表
+                - products (List[Dict]): 相关产品信息列表
+                - policies (List[Dict]): 相关政策信息列表
+                - mentioned_products (List[str]): 问题中提到的产品名称
+                - has_product_info (bool): 是否找到相关产品信息
+                - has_policy_info (bool): 是否找到相关政策信息
+
+        Example:
+            >>> retriever = KnowledgeRetriever()
+            >>> result = retriever.retrieve_information("苹果多少钱？")
+            >>> print(result['intent'])  # 'price'
+            >>> print(result['has_product_info'])  # True
+        """
+        # 分析问题意图和关键词
         intent, keywords = self.analyze_question_intent(question)
-        
-        # 检索产品信息
+
+        # 从产品数据中检索相关信息
         product_results = self.data_processor.search_products(question)
-        
-        # 检索政策信息
+
+        # 从政策数据中检索相关信息
         policy_results = self.data_processor.search_policies(question)
-        
-        # 提取具体产品名称
+
+        # 提取问题中明确提到的产品名称
         mentioned_products = self.extract_product_names(question)
-        
+
+        # 构建并返回检索结果
         return {
-            'intent': intent,
-            'keywords': keywords,
-            'products': product_results,
-            'policies': policy_results,
-            'mentioned_products': mentioned_products,
-            'has_product_info': len(product_results) > 0,
-            'has_policy_info': len(policy_results) > 0
+            'intent': intent,  # 问题意图类型
+            'keywords': keywords,  # 分词结果
+            'products': product_results,  # 相关产品信息
+            'policies': policy_results,  # 相关政策信息
+            'mentioned_products': mentioned_products,  # 提到的产品名称
+            'has_product_info': len(product_results) > 0,  # 是否有产品信息
+            'has_policy_info': len(policy_results) > 0  # 是否有政策信息
         }
     
     def generate_context_info(self, retrieval_result: Dict[str, Any]) -> str:
-        """生成上下文信息"""
+        """
+        根据检索结果生成LLM所需的上下文信息
+
+        将检索到的产品信息和政策信息格式化为LLM可以理解的上下文文本。
+        这个上下文将帮助LLM生成更准确和相关的回答。
+
+        Args:
+            retrieval_result (Dict[str, Any]): 信息检索结果，包含产品和政策信息
+
+        Returns:
+            str: 格式化的上下文信息文本
+
+        Note:
+            如果没有找到相关信息，返回空字符串
+        """
         context_parts = []
-        
-        # 添加产品信息
+
+        # 添加产品信息到上下文
         if retrieval_result['has_product_info']:
             product_info = self.llm_client.format_product_info(retrieval_result['products'])
             context_parts.append(product_info)
-        
-        # 添加政策信息
+
+        # 添加政策信息到上下文
         if retrieval_result['has_policy_info']:
             policy_info = self.llm_client.format_policy_info(retrieval_result['policies'])
             context_parts.append(policy_info)
-        
+
         return "\n".join(context_parts)
-    
+
     def answer_question(self, question: str, conversation_history: List[Dict] = None) -> str:
-        """回答用户问题"""
+        """
+        回答用户问题的主要方法
+
+        这是知识检索器的核心方法，整合了信息检索、本地回答和LLM调用。
+        采用多层回答策略：优先使用本地知识，必要时调用LLM，确保回答的准确性和可靠性。
+
+        回答策略：
+        1. 检索相关信息（产品、政策）
+        2. 如果没有找到信息，提供通用建议
+        3. 尝试使用本地知识直接回答
+        4. 如果本地知识不足，调用LLM生成回答
+        5. 如果LLM调用失败，使用备用本地回答
+
+        Args:
+            question (str): 用户输入的问题
+            conversation_history (List[Dict], optional): 对话历史记录，用于维护上下文
+
+        Returns:
+            str: 生成的回答文本
+
+        Example:
+            >>> retriever = KnowledgeRetriever()
+            >>> answer = retriever.answer_question("苹果多少钱？")
+            >>> print(answer)  # 返回苹果的价格信息
+        """
         try:
-            # 检索相关信息
+            # 第一步：检索相关信息
             retrieval_result = self.retrieve_information(question)
 
-            # 生成上下文信息
+            # 第二步：生成LLM所需的上下文信息
             context_info = self.generate_context_info(retrieval_result)
 
-            # 如果没有找到相关信息，使用本地回答
+            # 第三步：如果没有找到相关信息，使用预设的处理方式
             if not retrieval_result['has_product_info'] and not retrieval_result['has_policy_info']:
                 return self._handle_no_information(question, retrieval_result['intent'])
 
-            # 尝试使用本地知识直接回答
+            # 第四步：尝试使用本地知识直接回答（快速响应）
             local_answer = self._try_local_answer(question, retrieval_result)
             if local_answer:
                 return local_answer
 
-            # 调用LLM生成回答
+            # 第五步：调用LLM生成智能回答
             try:
                 response = self.llm_client.chat(question, context_info, conversation_history)
                 return response
             except Exception as llm_error:
                 print(f"LLM调用失败，使用本地回答: {llm_error}")
+                # 第六步：LLM失败时的备用方案
                 return self._generate_local_answer(question, retrieval_result)
 
         except Exception as e:
             print(f"回答问题时出错: {e}")
+            # 最终备用方案：返回通用错误消息
             return self.llm_client.generate_error_message("general")
     
     def _handle_no_information(self, question: str, intent: str) -> str:

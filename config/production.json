@@ -1,0 +1,37 @@
+{
+  "database": {
+    "echo": false,
+    "pool_size": 20,
+    "max_overflow": 50,
+    "pool_recycle": 1800
+  },
+  "redis": {
+    "decode_responses": true,
+    "socket_timeout": 5,
+    "health_check_interval": 30
+  },
+  "cache": {
+    "default_timeout": 600,
+    "search_timeout": 1200,
+    "enabled": true
+  },
+  "security": {
+    "session_timeout": 3600,
+    "max_login_attempts": 5,
+    "login_attempt_timeout": 900,
+    "allowed_origins": ["https://your-domain.com"]
+  },
+  "llm": {
+    "temperature": 0.7,
+    "timeout": 20,
+    "max_tokens": 800
+  },
+  "business": {
+    "default_page_size": 50,
+    "max_page_size": 200,
+    "max_conversation_history": 20
+  },
+  "file": {
+    "max_upload_size": 5242880
+  }
+}

@@ -353,3 +353,36 @@ comparison.log
 # 性能分析文件
 profile_*.prof
 memory_*.dump
+
+# ===== 项目整理后新增忽略规则 =====
+# 临时测试文件
+*_test.html
+*_test.py
+test_*.html
+clean_test.*
+test_cleanup.*
+test_customer_service.*
+
+# 调试和开发临时文件
+*_debug.*
+*_temp.*
+*_backup.*
+app_refactored.*
+start_clean.*
+
+# 任务管理临时文件
+Tasks_*.md
+task_*.md
+
+# 翻译测试文件
+test_translation.*
+translation_test_*.*
+test_language.*
+
+# 条形码测试文件
+static/barcodes/Test*
+static/barcodes/测试*
+
+# 语言调试路由相关
+debug_i18n.*
+language_debug.*

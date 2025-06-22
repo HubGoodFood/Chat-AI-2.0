@@ -22,30 +22,93 @@ logger = get_logger('inventory_manager')
 
 
 class InventoryManager:
+    """
+    库存管理器类 - 果蔬客服系统的核心库存管理组件
+
+    负责管理产品库存信息、条形码生成、存储区域分配等功能。
+    支持完整的CRUD操作、库存变动追踪、低库存预警等高级功能。
+
+    主要功能：
+    - 产品信息管理：添加、更新、删除、查询产品
+    - 库存数量管理：库存增减、历史记录、低库存预警
+    - 条形码管理：自动生成Code128格式条形码及图片
+    - 存储区域管理：产品存储位置分配和查询
+    - 数据持久化：JSON格式存储，支持数据导入导出
+
+    数据结构：
+    - 库存文件：data/inventory.json（主要数据存储）
+    - 产品文件：data/products.csv（初始化数据源）
+    - 条形码目录：static/barcodes/（条形码图片存储）
+
+    Attributes:
+        inventory_file (str): 库存数据文件路径
+        products_file (str): 产品CSV文件路径
+        barcode_dir (str): 条形码图片存储目录
+        storage_area_manager (StorageAreaManager): 存储区域管理器实例
+        pickup_location_manager (PickupLocationManager): 取货点管理器实例
+    """
+
     def __init__(self):
-        self.inventory_file = 'data/inventory.json'
-        self.products_file = 'data/products.csv'
+        """
+        初始化库存管理器
+
+        设置文件路径、创建必要目录、初始化相关管理器组件。
+        如果库存文件不存在，会自动从产品CSV文件初始化库存数据。
+        """
+        # 核心文件路径配置
+        self.inventory_file = 'data/inventory.json'  # 库存数据主文件
+        self.products_file = 'data/products.csv'  # 产品基础数据文件
         self.barcode_dir = 'static/barcodes'  # 条形码图片存储目录
+
+        # 初始化相关管理器组件
         self.storage_area_manager = StorageAreaManager()  # 存储区域管理器
         self.pickup_location_manager = PickupLocationManager()  # 取货点管理器
+
+        # 确保必要的目录和文件存在
         self._ensure_directories()
         self._ensure_inventory_file()
 
     def _ensure_directories(self):
-        """确保必要的目录存在"""
+        """
+        确保必要的目录结构存在
+
+        创建库存数据目录和条形码图片存储目录。
+        如果目录不存在，会自动创建，包括父级目录。
+
+        Raises:
+            OSError: 如果目录创建失败
+        """
+        # 创建库存数据文件的父目录
         os.makedirs(os.path.dirname(self.inventory_file), exist_ok=True)
+        # 创建条形码图片存储目录
         os.makedirs(self.barcode_dir, exist_ok=True)
 
     def _generate_barcode(self, product_id: str, product_name: str) -> str:
         """
-        为产品生成唯一的条形码
+        为产品生成唯一的条形码数字
+
+        使用自定义算法生成12位条形码，确保每个产品都有唯一的标识。
+        条形码格式设计为：前缀(2位) + 产品ID(6位) + 随机后缀(4位)
+
+        条形码格式说明：
+        - 前缀"88"：自定义前缀，避免与标准商品条码冲突
+        - 产品ID：6位数字，不足位数用0补齐
+        - 随机后缀：4位随机数，增加唯一性保证
 
         Args:
-            product_id: 产品ID
-            product_name: 产品名称
+            product_id (str): 产品的唯一标识ID
+            product_name (str): 产品名称（用于日志记录）
 
         Returns:
-            str: 生成的条形码字符串
+            str: 生成的12位条形码数字字符串
+
+        Example:
+            >>> manager = InventoryManager()
+            >>> barcode = manager._generate_barcode("123", "苹果")
+            >>> print(barcode)  # "880001231234" (示例)
+
+        Note:
+            如果生成过程中出现异常，会返回基于时间戳的备用条形码
         """
         try:
             # 生成基于产品ID的条形码（确保唯一性）
@@ -55,41 +118,68 @@ class InventoryManager:
             random_suffix = str(secrets.randbelow(10000)).zfill(4)  # 4位随机数
 
             barcode_number = f"{prefix}{padded_id}{random_suffix}"
+            logger.debug(f"为产品 {product_name}(ID:{product_id}) 生成条形码: {barcode_number}")
             return barcode_number
 
         except Exception as e:
             logger.error(f"生成条形码失败: {e}")
             # 如果生成失败，返回基于时间戳的备用条形码
             timestamp = str(int(datetime.now().timestamp()))[-8:]
-            return f"88{timestamp}0000"
+            backup_barcode = f"88{timestamp}0000"
+            logger.warning(f"使用备用条形码: {backup_barcode}")
+            return backup_barcode
 
     def _save_barcode_image(self, barcode_number: str, product_name: str) -> str:
         """
-        保存条形码图片到文件
+        生成并保存条形码图片文件
+
+        使用Code128格式生成条形码图片，并保存到指定目录。
+        Code128是一种高密度的一维条形码，支持数字、字母和特殊字符。
+
+        文件命名规则：
+        - 使用安全的文件名（移除特殊字符）
+        - 格式：产品名称_条形码数字.png
+        - 自动处理中文字符和特殊符号
 
         Args:
-            barcode_number: 条形码数字
-            product_name: 产品名称（用于文件命名）
+            barcode_number (str): 条形码数字字符串
+            product_name (str): 产品名称，用于生成文件名
 
         Returns:
-            str: 条形码图片的相对路径
+            str: 条形码图片的相对路径（用于Web访问），失败时返回空字符串
+
+        Example:
+            >>> manager = InventoryManager()
+            >>> path = manager._save_barcode_image("880001231234", "苹果")
+            >>> print(path)  # "barcodes/苹果_880001231234.png"
+
+        Note:
+            - 图片保存在 static/barcodes/ 目录下
+            - 返回的路径是相对于static目录的路径，便于Web访问
+            - 如果保存失败，会记录错误日志并返回空字符串
         """
         try:
             # 使用Code128格式生成条形码
+            # Code128是一种高密度条形码，适合数字和字母混合编码
             code128 = barcode.get_barcode_class('code128')
             barcode_instance = code128(barcode_number, writer=ImageWriter())
 
-            # 生成安全的文件名
+            # 生成安全的文件名（处理中文字符和特殊符号）
             filename = safe_barcode_filename(product_name, barcode_number)
 
-            # 保存条形码图片
+            # 构建完整的文件路径
             filepath = os.path.join(self.barcode_dir, filename)
+
+            # 保存条形码图片到文件系统
             barcode_instance.save(filepath)
 
             # 返回相对路径（用于Web访问）
-            return f"barcodes/{filename}.png"
+            relative_path = f"barcodes/{filename}.png"
+            logger.info(f"条形码图片保存成功: {relative_path}")
+            return relative_path
 
         except Exception as e:
+            logger.error(f"保存条形码图片失败: {e}")
             safe_print(f"保存条形码图片失败: {e}")
             return ""
 

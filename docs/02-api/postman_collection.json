@@ -1,0 +1,382 @@
+{
+  "info": {
+    "name": "果蔬客服AI系统 API",
+    "description": "果蔬客服AI系统的完整API集合，包含客服聊天、库存管理、反馈处理等功能",
+    "version": "2.1.0",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:5000",
+      "type": "string"
+    },
+    {
+      "key": "sessionId",
+      "value": "",
+      "type": "string"
+    }
+  ],
+  "auth": {
+    "type": "noauth"
+  },
+  "item": [
+    {
+      "name": "🤖 客服聊天API",
+      "item": [
+        {
+          "name": "发送聊天消息",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"message\": \"苹果多少钱？\",\n  \"session_id\": \"{{sessionId}}\",\n  \"context\": {\n    \"timestamp\": \"{{$timestamp}}\"\n  }\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/chat",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "chat"]
+            },
+            "description": "发送用户消息并获取AI回复"
+          },
+          "response": []
+        },
+        {
+          "name": "获取对话历史",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/chat/history/{{sessionId}}?limit=20",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "chat", "history", "{{sessionId}}"],
+              "query": [
+                {
+                  "key": "limit",
+                  "value": "20"
+                }
+              ]
+            },
+            "description": "获取指定会话的对话历史记录"
+          },
+          "response": []
+        },
+        {
+          "name": "获取活跃会话列表",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/chat/sessions",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "chat", "sessions"]
+            },
+            "description": "获取当前活跃的会话列表"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "🔐 管理员认证API",
+      "item": [
+        {
+          "name": "管理员登录",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"admin\",\n  \"password\": \"admin123\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/admin/login",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "admin", "login"]
+            },
+            "description": "管理员账户登录认证"
+          },
+          "response": []
+        },
+        {
+          "name": "管理员登出",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/admin/logout",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "admin", "logout"]
+            },
+            "description": "管理员账户登出"
+          },
+          "response": []
+        },
+        {
+          "name": "检查认证状态",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/admin/status",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "admin", "status"]
+            },
+            "description": "检查当前管理员会话状态"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "📦 库存管理API",
+      "item": [
+        {
+          "name": "获取产品列表",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/admin/inventory?page=1&per_page=20&status=active",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "admin", "inventory"],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "per_page",
+                  "value": "20"
+                },
+                {
+                  "key": "status",
+                  "value": "active"
+                }
+              ]
+            },
+            "description": "获取产品库存列表，支持分页和筛选"
+          },
+          "response": []
+        },
+        {
+          "name": "添加新产品",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"product_name\": \"新鲜香蕉\",\n  \"category\": \"水果\",\n  \"specification\": \"中等大小\",\n  \"price\": 25,\n  \"unit\": \"小箱\",\n  \"initial_stock\": 100,\n  \"min_stock_warning\": 15,\n  \"description\": \"进口香蕉，香甜可口\",\n  \"storage_area\": \"B\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/admin/inventory",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "admin", "inventory"]
+            },
+            "description": "添加新的产品到库存系统"
+          },
+          "response": []
+        },
+        {
+          "name": "更新产品信息",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"product_name\": \"优质香蕉\",\n  \"price\": 28,\n  \"min_stock_warning\": 20,\n  \"description\": \"精选进口香蕉，品质优良\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/admin/inventory/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "admin", "inventory", "1"]
+            },
+            "description": "更新指定产品的信息"
+          },
+          "response": []
+        },
+        {
+          "name": "库存数量调整",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"quantity_change\": 50,\n  \"action\": \"increase\",\n  \"note\": \"新到货补充库存\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/admin/inventory/1/stock",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "admin", "inventory", "1", "stock"]
+            },
+            "description": "调整产品的库存数量"
+          },
+          "response": []
+        },
+        {
+          "name": "获取库存汇总",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/admin/inventory/summary",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "admin", "inventory", "summary"]
+            },
+            "description": "获取库存系统的汇总统计信息"
+          },
+          "response": []
+        },
+        {
+          "name": "获取低库存产品",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/admin/inventory/low-stock",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "admin", "inventory", "low-stock"]
+            },
+            "description": "获取库存数量低于警告线的产品列表"
+          },
+          "response": []
+        },
+        {
+          "name": "产品搜索",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/admin/inventory/search?q=苹果&category=水果",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "admin", "inventory", "search"],
+              "query": [
+                {
+                  "key": "q",
+                  "value": "苹果"
+                },
+                {
+                  "key": "category",
+                  "value": "水果"
+                }
+              ]
+            },
+            "description": "根据关键词搜索产品"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "💬 反馈管理API",
+      "item": [
+        {
+          "name": "获取反馈列表",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/admin/feedback?page=1&per_page=20",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "admin", "feedback"],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "per_page",
+                  "value": "20"
+                }
+              ]
+            },
+            "description": "获取客户反馈列表"
+          },
+          "response": []
+        },
+        {
+          "name": "添加新反馈",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"product_name\": \"爱妃苹果\",\n  \"customer_name\": \"李四\",\n  \"wechat_group\": \"果蔬拼台群2\",\n  \"payment_status\": \"已付款\",\n  \"feedback_type\": \"negative\",\n  \"content\": \"苹果有些软了，不够新鲜\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/admin/feedback",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "admin", "feedback"]
+            },
+            "description": "添加新的客户反馈记录"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "🔍 系统状态API",
+      "item": [
+        {
+          "name": "系统健康检查",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/health",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "health"]
+            },
+            "description": "检查系统运行状态"
+          },
+          "response": []
+        },
+        {
+          "name": "API信息",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api",
+              "host": ["{{baseUrl}}"],
+              "path": ["api"]
+            },
+            "description": "获取API基本信息"
+          },
+          "response": []
+        }
+      ]
+    }
+  ]
+}

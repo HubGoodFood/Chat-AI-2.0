@@ -12,15 +12,50 @@ load_dotenv()
 
 
 class LLMClient:
+    """
+    LLM客户端类 - 封装与DeepSeek AI模型的交互
+
+    负责与外部LLM API进行通信，为果蔬客服系统提供智能对话能力。
+    支持上下文管理、对话历史、重试机制等高级功能。
+
+    主要功能：
+    - API密钥安全管理：从环境变量读取，避免硬编码
+    - 智能对话：支持上下文信息和对话历史
+    - 错误处理：完善的异常处理和重试机制
+    - 信息格式化：产品信息和政策信息的结构化输出
+    - 消息生成：欢迎消息、错误消息等预设回复
+
+    配置要求：
+    - LLM_API_KEY：必需的API密钥环境变量
+    - LLM_API_URL：可选的API端点URL
+    - LLM_MODEL：可选的模型名称
+
+    Attributes:
+        api_url (str): LLM API的端点URL
+        api_key (str): API访问密钥
+        model (str): 使用的LLM模型名称
+        system_prompt (str): 系统提示词，定义AI助手的角色和行为
+    """
+
     def __init__(self):
+        """
+        初始化LLM客户端
+
+        从环境变量读取配置信息，验证API密钥，初始化系统提示词。
+        如果配置不正确，会提供详细的错误信息和解决方案。
+
+        Raises:
+            SystemExit: 如果API密钥未配置或配置错误
+        """
+        # 从环境变量读取配置，提供默认值
         self.api_url = os.environ.get('LLM_API_URL', "https://llm.chutes.ai/v1/chat/completions")
-        self.api_key = self._get_api_key()
+        self.api_key = self._get_api_key()  # 安全获取API密钥
         self.model = os.environ.get('LLM_MODEL', "deepseek-ai/DeepSeek-V3-0324")
 
-        # 验证API密钥
+        # 验证API密钥格式和有效性
         self._validate_api_key()
 
-        # 初始化系统提示词
+        # 初始化系统提示词，定义AI助手的角色和行为规范
         self._init_system_prompt()
 
     def _get_api_key(self) -> str:
@@ -73,7 +108,22 @@ class LLMClient:
                 print("API key configured successfully")
 
     def _init_system_prompt(self):
-        """初始化系统提示词"""
+        """
+        初始化系统提示词
+
+        设置AI助手的角色定义、行为规范和回答原则。
+        系统提示词是确保AI回答质量和一致性的关键组件。
+
+        提示词设计原则：
+        - 明确角色定位：专业的果蔬客服AI助手
+        - 详细职责说明：产品咨询、政策解答、客户服务
+        - 具体回答规范：友好、准确、专业的服务态度
+        - 特殊注意事项：价格准确性、政策详细性、信息真实性
+
+        Note:
+            系统提示词会在每次对话开始时发送给LLM，
+            确保AI助手始终保持一致的服务标准和回答风格。
+        """
         self.system_prompt = """你是一个专业的果蔬客服AI助手，专门为果蔬拼台社区提供客户服务。
 
 你的职责：
@@ -97,15 +147,35 @@ class LLMClient:
 
     def chat(self, user_message: str, context_info: str = "", conversation_history: List[Dict] = None) -> str:
         """
-        与LLM进行对话
-        
+        与LLM进行智能对话的核心方法
+
+        整合用户消息、上下文信息和对话历史，调用LLM API生成智能回答。
+        支持重试机制、错误处理和详细的日志记录。
+
+        对话流程：
+        1. 构建消息列表（系统提示词 + 对话历史 + 当前消息）
+        2. 整合上下文信息（产品数据、政策信息等）
+        3. 调用LLM API（支持重试机制）
+        4. 解析响应并返回AI回答
+        5. 异常处理和错误消息生成
+
         Args:
-            user_message: 用户消息
-            context_info: 检索到的相关信息
-            conversation_history: 对话历史
-            
+            user_message (str): 用户输入的问题或消息
+            context_info (str, optional): 检索到的相关信息（产品、政策等）
+            conversation_history (List[Dict], optional): 对话历史记录，用于维护上下文
+
         Returns:
-            AI回复
+            str: AI生成的回答文本
+
+        Example:
+            >>> client = LLMClient()
+            >>> response = client.chat("苹果多少钱？", "产品：苹果，价格：$5/斤")
+            >>> print(response)  # AI生成的关于苹果价格的回答
+
+        Note:
+            - 对话历史最多保留最近6轮，避免上下文过长
+            - 支持最多2次重试，提高API调用成功率
+            - 所有异常都会被捕获并返回友好的错误消息
         """
         try:
             try:

@@ -1,0 +1,31 @@
+{
+  "database": {
+    "url": "sqlite:///:memory:",
+    "echo": false
+  },
+  "redis": {
+    "url": "redis://localhost:6379/15"
+  },
+  "cache": {
+    "default_timeout": 60,
+    "enabled": false
+  },
+  "security": {
+    "session_timeout": 1800,
+    "max_login_attempts": 3,
+    "login_attempt_timeout": 60
+  },
+  "llm": {
+    "temperature": 0.5,
+    "timeout": 10,
+    "max_tokens": 500
+  },
+  "business": {
+    "default_page_size": 10,
+    "max_page_size": 50,
+    "max_conversation_history": 10
+  },
+  "file": {
+    "max_upload_size": 1048576
+  }
+}

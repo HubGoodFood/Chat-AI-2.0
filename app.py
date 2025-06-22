@@ -18,6 +18,9 @@ from src.utils.i18n_simple import i18n_simple, _
 from src.utils.simple_flask_fix import apply_simple_fixes
 from src.utils.logger_config import get_logger, safe_print
 from src.utils.barcode_batch_generator import BarcodeBatchGenerator
+from src.utils.security_config import security_config
+from src.utils.decorators import validate_json, require_admin_auth, handle_service_errors, check_login_attempts, log_admin_operation
+from src.utils.validators import ChatMessageRequest, AdminLoginRequest, ProductCreateRequest, ProductUpdateRequest, StockUpdateRequest
 from dotenv import load_dotenv
 
 # 加载环境变量
@@ -27,10 +30,14 @@ load_dotenv()
 logger = get_logger('app')
 
 app = Flask(__name__)
-app.secret_key = os.environ.get('SECRET_KEY', 'fruit_vegetable_ai_service_2024')
+# 使用增强的安全配置
+from src.utils.security_config_enhanced import security_config
 
 # 应用Flask配置修复
 apply_simple_fixes(app)
+
+# 初始化增强的安全配置
+security_config.init_app(app)
 
 # 初始化简洁的国际化配置
 i18n_simple.init_app(app)
@@ -89,17 +96,12 @@ def index():
 
 
 @app.route('/api/chat', methods=['POST'])
-def chat():
-    """聊天API"""
+@validate_json(ChatMessageRequest)
+@handle_service_errors
+def chat(validated_data: ChatMessageRequest):
+    """聊天API（已增强安全验证）"""
     try:
-        data = request.get_json()
-        user_message = data.get('message', '').strip()
-
-        if not user_message:
-            return jsonify({
-                'success': False,
-                'error': '请输入您的问题'
-            })
+        user_message = validated_data.message
 
         # 获取会话ID
         session_id = session.get('session_id')
@@ -251,18 +253,10 @@ def health_check():
 @app.route('/api/language', methods=['GET'])
 def get_language_info():
     """获取语言信息"""
-    print(f"[DEBUG] get_language_info被调用")
-    print(f"[DEBUG] i18n_simple.languages.keys(): {list(i18n_simple.languages.keys())}")
-    print(f"[DEBUG] 'en_US' in i18n_simple.languages: {'en_US' in i18n_simple.languages}")
-
     return jsonify({
         'success': True,
         'current_language': i18n_simple.get_current_language(),
-        'available_languages': i18n_simple.get_available_languages(),
-        'debug_info': {
-            'all_language_keys': list(i18n_simple.languages.keys()),
-            'en_US_exists': 'en_US' in i18n_simple.languages
-        }
+        'available_languages': i18n_simple.get_available_languages()
     })
 
 
@@ -270,13 +264,7 @@ def get_language_info():
 def set_language(language_code):
     """设置语言"""
     try:
-        print(f"[DEBUG] 设置语言请求: {language_code}")
-        print(f"[DEBUG] 当前session: {dict(session)}")
-
         success = i18n_simple.set_language(language_code)
-        print(f"[DEBUG] 设置语言结果: {success}")
-        print(f"[DEBUG] 设置后session: {dict(session)}")
-
         if success:
             return jsonify({
                 'success': True,
@@ -289,44 +277,13 @@ def set_language(language_code):
                 'error': 'Unsupported language'
             })
     except Exception as e:
-        print(f"设置语言错误: {e}")
+        logger.error(f"设置语言错误: {e}")
         return jsonify({
             'success': False,
             'error': 'Failed to set language'
         })
 
-@app.route('/test-translation')
-def test_translation():
-    """测试翻译功能"""
-    import sys
-    print(f"[DEBUG] 测试翻译功能", flush=True)
-    print(f"[DEBUG] 当前语言: {i18n_simple.get_locale()}", flush=True)
-    print(f"[DEBUG] session内容: {dict(session)}", flush=True)
-    print(f"[DEBUG] 翻译测试 '管理后台': {i18n_simple.translate('管理后台')}", flush=True)
-    sys.stdout.flush()
 
-    return jsonify({
-        'current_language': i18n_simple.get_locale(),
-        'session': dict(session),
-        'translation_test': i18n_simple.translate('管理后台'),
-        'available_languages': i18n_simple.get_available_languages()
-    })
-
-
-@app.route('/test-translation-page')
-def test_translation_page():
-    """测试翻译页面"""
-    print(f"[DEBUG] 渲染翻译测试页面")
-    print(f"[DEBUG] 当前语言: {i18n_simple.get_locale()}")
-    return render_template('test_translation.html')
-
-
-@app.route('/final-translation-test')
-def final_translation_test():
-    """最终翻译测试页面"""
-    print(f"[DEBUG] 渲染最终翻译测试页面")
-    print(f"[DEBUG] 当前语言: {i18n_simple.get_locale()}")
-    return render_template('translation_test_final.html')
 
 
 # ==================== 管理员路由 ====================
@@ -343,55 +300,12 @@ def admin_login_page():
     return render_template('admin/login.html')
 
 
-@app.route('/test/language')
-def test_language_debug():
-    """语言调试测试页面"""
-    print(f"[DEBUG] 访问语言测试页面")
-    return "Language test page - working!"
 
-
-@app.route('/test/lang')
-def test_lang_simple():
-    """简单语言测试"""
-    print(f"[DEBUG] 访问简单语言测试页面")
-    try:
-        return render_template('test_language.html')
-    except Exception as e:
-        print(f"[ERROR] 渲染测试页面失败: {e}")
-        return f"Error rendering test page: {e}"
-
-
-@app.route('/test/auto')
-def test_language_auto():
-    """自动语言测试页面"""
-    print(f"[DEBUG] 访问自动语言测试页面")
-    try:
-        with open('static/test_language_auto.html', 'r', encoding='utf-8') as f:
-            content = f.read()
-        return content
-    except Exception as e:
-        print(f"[ERROR] 读取自动测试页面失败: {e}")
-        return f"Error loading auto test page: {e}"
-
-
-@app.route('/debug/i18n')
-def debug_i18n():
-    """调试i18n配置"""
-    return jsonify({
-        'available_languages': list(i18n_simple.languages.keys()),
-        'en_US_exists': 'en_US' in i18n_simple.languages,
-        'current_language': i18n_simple.get_locale(),
-        'session_content': dict(session),
-        'languages_detail': i18n_simple.languages
-    })
 
 
 @app.route('/admin/dashboard')
 def admin_dashboard():
     """管理员控制台"""
-    print(f"[DEBUG] 渲染管理后台页面")
-    print(f"[DEBUG] 当前语言: {i18n_simple.get_locale()}")
-    print(f"[DEBUG] 翻译测试: {i18n_simple.translate('管理后台')}")
     return render_template('admin/dashboard.html')
 
 

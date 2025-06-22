@@ -250,21 +250,36 @@ Chat AI 2.0/
 │   ├── admin.json               # 管理员账户
 │   ├── operation_logs.json      # 操作日志
 │   └── storage_areas.json       # 存储区域配置
-├── docs/                         # 文档目录
-│   ├── PROJECT_SUMMARY.md       # 项目总结
-│   ├── DEPLOYMENT_CHECKLIST.md  # 部署检查清单
-│   ├── GITHUB_SETUP.md          # GitHub设置指南
-│   ├── RENDER_DEPLOYMENT.md     # Render部署指南
-│   ├── INVENTORY_MANAGEMENT_GUIDE.md # 库存管理指南
-│   ├── MULTILINGUAL_SUPPORT.md  # 多语言支持文档
-│   ├── ADMIN_SYSTEM_SUMMARY.md  # 管理员系统总结
-│   ├── FINAL_PROJECT_SUMMARY.md # 项目完成总结
-│   ├── USER_GUIDE.md            # 用户使用指南
-│   ├── security_best_practices.md # 安全最佳实践
-│   ├── render_env_setup_guide.md # 环境设置指南
-│   ├── secret_key_lifecycle_guide.md # 密钥管理指南
-│   ├── NAS_*.md                 # NAS相关文档
-│   └── 各种分析报告.md           # 开发过程中的分析报告
+├── docs/                         # 文档目录（已重新组织）
+│   ├── 01-getting-started/      # 快速开始指南
+│   │   ├── README.md            # 项目概览和快速开始
+│   │   ├── USER_GUIDE.md        # 用户使用指南
+│   │   ├── GITHUB_SETUP.md      # GitHub设置指南
+│   │   └── COMPLETE_SYSTEM_SUMMARY.md # 完整系统总结
+│   ├── 02-api/                  # API文档
+│   │   ├── API_DOCUMENTATION.md # 完整API参考
+│   │   ├── API_KEY_SETUP.md     # API配置指南
+│   │   ├── API_QUICK_REFERENCE.md # API快速参考
+│   │   └── postman_collection.json # Postman测试集合
+│   ├── 03-features/             # 功能模块文档
+│   │   ├── ADMIN_SYSTEM_GUIDE.md # 管理员系统指南
+│   │   ├── INVENTORY_MANAGEMENT_GUIDE.md # 库存管理指南
+│   │   ├── MULTILINGUAL_SUPPORT.md # 多语言支持文档
+│   │   ├── BATCH_BARCODE_GENERATION_GUIDE.md # 批量条形码生成
+│   │   └── 库存管理功能验证指南.md # 功能验证指南
+│   ├── 04-deployment/           # 部署配置文档
+│   │   ├── DEPLOYMENT_CHECKLIST.md # 部署检查清单
+│   │   ├── RENDER_DEPLOYMENT.md # Render部署指南
+│   │   ├── SECURITY_CONFIG.md   # 安全配置
+│   │   ├── security_best_practices.md # 安全最佳实践
+│   │   └── secret_key_lifecycle_guide.md # 密钥管理指南
+│   ├── 05-development/          # 开发维护文档
+│   │   ├── PROJECT_STRUCTURE.md # 项目结构说明
+│   │   ├── INTEGRATION_TESTING.md # 集成测试指南
+│   │   ├── PROJECT_IMPROVEMENT_GUIDE.md # 项目改进指南
+│   │   └── NAS_*.md             # NAS相关文档
+│   └── 06-archive/              # 归档文档
+│       └── 历史开发报告和分析文档 # 开发过程中的分析报告
 ├── tools/                        # 工具脚本目录
 │   └── nas_config_validator.py  # NAS配置验证工具
 ├── scripts/                      # 部署脚本目录
@@ -296,7 +311,6 @@ Chat AI 2.0/
 │   └── 数据备份文件              # 数据库和配置备份
 ├── app.py                        # Flask主应用
 ├── start.py                      # 启动脚本
-├── start_clean.py               # 清理启动脚本
 ├── babel.cfg                    # Babel配置文件
 ├── requirements.txt              # Python依赖
 ├── render.yaml                   # 部署配置

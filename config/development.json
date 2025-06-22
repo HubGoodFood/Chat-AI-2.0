@@ -1,0 +1,31 @@
+{
+  "database": {
+    "echo": true,
+    "pool_size": 5,
+    "max_overflow": 10
+  },
+  "redis": {
+    "url": "redis://localhost:6379/0"
+  },
+  "cache": {
+    "default_timeout": 300,
+    "enabled": true
+  },
+  "security": {
+    "session_timeout": 7200,
+    "max_login_attempts": 10,
+    "login_attempt_timeout": 300
+  },
+  "llm": {
+    "temperature": 0.8,
+    "timeout": 30
+  },
+  "business": {
+    "default_page_size": 20,
+    "max_page_size": 100,
+    "max_conversation_history": 50
+  },
+  "file": {
+    "max_upload_size": 10485760
+  }
+}

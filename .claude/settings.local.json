@@ -1,0 +1,13 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(find:*)",
+      "Bash(grep:*)",
+      "Bash(chmod:*)",
+      "Bash(python:*)",
+      "Bash(rg:*)",
+      "Bash(touch:*)"
+    ],
+    "deny": []
+  }
+}
