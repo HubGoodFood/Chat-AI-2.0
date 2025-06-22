@@ -253,10 +253,18 @@ def health_check():
 @app.route('/api/language', methods=['GET'])
 def get_language_info():
     """获取语言信息"""
+    print(f"[DEBUG] get_language_info被调用")
+    print(f"[DEBUG] i18n_simple.languages.keys(): {list(i18n_simple.languages.keys())}")
+    print(f"[DEBUG] 'en_US' in i18n_simple.languages: {'en_US' in i18n_simple.languages}")
+
     return jsonify({
         'success': True,
         'current_language': i18n_simple.get_current_language(),
-        'available_languages': i18n_simple.get_available_languages()
+        'available_languages': i18n_simple.get_available_languages(),
+        'debug_info': {
+            'all_language_keys': list(i18n_simple.languages.keys()),
+            'en_US_exists': 'en_US' in i18n_simple.languages
+        }
     })
 
 
@@ -264,7 +272,13 @@ def get_language_info():
 def set_language(language_code):
     """设置语言"""
     try:
+        print(f"[DEBUG] 设置语言请求: {language_code}")
+        print(f"[DEBUG] 当前session: {dict(session)}")
+
         success = i18n_simple.set_language(language_code)
+        print(f"[DEBUG] 设置语言结果: {success}")
+        print(f"[DEBUG] 设置后session: {dict(session)}")
+
         if success:
             return jsonify({
                 'success': True,
@@ -277,13 +291,65 @@ def set_language(language_code):
                 'error': 'Unsupported language'
             })
     except Exception as e:
-        logger.error(f"设置语言错误: {e}")
+        print(f"设置语言错误: {e}")
         return jsonify({
             'success': False,
             'error': 'Failed to set language'
         })
 
+@app.route('/test-translation')
+def test_translation():
+    """测试翻译功能"""
+    import sys
+    print(f"[DEBUG] 测试翻译功能", flush=True)
+    print(f"[DEBUG] 当前语言: {i18n_simple.get_locale()}", flush=True)
+    print(f"[DEBUG] session内容: {dict(session)}", flush=True)
+    print(f"[DEBUG] 翻译测试 '管理后台': {i18n_simple.translate('管理后台')}", flush=True)
+    sys.stdout.flush()
 
+    return jsonify({
+        'current_language': i18n_simple.get_locale(),
+        'session': dict(session),
+        'translation_test': i18n_simple.translate('管理后台'),
+        'available_languages': i18n_simple.get_available_languages()
+    })
+
+
+@app.route('/test-translation-page')
+def test_translation_page():
+    """测试翻译页面"""
+    print(f"[DEBUG] 渲染翻译测试页面")
+    print(f"[DEBUG] 当前语言: {i18n_simple.get_locale()}")
+    return render_template('test_translation.html')
+
+
+@app.route('/final-translation-test')
+def final_translation_test():
+    """最终翻译测试页面"""
+    print(f"[DEBUG] 渲染最终翻译测试页面")
+    print(f"[DEBUG] 当前语言: {i18n_simple.get_locale()}")
+    return render_template('translation_test_final.html')
+
+
+@app.route('/test_cleanup.html')
+def test_cleanup():
+    """客服页面清理测试页面"""
+    from flask import send_from_directory
+    return send_from_directory('.', 'test_cleanup.html')
+
+
+@app.route('/clean_test.html')
+def clean_test():
+    """干净测试页面"""
+    from flask import send_from_directory
+    return send_from_directory('.', 'clean_test.html')
+
+
+@app.route('/test_customer_service.html')
+def test_customer_service():
+    """客服功能测试页面"""
+    from flask import send_from_directory
+    return send_from_directory('.', 'test_customer_service.html')
 
 
 # ==================== 管理员路由 ====================
@@ -300,12 +366,55 @@ def admin_login_page():
     return render_template('admin/login.html')
 
 
+@app.route('/test/language')
+def test_language_debug():
+    """语言调试测试页面"""
+    print(f"[DEBUG] 访问语言测试页面")
+    return "Language test page - working!"
 
+
+@app.route('/test/lang')
+def test_lang_simple():
+    """简单语言测试"""
+    print(f"[DEBUG] 访问简单语言测试页面")
+    try:
+        return render_template('test_language.html')
+    except Exception as e:
+        print(f"[ERROR] 渲染测试页面失败: {e}")
+        return f"Error rendering test page: {e}"
+
+
+@app.route('/test/auto')
+def test_language_auto():
+    """自动语言测试页面"""
+    print(f"[DEBUG] 访问自动语言测试页面")
+    try:
+        with open('static/test_language_auto.html', 'r', encoding='utf-8') as f:
+            content = f.read()
+        return content
+    except Exception as e:
+        print(f"[ERROR] 读取自动测试页面失败: {e}")
+        return f"Error loading auto test page: {e}"
+
+
+@app.route('/debug/i18n')
+def debug_i18n():
+    """调试i18n配置"""
+    return jsonify({
+        'available_languages': list(i18n_simple.languages.keys()),
+        'en_US_exists': 'en_US' in i18n_simple.languages,
+        'current_language': i18n_simple.get_locale(),
+        'session_content': dict(session),
+        'languages_detail': i18n_simple.languages
+    })
 
 
 @app.route('/admin/dashboard')
 def admin_dashboard():
     """管理员控制台"""
+    print(f"[DEBUG] 渲染管理后台页面")
+    print(f"[DEBUG] 当前语言: {i18n_simple.get_locale()}")
+    print(f"[DEBUG] 翻译测试: {i18n_simple.translate('管理后台')}")
     return render_template('admin/dashboard.html')
 
 
@@ -352,26 +461,35 @@ def admin_login():
         username = data.get('username', '').strip()
         password = data.get('password', '').strip()
 
+        print(f"[DEBUG] 登录尝试: 用户名={username}, 密码长度={len(password)}")
+        print(f"[DEBUG] admin_auth对象: {admin_auth}")
+
         if not username or not password:
+            print(f"[DEBUG] 用户名或密码为空")
             return jsonify({
                 'success': False,
                 'error': _('请输入用户名和密码')
             })
 
         if admin_auth:
+            print(f"[DEBUG] 调用admin_auth.login方法")
             session_token = admin_auth.login(username, password)
+            print(f"[DEBUG] 登录结果: session_token={session_token}")
             if session_token:
                 session['admin_token'] = session_token
+                print(f"[DEBUG] 登录成功，设置session")
                 return jsonify({
                     'success': True,
                     'message': _('登录成功')
                 })
             else:
+                print(f"[DEBUG] 登录失败，session_token为None")
                 return jsonify({
                     'success': False,
                     'error': _('用户名或密码错误')
                 })
         else:
+            print(f"[DEBUG] admin_auth对象为None")
             return jsonify({
                 'success': False,
                 'error': _('系统暂时不可用')
@@ -379,6 +497,8 @@ def admin_login():
 
     except Exception as e:
         print(f"管理员登录错误: {e}")
+        import traceback
+        traceback.print_exc()
         return jsonify({
             'success': False,
             'error': _('登录失败，请稍后再试')

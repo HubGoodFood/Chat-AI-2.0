@@ -49,7 +49,7 @@ class SecurityConfig:
             else:
                 # 开发环境生成临时密钥
                 secret_key = secrets.token_urlsafe(32)
-                print(f"⚠️  开发环境使用临时密钥，生产环境请设置SECRET_KEY环境变量")
+                print(f"[WARNING] 开发环境使用临时密钥，生产环境请设置SECRET_KEY环境变量")
         
         # 验证密钥强度
         if len(secret_key) < 32:
@@ -74,11 +74,11 @@ class SecurityConfig:
         if os.environ.get('FLASK_ENV') == 'production':
             allowed_origins = os.environ.get('ALLOWED_ORIGINS', '').split(',')
             if not allowed_origins or allowed_origins == ['']:
-                allowed_origins = False  # 禁用CORS
+                allowed_origins = []  # 空列表表示禁用CORS
         else:
-            allowed_origins = True  # 开发环境允许所有来源
-        
-        CORS(app, 
+            allowed_origins = ["*"]  # 开发环境允许所有来源
+
+        CORS(app,
              origins=allowed_origins,
              supports_credentials=True,
              methods=['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
@@ -86,39 +86,21 @@ class SecurityConfig:
     
     def _setup_rate_limiting(self, app: Flask):
         """设置速率限制"""
-        # 获取Redis URL用于分布式速率限制
-        redis_url = os.environ.get('REDIS_URL', 'redis://localhost:6379/1')
-        
         try:
+            # 默认使用内存存储，避免Redis连接问题
             limiter = Limiter(
-                app,
-                key_func=get_remote_address,
-                default_limits=["1000 per hour", "100 per minute"],
-                storage_uri=redis_url
-            )
-            
-            # 为特定路由设置限制
-            @limiter.limit("10 per minute")
-            @app.route('/api/admin/login', methods=['POST'])
-            def limited_login():
-                pass
-            
-            @limiter.limit("60 per minute")
-            @app.route('/api/chat', methods=['POST'])
-            def limited_chat():
-                pass
-            
-            app.limiter = limiter
-            
-        except Exception as e:
-            print(f"⚠️  速率限制初始化失败，使用内存存储: {e}")
-            # 降级到内存存储
-            limiter = Limiter(
-                app,
                 key_func=get_remote_address,
                 default_limits=["1000 per hour", "100 per minute"]
             )
+            limiter.init_app(app)
+
             app.limiter = limiter
+            print("[INFO] 速率限制初始化成功 (内存存储)")
+
+        except Exception as e:
+            print(f"[WARNING] 速率限制初始化失败: {e}")
+            # 如果连内存存储都失败，则跳过速率限制
+            app.limiter = None
     
     def _setup_security_headers(self, app: Flask):
         """设置安全头"""
