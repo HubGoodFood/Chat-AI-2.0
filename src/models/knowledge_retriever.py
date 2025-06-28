@@ -1,12 +1,20 @@
+# -*- coding: utf-8 -*-
 """
 知识检索模块 - 智能检索产品和政策信息
 """
 import jieba
 import re
+import time
 from typing import List, Dict, Any, Tuple
 from .data_processor import DataProcessor
+from .database_data_processor import DatabaseDataProcessor
 from .llm_client import LLMClient
 from .pickup_location_manager import PickupLocationManager
+from .operation_logger import operation_logger
+# 延迟导入以避免循环导入
+# from ..services.intelligent_cache_manager import intelligent_cache_manager
+# from ..services.performance_collector import performance_collector
+# from ..services.query_performance_analyzer import query_performance_analyzer
 
 
 class KnowledgeRetriever:
@@ -29,15 +37,32 @@ class KnowledgeRetriever:
         question_patterns (Dict): 问题类型关键词映射表，用于意图识别
     """
 
-    def __init__(self):
+    def __init__(self, use_database_processor: bool = True):
         """
         初始化知识检索器
 
         创建必要的组件实例并设置问题类型关键词映射表。
         这些关键词用于分析用户问题的意图，帮助系统提供更准确的回答。
+
+        Args:
+            use_database_processor (bool): 是否使用数据库化数据处理器（默认True，性能更好）
         """
-        # 初始化核心组件
-        self.data_processor = DataProcessor()  # 数据处理器：处理产品和政策数据
+        # 🚀 根据配置选择数据处理器（数据库查询优化）
+        if use_database_processor:
+            try:
+                self.data_processor = DatabaseDataProcessor()
+                self.processor_type = "database"
+                print("[OK] 使用数据库化数据处理器（高性能模式）")
+            except Exception as e:
+                print(f"[WARN] 数据库处理器初始化失败，降级到文件处理器: {e}")
+                self.data_processor = DataProcessor()
+                self.processor_type = "file"
+        else:
+            self.data_processor = DataProcessor()
+            self.processor_type = "file"
+            print("使用文件数据处理器（兼容模式）")
+
+        # 初始化其他核心组件
         self.llm_client = LLMClient()  # LLM客户端：与AI模型交互
         self.pickup_location_manager = PickupLocationManager()  # 取货点管理器：动态管理取货地点
 
@@ -126,12 +151,20 @@ class KnowledgeRetriever:
             >>> products = retriever.extract_product_names("苹果和香蕉的价格是多少？")
             >>> print(products)  # ['苹果', '香蕉']
         """
-        # 检查产品数据是否已加载
-        if self.data_processor.products_df is None:
+        # 🚀 兼容数据库处理器和文件处理器
+        try:
+            # 如果是数据库处理器，使用专门的方法获取产品名称
+            if hasattr(self.data_processor, 'get_all_product_names'):
+                product_names = self.data_processor.get_all_product_names()
+            # 如果是文件处理器，使用DataFrame
+            elif hasattr(self.data_processor, 'products_df') and self.data_processor.products_df is not None:
+                product_names = self.data_processor.products_df['ProductName'].tolist()
+            else:
+                return []
+        except Exception as e:
+            operation_logger.warning(f"获取产品名称失败: {e}")
             return []
 
-        # 获取所有产品名称列表
-        product_names = self.data_processor.products_df['ProductName'].tolist()
         found_products = []
 
         # 遍历所有产品名称，检查是否在问题中被提到
@@ -171,11 +204,21 @@ class KnowledgeRetriever:
         # 分析问题意图和关键词
         intent, keywords = self.analyze_question_intent(question)
 
-        # 从产品数据中检索相关信息
-        product_results = self.data_processor.search_products(question)
+        # 🚀 从产品数据中检索相关信息（带性能监控）
+        try:
+            from ..services.query_performance_analyzer import query_performance_analyzer
+            with query_performance_analyzer.monitor_query('product_search', f'搜索产品: {question[:30]}...'):
+                product_results = self.data_processor.search_products(question)
+        except ImportError:
+            product_results = self.data_processor.search_products(question)
 
-        # 从政策数据中检索相关信息
-        policy_results = self.data_processor.search_policies(question)
+        # 🚀 从政策数据中检索相关信息（带性能监控）
+        try:
+            from ..services.query_performance_analyzer import query_performance_analyzer
+            with query_performance_analyzer.monitor_query('policy_search', f'搜索政策: {question[:30]}...'):
+                policy_results = self.data_processor.search_policies(question)
+        except ImportError:
+            policy_results = self.data_processor.search_policies(question)
 
         # 提取问题中明确提到的产品名称
         mentioned_products = self.extract_product_names(question)
@@ -225,15 +268,17 @@ class KnowledgeRetriever:
         """
         回答用户问题的主要方法
 
-        这是知识检索器的核心方法，整合了信息检索、本地回答和LLM调用。
-        采用多层回答策略：优先使用本地知识，必要时调用LLM，确保回答的准确性和可靠性。
+        这是知识检索器的核心方法，整合了智能缓存、信息检索、本地回答和LLM调用。
+        采用多层回答策略：优先使用缓存，然后本地知识，最后调用LLM，确保回答的准确性和响应速度。
 
-        回答策略：
-        1. 检索相关信息（产品、政策）
-        2. 如果没有找到信息，提供通用建议
-        3. 尝试使用本地知识直接回答
-        4. 如果本地知识不足，调用LLM生成回答
-        5. 如果LLM调用失败，使用备用本地回答
+        回答策略（已优化）：
+        1. 🚀 检查智能缓存（新增）- 大幅提升响应速度
+        2. 检索相关信息（产品、政策）
+        3. 如果没有找到信息，提供通用建议
+        4. 尝试使用本地知识直接回答
+        5. 如果本地知识不足，调用LLM生成回答
+        6. 🚀 缓存AI响应（新增）- 为后续相似问题提速
+        7. 如果LLM调用失败，使用备用本地回答
 
         Args:
             question (str): 用户输入的问题
@@ -245,34 +290,117 @@ class KnowledgeRetriever:
         Example:
             >>> retriever = KnowledgeRetriever()
             >>> answer = retriever.answer_question("苹果多少钱？")
-            >>> print(answer)  # 返回苹果的价格信息
+            >>> print(answer)  # 返回苹果的价格信息（可能来自缓存，响应更快）
         """
         try:
-            # 第一步：检索相关信息
+            # 🚀 记录请求开始时间（性能监控）
+            start_time = time.time()
+
+            # 🚀 第一步：检查智能缓存（性能优化的关键）
+            try:
+                from ..services.intelligent_cache_manager import intelligent_cache_manager
+                cached_response = intelligent_cache_manager.get_cached_response(question)
+                if cached_response:
+                    # 🚀 记录缓存命中的性能数据
+                    response_time = (time.time() - start_time) * 1000  # 转换为毫秒
+                    cache_type = 'exact' if '精确匹配' in str(cached_response) else 'similarity'
+                    try:
+                        from ..services.performance_collector import performance_collector
+                        performance_collector.record_response_time(response_time, True, cache_type)
+                    except ImportError:
+                        pass
+
+                    print(f"[缓存命中] 问题: {question[:30]}... 响应时间: {response_time:.0f}ms")
+                    return cached_response
+            except ImportError:
+                pass
+
+            # 第二步：检索相关信息
             retrieval_result = self.retrieve_information(question)
 
-            # 第二步：生成LLM所需的上下文信息
+            # 第三步：生成LLM所需的上下文信息
             context_info = self.generate_context_info(retrieval_result)
 
-            # 第三步：如果没有找到相关信息，使用预设的处理方式
+            # 第四步：如果没有找到相关信息，使用预设的处理方式
             if not retrieval_result['has_product_info'] and not retrieval_result['has_policy_info']:
                 return self._handle_no_information(question, retrieval_result['intent'])
 
-            # 第四步：尝试使用本地知识直接回答（快速响应）
+            # 第五步：尝试使用本地知识直接回答（快速响应）
             local_answer = self._try_local_answer(question, retrieval_result)
             if local_answer:
+                # 🚀 记录本地回答的性能数据
+                response_time = (time.time() - start_time) * 1000
+                try:
+                    from ..services.performance_collector import performance_collector
+                    performance_collector.record_response_time(response_time, False, None)
+                except ImportError:
+                    pass
+
+                # 🚀 缓存本地回答
+                try:
+                    from ..services.intelligent_cache_manager import intelligent_cache_manager
+                    intelligent_cache_manager.cache_response(question, local_answer)
+                except ImportError:
+                    pass
+                print(f"[本地回答] 问题: {question[:30]}... 响应时间: {response_time:.0f}ms")
                 return local_answer
 
-            # 第五步：调用LLM生成智能回答
+            # 第六步：调用LLM生成智能回答
             try:
+                print(f"[LLM调用] 问题: {question[:30]}...")
                 response = self.llm_client.chat(question, context_info, conversation_history)
+
+                # 🚀 记录LLM调用的性能数据
+                response_time = (time.time() - start_time) * 1000
+                try:
+                    from ..services.performance_collector import performance_collector
+                    performance_collector.record_response_time(response_time, False, None)
+                except ImportError:
+                    pass
+
+                # 🚀 缓存LLM响应（关键优化）
+                try:
+                    from ..services.intelligent_cache_manager import intelligent_cache_manager
+                    intelligent_cache_manager.cache_response(question, response)
+                except ImportError:
+                    pass
+                print(f"[LLM响应] 问题: {question[:30]}... 响应时间: {response_time:.0f}ms")
+
                 return response
             except Exception as llm_error:
+                # 🚀 记录错误
+                response_time = (time.time() - start_time) * 1000
+                try:
+                    from ..services.performance_collector import performance_collector
+                    performance_collector.record_error('llm_error', str(llm_error))
+                    performance_collector.record_response_time(response_time, False, None)
+                except ImportError:
+                    pass
+
                 print(f"LLM调用失败，使用本地回答: {llm_error}")
-                # 第六步：LLM失败时的备用方案
-                return self._generate_local_answer(question, retrieval_result)
+                # 第七步：LLM失败时的备用方案
+                local_fallback = self._generate_local_answer(question, retrieval_result)
+
+                # 🚀 也缓存本地备用回答
+                try:
+                    from ..services.intelligent_cache_manager import intelligent_cache_manager
+                    intelligent_cache_manager.cache_response(question, local_fallback)
+                except ImportError:
+                    pass
+
+                return local_fallback
 
         except Exception as e:
+            # 🚀 记录系统错误
+            response_time = (time.time() - start_time) * 1000 if 'start_time' in locals() else 0
+            try:
+                from ..services.performance_collector import performance_collector
+                performance_collector.record_error('system_error', str(e))
+                if response_time > 0:
+                    performance_collector.record_response_time(response_time, False, None)
+            except ImportError:
+                pass
+
             print(f"回答问题时出错: {e}")
             # 最终备用方案：返回通用错误消息
             return self.llm_client.generate_error_message("general")

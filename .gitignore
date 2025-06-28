@@ -359,9 +359,16 @@ memory_*.dump
 *_test.html
 *_test.py
 test_*.html
+test_*.py
 clean_test.*
 test_cleanup.*
 test_customer_service.*
+check_*.py
+debug_*.py
+simple_*.py
+final_*.py
+quick_*.py
+fix_*.py
 
 # 调试和开发临时文件
 *_debug.*
@@ -386,3 +393,12 @@ static/barcodes/测试*
 # 语言调试路由相关
 debug_i18n.*
 language_debug.*
+
+# 项目文档临时文件
+*修复报告.md
+*_summary.md
+*_report.md
+
+# 脚本临时文件
+scripts/*_temp.*
+scripts/upload_*.bat

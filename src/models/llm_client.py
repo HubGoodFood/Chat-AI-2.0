@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """
 LLM客户端模块 - 封装DeepSeek API调用
 """

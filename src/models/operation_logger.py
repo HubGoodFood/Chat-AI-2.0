@@ -16,6 +16,24 @@ class OperationLogger:
     def __init__(self):
         self.log_file = 'data/operation_logs.json'
         self._ensure_log_file()
+        # 添加标准日志方法支持
+        self.logger = logger
+
+    def info(self, message: str):
+        """信息日志"""
+        self.logger.info(message)
+
+    def error(self, message: str):
+        """错误日志"""
+        self.logger.error(message)
+
+    def warning(self, message: str):
+        """警告日志"""
+        self.logger.warning(message)
+
+    def debug(self, message: str):
+        """调试日志"""
+        self.logger.debug(message)
     
     def _ensure_log_file(self):
         """确保日志文件存在"""

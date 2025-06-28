@@ -5,6 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{ _('管理员控制台 - 果蔬客服AI系统') }}</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/admin.css') }}">
+    <!-- Quill.js 富文本编辑器 (本地文件) -->
+    <link href="{{ url_for('static', filename='css/vendor/quill.snow.css') }}" rel="stylesheet">
+    <script src="{{ url_for('static', filename='js/vendor/quill.min.js') }}"></script>
 </head>
 <body class="admin-page" data-default-section="{{ default_section or 'dashboard' }}">
     <div class="admin-container">
@@ -26,6 +29,7 @@
                     <a href="#pickup-locations" class="menu-item" data-section="pickup-locations">📍 {{ _('取货点管理') }}</a>
                 </li>
                 <li><a href="#feedback" class="menu-item" data-section="feedback">💬 {{ _('反馈管理') }}</a></li>
+                <li><a href="#policies" class="menu-item" data-section="policies">📋 {{ _('政策管理') }}</a></li>
                 <li><a href="#logs" class="menu-item" data-section="logs">📋 {{ _('操作日志') }}</a></li>
                 <li><a href="#export" class="menu-item" data-section="export">📤 {{ _('数据导出') }}</a></li>
                 <li><a href="#settings" class="menu-item" data-section="settings">⚙️ {{ _('系统设置') }}</a></li>
@@ -207,7 +211,61 @@
                     </table>
                 </div>
             </section>
-            
+
+            <!-- 政策管理 -->
+            <section id="policiesSection" class="content-section">
+                <div class="section-header">
+                    <h1>📋 {{ _('平台政策管理') }}</h1>
+                    <button id="addPolicyBtn" class="primary-btn">+ {{ _('添加政策') }}</button>
+                </div>
+
+                <div class="policies-controls">
+                    <div class="search-box">
+                        <input type="text" id="policySearch" placeholder="{{ _('搜索政策...') }}">
+                        <button id="searchPolicyBtn">🔍</button>
+                    </div>
+
+                    <div class="filter-controls">
+                        <select id="policyTypeFilter">
+                            <option value="">{{ _('所有类型') }}</option>
+                            <option value="return_policy">{{ _('退换货政策') }}</option>
+                            <option value="privacy_policy">{{ _('隐私政策') }}</option>
+                            <option value="terms_of_service">{{ _('服务条款') }}</option>
+                            <option value="shipping_policy">{{ _('配送政策') }}</option>
+                            <option value="payment_policy">{{ _('付款政策') }}</option>
+                            <option value="quality_guarantee">{{ _('质量保证') }}</option>
+                        </select>
+                        <select id="policyStatusFilter">
+                            <option value="">{{ _('所有状态') }}</option>
+                            <option value="draft">{{ _('草稿') }}</option>
+                            <option value="active">{{ _('已发布') }}</option>
+                            <option value="archived">{{ _('已归档') }}</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="policies-table-container">
+                    <table id="policiesTable" class="data-table">
+                        <thead>
+                            <tr>
+                                <th>{{ _('政策类型') }}</th>
+                                <th>{{ _('标题') }}</th>
+                                <th>{{ _('版本') }}</th>
+                                <th>{{ _('状态') }}</th>
+                                <th>{{ _('最后更新') }}</th>
+                                <th>{{ _('更新者') }}</th>
+                                <th>{{ _('操作') }}</th>
+                            </tr>
+                        </thead>
+                        <tbody id="policiesTableBody">
+                            <tr>
+                                <td colspan="7" class="loading">{{ _('正在加载政策数据...') }}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
             <!-- 操作日志 -->
             <section id="logsSection" class="content-section">
                 <div class="section-header">

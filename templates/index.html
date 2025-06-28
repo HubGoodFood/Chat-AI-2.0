@@ -14,16 +14,18 @@
         body {
             font-family: 'Microsoft YaHei', Arial, sans-serif;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            height: 100vh;
+            min-height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
+            padding: 20px;
         }
 
         .chat-container {
-            width: 90%;
+            width: 100%;
             max-width: 800px;
             height: 90vh;
+            min-height: 600px;
             background: white;
             border-radius: 20px;
             box-shadow: 0 20px 40px rgba(0,0,0,0.1);
@@ -38,13 +40,13 @@
             padding: 20px;
             text-align: center;
             position: relative;
+            flex-shrink: 0;
         }
 
         .language-selector {
             position: absolute;
             top: 15px;
-            left: 20px;
-            z-index: 100;
+            right: 20px;
         }
 
         .language-dropdown {
@@ -52,10 +54,11 @@
             border: 1px solid rgba(255, 255, 255, 0.3);
             border-radius: 8px;
             color: white;
-            padding: 5px 10px;
-            font-size: 12px;
+            padding: 8px 12px;
+            font-size: 14px;
             cursor: pointer;
-            transition: background 0.2s;
+            outline: none;
+            transition: all 0.3s ease;
         }
 
         .language-dropdown:hover {
@@ -67,20 +70,10 @@
             color: white;
         }
 
-        .chat-header h1 {
-            font-size: 24px;
-            margin-bottom: 5px;
-        }
-
-        .chat-header p {
-            font-size: 14px;
-            opacity: 0.9;
-        }
-
         .status-indicator {
             position: absolute;
             top: 20px;
-            right: 20px;
+            left: 20px;
             width: 12px;
             height: 12px;
             background: #4CAF50;
@@ -94,6 +87,17 @@
             100% { opacity: 1; }
         }
 
+        .chat-header h1 {
+            font-size: 24px;
+            margin-bottom: 5px;
+            font-weight: 600;
+        }
+
+        .chat-header p {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
         .chat-messages {
             flex: 1;
             padding: 20px;
@@ -101,14 +105,38 @@
             background: #f8f9fa;
         }
 
-        .message {
+        .welcome-message {
+            background: white;
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+
+        .welcome-message h3 {
+            color: #4CAF50;
             margin-bottom: 15px;
+            font-size: 20px;
+        }
+
+        .welcome-message p {
+            color: #666;
+            line-height: 1.6;
+            margin-bottom: 8px;
+        }
+
+        .message {
             display: flex;
+            margin-bottom: 15px;
             align-items: flex-start;
         }
 
         .message.user {
             justify-content: flex-end;
+        }
+
+        .message.ai {
+            justify-content: flex-start;
         }
 
         .message-content {
@@ -120,7 +148,7 @@
         }
 
         .message.user .message-content {
-            background: #007bff;
+            background: #4CAF50;
             color: white;
             border-bottom-right-radius: 4px;
         }
@@ -128,87 +156,103 @@
         .message.ai .message-content {
             background: white;
             color: #333;
-            border: 1px solid #e0e0e0;
             border-bottom-left-radius: 4px;
-        }
-
-        .message-time {
-            font-size: 11px;
-            color: #999;
-            margin: 5px 10px 0;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
         }
 
         .avatar {
             width: 32px;
             height: 32px;
             border-radius: 50%;
-            margin: 0 8px;
             display: flex;
             align-items: center;
             justify-content: center;
             font-size: 16px;
+            margin: 0 8px;
+            flex-shrink: 0;
         }
 
         .avatar.user {
-            background: #007bff;
-            color: white;
-        }
-
-        .avatar.ai {
             background: #4CAF50;
             color: white;
         }
 
+        .avatar.ai {
+            background: #e3f2fd;
+            color: #1976d2;
+        }
+
+        .message-time {
+            font-size: 12px;
+            color: #999;
+            margin: 5px 15px;
+        }
+
         .quick-actions {
-            padding: 10px 20px;
+            padding: 15px 20px;
             background: white;
             border-top: 1px solid #e0e0e0;
+            flex-shrink: 0;
         }
 
         .quick-buttons {
             display: flex;
-            gap: 8px;
             flex-wrap: wrap;
-            margin-bottom: 10px;
+            gap: 8px;
+            justify-content: center;
         }
 
         .quick-btn {
-            padding: 6px 12px;
-            background: #f0f0f0;
-            border: none;
-            border-radius: 15px;
-            font-size: 12px;
+            background: #f5f5f5;
+            border: 1px solid #ddd;
+            border-radius: 20px;
+            padding: 8px 16px;
+            font-size: 14px;
             cursor: pointer;
-            transition: background 0.2s;
+            transition: all 0.3s ease;
+            color: #666;
         }
 
         .quick-btn:hover {
-            background: #e0e0e0;
+            background: #4CAF50;
+            color: white;
+            border-color: #4CAF50;
+        }
+
+        .typing-indicator {
+            display: none;
+            padding: 10px 20px;
+            color: #666;
+            font-style: italic;
+            background: #f8f9fa;
+            border-top: 1px solid #e0e0e0;
         }
 
         .chat-input {
             padding: 20px;
             background: white;
             border-top: 1px solid #e0e0e0;
+            flex-shrink: 0;
         }
 
         .input-container {
             display: flex;
-            gap: 10px;
             align-items: flex-end;
+            gap: 10px;
         }
 
         .input-field {
             flex: 1;
-            padding: 12px 16px;
             border: 2px solid #e0e0e0;
-            border-radius: 25px;
-            font-size: 14px;
+            border-radius: 20px;
+            padding: 12px 16px;
+            font-size: 16px;
+            font-family: inherit;
             resize: none;
-            max-height: 100px;
-            min-height: 44px;
             outline: none;
-            transition: border-color 0.2s;
+            transition: border-color 0.3s ease;
+            min-height: 44px;
+            max-height: 100px;
         }
 
         .input-field:focus {
@@ -218,39 +262,35 @@
         .send-btn {
             width: 44px;
             height: 44px;
-            background: #4CAF50;
-            color: white;
             border: none;
             border-radius: 50%;
+            background: #4CAF50;
+            color: white;
             cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
-            transition: background 0.2s;
+            font-size: 18px;
+            transition: all 0.3s ease;
+            flex-shrink: 0;
         }
 
-        .send-btn:hover:not(:disabled) {
+        .send-btn:hover {
             background: #45a049;
+            transform: scale(1.05);
         }
 
         .send-btn:disabled {
             background: #ccc;
             cursor: not-allowed;
-        }
-
-        .typing-indicator {
-            display: none;
-            padding: 10px 16px;
-            color: #666;
-            font-style: italic;
+            transform: none;
         }
 
         .loading {
-            display: inline-block;
             width: 20px;
             height: 20px;
-            border: 2px solid #f3f3f3;
-            border-top: 2px solid #4CAF50;
+            border: 2px solid #ffffff;
+            border-top: 2px solid transparent;
             border-radius: 50%;
             animation: spin 1s linear infinite;
         }
@@ -260,196 +300,215 @@
             100% { transform: rotate(360deg); }
         }
 
-        .welcome-message {
-            text-align: center;
+        /* 🚀 新增：思考指示器样式 */
+        .thinking-indicator {
+            margin: 10px 0;
+        }
+
+        .thinking {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            border: 1px solid #dee2e6;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .thinking::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+            animation: shimmer 2s infinite;
+        }
+
+        @keyframes shimmer {
+            0% { left: -100%; }
+            100% { left: 100%; }
+        }
+
+        .thinking-dots {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 8px;
+        }
+
+        .dots {
+            display: flex;
+            gap: 2px;
+        }
+
+        .dots span {
+            display: inline-block;
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: #4CAF50;
+            animation: bounce 1.4s infinite ease-in-out both;
+        }
+
+        .dots span:nth-child(1) { animation-delay: -0.32s; }
+        .dots span:nth-child(2) { animation-delay: -0.16s; }
+        .dots span:nth-child(3) { animation-delay: 0s; }
+
+        @keyframes bounce {
+            0%, 80%, 100% {
+                transform: scale(0);
+            }
+            40% {
+                transform: scale(1);
+            }
+        }
+
+        .thinking-progress {
+            font-size: 12px;
             color: #666;
-            padding: 40px 20px;
-            line-height: 1.6;
         }
 
-        .welcome-message h3 {
-            color: #4CAF50;
-            margin-bottom: 15px;
+        .progress-bar {
+            width: 100%;
+            height: 4px;
+            background: #e0e0e0;
+            border-radius: 2px;
+            overflow: hidden;
+            margin: 4px 0;
         }
 
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #4CAF50, #45a049);
+            border-radius: 2px;
+            animation: progress 3s ease-in-out infinite;
+        }
+
+        @keyframes progress {
+            0% { width: 0%; }
+            50% { width: 70%; }
+            100% { width: 100%; }
+        }
+
+        .estimated-time {
+            margin-top: 4px;
+            font-style: italic;
+        }
+
+        /* 🚀 新增：打字机效果样式 */
+        .typing-cursor {
+            display: inline-block;
+            background: #4CAF50;
+            width: 2px;
+            height: 1.2em;
+            animation: blink 1s infinite;
+            margin-left: 2px;
+        }
+
+        @keyframes blink {
+            0%, 50% { opacity: 1; }
+            51%, 100% { opacity: 0; }
+        }
+
+        /* 🚀 新增：响应时间显示样式 */
+        .message-time {
+            font-size: 0.8em;
+            color: #888;
+            margin: 2px 0 10px 0;
+            padding: 0 20px;
+        }
+
+        .performance-info {
+            font-size: 0.75em;
+            color: #999;
+            font-style: italic;
+        }
+
+        /* 响应式设计 */
         @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+
             .chat-container {
-                width: 100%;
-                height: 100vh;
-                border-radius: 0;
+                height: 95vh;
+                border-radius: 15px;
+            }
+
+            .chat-header {
+                padding: 15px;
+            }
+
+            .chat-header h1 {
+                font-size: 20px;
+            }
+
+            .language-selector {
+                top: 10px;
+                right: 15px;
+            }
+
+            .language-dropdown {
+                padding: 6px 10px;
+                font-size: 12px;
+            }
+
+            .chat-messages {
+                padding: 15px;
             }
 
             .message-content {
                 max-width: 85%;
+                font-size: 14px;
+            }
+
+            .quick-buttons {
+                gap: 6px;
+            }
+
+            .quick-btn {
+                padding: 6px 12px;
+                font-size: 13px;
+            }
+
+            .chat-input {
+                padding: 15px;
+            }
+
+            .input-field {
+                font-size: 16px;
+                padding: 10px 14px;
             }
         }
 
-        /* 🚨 强力防护CSS：完全隐藏所有管理员相关内容 */
-        .modal-template,
-        .admin-container,
-        .sidebar,
-        .modal-content,
-        .modal-form,
-        .form-group,
-        .form-row,
-        .form-actions,
-        .primary-btn,
-        .secondary-btn,
-        .danger-btn,
-        #modal,
-        #productModal,
-        #stockModal,
-        #feedbackModal,
-        #addFeedbackModal,
-        #processFeedbackModal,
-        #addPickupLocationModal,
-        #editPickupLocationModal,
-        #addStorageAreaModal,
-        #editStorageAreaModal,
-        #storageAreaProductsModal,
-        .admin-page,
-        [id*="admin"],
-        [class*="admin"],
-        [id*="modal"],
-        [class*="modal"],
-        [id*="product"],
-        [id*="Product"],
-        [id*="feedback"],
-        [id*="Feedback"],
-        [id*="stock"],
-        [id*="Stock"],
-        form[id*="Form"],
-        form[id*="form"],
-        input[id*="product"],
-        input[id*="Product"],
-        input[id*="feedback"],
-        input[id*="Feedback"],
-        select[id*="product"],
-        select[id*="Product"],
-        textarea[id*="product"],
-        textarea[id*="Product"],
-        button[onclick*="admin"],
-        button[onclick*="Admin"] {
-            display: none !important;
-            visibility: hidden !important;
-            opacity: 0 !important;
-            position: fixed !important;
-            left: -99999px !important;
-            top: -99999px !important;
-            width: 0 !important;
-            height: 0 !important;
-            z-index: -99999 !important;
-            pointer-events: none !important;
-            overflow: hidden !important;
-        }
+        @media (max-width: 480px) {
+            .chat-header h1 {
+                font-size: 18px;
+            }
 
-        /* 🛡️ 确保客服容器始终可见且在最前面 */
-        .chat-container {
-            display: flex !important;
-            visibility: visible !important;
-            opacity: 1 !important;
-            position: relative !important;
-            left: auto !important;
-            top: auto !important;
-            z-index: 99999 !important;
-            pointer-events: auto !important;
-        }
+            .welcome-message {
+                padding: 15px;
+            }
 
-        /* 🔒 确保客服元素的字体大小和样式正常 */
-        .chat-container,
-        .chat-container * {
-            font-size: inherit !important;
-            display: inherit !important;
-            visibility: inherit !important;
-            opacity: inherit !important;
-        }
+            .welcome-message h3 {
+                font-size: 18px;
+            }
 
-        *[class*="modal"]:not(.chat-container):not(.chat-container *),
-        *[id*="modal"]:not(.chat-container):not(.chat-container *),
-        *[class*="admin"]:not(.chat-container):not(.chat-container *),
-        *[id*="admin"]:not(.chat-container):not(.chat-container *),
-        *[class*="product"]:not(.chat-container):not(.chat-container *),
-        *[id*="product"]:not(.chat-container):not(.chat-container *),
-        *[class*="feedback"]:not(.chat-container):not(.chat-container *),
-        *[id*="feedback"]:not(.chat-container):not(.chat-container *) {
-            display: none !important;
-            visibility: hidden !important;
-            opacity: 0 !important;
-            position: fixed !important;
-            left: -99999px !important;
-            top: -99999px !important;
-            width: 0 !important;
-            height: 0 !important;
-            z-index: -99999 !important;
+            .message-content {
+                max-width: 90%;
+            }
+
+            .quick-buttons {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .quick-btn {
+                text-align: center;
+            }
         }
     </style>
 </head>
 <body>
-    <!-- 🚨 立即执行的清理脚本 -->
-    <script>
-        (function() {
-            console.log('🚨 立即清理脚本启动...');
-
-            // 立即隐藏管理员相关内容
-            const style = document.createElement('style');
-            style.innerHTML = `
-                .modal-template,
-                .admin-container,
-                .sidebar,
-                .modal-content,
-                .modal-form,
-                #modal,
-                #productModal,
-                #stockModal,
-                #feedbackModal,
-                [id*="admin"]:not(.chat-container):not(.chat-container *),
-                [class*="admin"]:not(.chat-container):not(.chat-container *),
-                [id*="modal"]:not(.chat-container):not(.chat-container *),
-                [class*="modal"]:not(.chat-container):not(.chat-container *) {
-                    display: none !important;
-                    visibility: hidden !important;
-                    opacity: 0 !important;
-                }
-                .chat-container {
-                    display: flex !important;
-                    visibility: visible !important;
-                    opacity: 1 !important;
-                    z-index: 99999 !important;
-                }
-            `;
-            document.head.appendChild(style);
-
-            // 移除管理员相关元素
-            setTimeout(function() {
-                const adminSelectors = [
-                    '.modal-template',
-                    '.admin-container',
-                    '.sidebar',
-                    '.modal-content',
-                    '.modal-form',
-                    '#modal',
-                    '#productModal',
-                    '#stockModal',
-                    '#feedbackModal'
-                ];
-
-                adminSelectors.forEach(function(selector) {
-                    try {
-                        const elements = document.querySelectorAll(selector);
-                        elements.forEach(function(element) {
-                            if (!element.closest('.chat-container')) {
-                                element.remove();
-                            }
-                        });
-                    } catch (e) {
-                        console.warn('选择器错误:', selector, e);
-                    }
-                });
-                console.log('🧹 立即清理完成');
-            }, 1);
-        })();
-    </script>
-
     <div class="chat-container">
         <div class="chat-header">
             <div class="language-selector">
@@ -494,9 +553,9 @@
 
         <div class="chat-input">
             <div class="input-container">
-                <textarea 
-                    class="input-field" 
-                    id="messageInput" 
+                <textarea
+                    class="input-field"
+                    id="messageInput"
                     placeholder="请输入您的问题..."
                     rows="1"
                 ></textarea>
@@ -590,12 +649,10 @@
                     updatePageLanguage(newLanguage);
                 } else {
                     console.error('语言设置失败:', data.error);
-                    // 恢复原来的选择
                     selector.value = currentLanguage;
                 }
             } catch (error) {
                 console.error('语言切换失败:', error);
-                // 恢复原来的选择
                 selector.value = currentLanguage;
             }
         }
@@ -604,20 +661,12 @@
         function updatePageLanguage(language) {
             const texts = languageTexts[language];
 
-            // 更新标题
             document.getElementById('headerTitle').textContent = texts.headerTitle;
             document.getElementById('headerSubtitle').textContent = texts.headerSubtitle;
-
-            // 更新输入框占位符
             document.getElementById('messageInput').placeholder = texts.placeholder;
-
-            // 更新打字指示器
             document.getElementById('typingIndicator').textContent = texts.typing;
 
-            // 更新快速按钮
             updateQuickButtons(texts.quickButtons);
-
-            // 如果还有欢迎消息，更新它
             updateWelcomeMessage(texts);
         }
 
@@ -629,7 +678,6 @@
             buttons.forEach((button, index) => {
                 if (index < buttonTexts.length) {
                     button.textContent = buttonTexts[index];
-                    // 更新点击事件，使用对应的查询
                     const queries = {
                         zh: ['配送时间', '付款方式', '取货地点', '有什么水果', '有什么蔬菜', '质量问题怎么办'],
                         en: ['delivery time', 'payment methods', 'pickup location', 'what fruits available', 'what vegetables available', 'quality issues'],
@@ -670,7 +718,7 @@
             }
         }
 
-        // 自动调整输入框高度
+        // 输入框自动调整高度
         const messageInput = document.getElementById('messageInput');
         messageInput.addEventListener('input', function() {
             this.style.height = 'auto';
@@ -685,18 +733,20 @@
             }
         });
 
-        // 发送消息
+        // 发送消息（已优化用户体验）
         async function sendMessage() {
             const message = messageInput.value.trim();
             if (!message || isLoading) return;
 
-            // 显示用户消息
             addMessage(message, 'user');
             messageInput.value = '';
             messageInput.style.height = 'auto';
 
-            // 设置加载状态
-            setLoading(true);
+            // 🚀 显示增强的加载状态
+            setLoadingWithProgress(true);
+
+            // 🚀 记录请求开始时间（用于性能统计）
+            const startTime = Date.now();
 
             try {
                 const response = await fetch('/api/chat', {
@@ -709,18 +759,26 @@
 
                 const data = await response.json();
 
+                // 🚀 计算响应时间
+                const responseTime = Date.now() - startTime;
+                console.log(`[性能] 响应时间: ${responseTime}ms`);
+
+                // 🚀 记录响应时间用于预估
+                recordResponseTime(responseTime);
+
                 if (data.success) {
-                    addMessage(data.response, 'ai', data.timestamp);
+                    // 🚀 使用打字机效果显示AI回复
+                    addMessageWithTypewriter(data.response, 'ai', data.timestamp, responseTime);
                 } else {
                     const texts = languageTexts[currentLanguage];
-                    addMessage(texts.errorMessage + (data.error || '未知错误'), 'ai');
+                    addMessageWithTypewriter(texts.errorMessage + (data.error || '未知错误'), 'ai');
                 }
             } catch (error) {
                 console.error('发送消息失败:', error);
                 const texts = languageTexts[currentLanguage];
-                addMessage(texts.networkError, 'ai');
+                addMessageWithTypewriter(texts.networkError, 'ai');
             } finally {
-                setLoading(false);
+                setLoadingWithProgress(false);
             }
         }
 
@@ -730,12 +788,11 @@
             sendMessage();
         }
 
-        // 添加消息到聊天界面
+        // 添加消息到聊天界面（保留原版本，用于用户消息）
         function addMessage(content, sender, timestamp = null) {
             const chatMessages = document.getElementById('chatMessages');
             const welcomeMessage = chatMessages.querySelector('.welcome-message');
-            
-            // 移除欢迎消息
+
             if (welcomeMessage) {
                 welcomeMessage.remove();
             }
@@ -743,9 +800,9 @@
             const messageDiv = document.createElement('div');
             messageDiv.className = `message ${sender}`;
 
-            const currentTime = timestamp || new Date().toLocaleTimeString('zh-CN', { 
-                hour: '2-digit', 
-                minute: '2-digit' 
+            const currentTime = timestamp || new Date().toLocaleTimeString('zh-CN', {
+                hour: '2-digit',
+                minute: '2-digit'
             });
 
             if (sender === 'user') {
@@ -762,32 +819,134 @@
 
             chatMessages.appendChild(messageDiv);
 
-            // 添加时间戳
             const timeDiv = document.createElement('div');
             timeDiv.className = 'message-time';
             timeDiv.style.textAlign = sender === 'user' ? 'right' : 'left';
             timeDiv.textContent = currentTime;
             chatMessages.appendChild(timeDiv);
 
-            // 滚动到底部
             chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        // 🚀 带打字机效果的消息添加函数（新增）
+        function addMessageWithTypewriter(content, sender, timestamp = null, responseTime = null) {
+            const chatMessages = document.getElementById('chatMessages');
+            const welcomeMessage = chatMessages.querySelector('.welcome-message');
+
+            if (welcomeMessage) {
+                welcomeMessage.remove();
+            }
+
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${sender}`;
+
+            const currentTime = timestamp || new Date().toLocaleTimeString('zh-CN', {
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+
+            if (sender === 'user') {
+                // 用户消息直接显示
+                messageDiv.innerHTML = `
+                    <div class="message-content">${content}</div>
+                    <div class="avatar user">👤</div>
+                `;
+                chatMessages.appendChild(messageDiv);
+            } else {
+                // AI消息使用打字机效果
+                messageDiv.innerHTML = `
+                    <div class="avatar ai">🤖</div>
+                    <div class="message-content">
+                        <div class="typing-cursor">|</div>
+                    </div>
+                `;
+                chatMessages.appendChild(messageDiv);
+
+                // 🚀 实现打字机效果
+                const messageContent = messageDiv.querySelector('.message-content');
+                const cursor = messageContent.querySelector('.typing-cursor');
+
+                // 格式化内容
+                const formattedContent = formatMessage(content);
+
+                // 打字机动画
+                typewriterEffect(messageContent, formattedContent, cursor, responseTime);
+            }
+
+            // 添加时间戳
+            const timeDiv = document.createElement('div');
+            timeDiv.className = 'message-time';
+            timeDiv.style.textAlign = sender === 'user' ? 'right' : 'left';
+
+            // 🚀 为AI回复添加响应时间信息
+            if (sender === 'ai' && responseTime) {
+                timeDiv.textContent = `${currentTime} (${responseTime}ms)`;
+                timeDiv.style.fontSize = '0.75em';
+                timeDiv.style.color = '#888';
+            } else {
+                timeDiv.textContent = currentTime;
+            }
+
+            chatMessages.appendChild(timeDiv);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        // 🚀 打字机效果实现（新增）
+        function typewriterEffect(container, content, cursor, responseTime) {
+            // 移除光标，准备开始打字
+            cursor.remove();
+
+            // 创建内容容器
+            const contentDiv = document.createElement('div');
+            container.appendChild(contentDiv);
+
+            // 计算打字速度（根据内容长度调整）
+            const baseSpeed = 30; // 基础速度：30ms每字符
+            const maxSpeed = 15;   // 最快速度：15ms每字符
+            const minSpeed = 50;   // 最慢速度：50ms每字符
+
+            // 根据响应时间调整打字速度（响应越快，打字越快）
+            let typingSpeed = baseSpeed;
+            if (responseTime) {
+                if (responseTime < 2000) {
+                    typingSpeed = maxSpeed; // 快速响应，快速打字
+                } else if (responseTime > 10000) {
+                    typingSpeed = minSpeed; // 慢速响应，慢速打字
+                }
+            }
+
+            let index = 0;
+            const typeInterval = setInterval(() => {
+                if (index < content.length) {
+                    contentDiv.innerHTML = content.substring(0, index + 1);
+                    index++;
+
+                    // 自动滚动到底部
+                    const chatMessages = document.getElementById('chatMessages');
+                    chatMessages.scrollTop = chatMessages.scrollHeight;
+                } else {
+                    clearInterval(typeInterval);
+
+                    // 🚀 打字完成后的效果
+                    contentDiv.style.borderRight = 'none';
+
+                    // 显示完成提示（可选）
+                    if (responseTime && responseTime > 5000) {
+                        console.log(`[用户体验] 长响应时间 ${responseTime}ms 已通过打字机效果优化`);
+                    }
+                }
+            }, typingSpeed);
         }
 
         // 格式化消息内容
         function formatMessage(content) {
-            // 处理换行
             content = content.replace(/\n/g, '<br>');
-            
-            // 处理粗体
             content = content.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
-            
-            // 处理列表项
             content = content.replace(/^• (.+)$/gm, '<div style="margin-left: 15px;">• $1</div>');
-            
             return content;
         }
 
-        // 设置加载状态
+        // 设置加载状态（保留原版本）
         function setLoading(loading) {
             isLoading = loading;
             const sendBtn = document.getElementById('sendBtn');
@@ -808,178 +967,129 @@
             }
         }
 
-        // 🚨 强力防护函数：彻底清理所有管理员相关元素
-        function cleanupAdminElements() {
-            console.log('🧹 开始清理管理员元素...');
+        // 🚀 增强的加载状态（新增）
+        function setLoadingWithProgress(loading) {
+            isLoading = loading;
+            const sendBtn = document.getElementById('sendBtn');
+            const sendIcon = document.getElementById('sendIcon');
+            const loadingIcon = document.getElementById('loadingIcon');
+            const typingIndicator = document.getElementById('typingIndicator');
 
-            // 扩展的管理员选择器列表
-            const adminSelectors = [
-                '.modal-template',
-                '.admin-container',
-                '.sidebar',
-                '.modal-content',
-                '.modal-form',
-                '.form-group',
-                '.form-row',
-                '.form-actions',
-                '#modal',
-                '#productModal',
-                '#stockModal',
-                '#feedbackModal',
-                '#addFeedbackModal',
-                '#processFeedbackModal',
-                '#addPickupLocationModal',
-                '#editPickupLocationModal',
-                '#addStorageAreaModal',
-                '#editStorageAreaModal',
-                '#storageAreaProductsModal',
-                '[id*="admin"]',
-                '[class*="admin"]',
-                '[id*="Modal"]',
-                '[id*="modal"]',
-                '[id*="product"]',
-                '[id*="Product"]',
-                '[id*="feedback"]',
-                '[id*="Feedback"]',
-                '[id*="stock"]',
-                '[id*="Stock"]',
-                'form[id*="Form"]',
-                'form[id*="form"]',
-                'input[id*="product"]',
-                'input[id*="Product"]',
-                'select[id*="product"]',
-                'textarea[id*="product"]',
-                'button[onclick*="admin"]'
-            ];
+            if (loading) {
+                sendBtn.disabled = true;
+                sendIcon.style.display = 'none';
+                loadingIcon.style.display = 'block';
 
-            let removedCount = 0;
+                // 🚀 显示智能提示信息
+                showThinkingIndicator();
 
-            // 移除所有匹配的元素
-            adminSelectors.forEach(selector => {
-                try {
-                    const elements = document.querySelectorAll(selector);
-                    elements.forEach(element => {
-                        if (element && !element.closest('.chat-container')) {
-                            element.remove();
-                            removedCount++;
-                        }
-                    });
-                } catch (e) {
-                    console.warn('选择器错误:', selector, e);
-                }
-            });
+                // 🚀 预估响应时间（基于历史数据）
+                showEstimatedTime();
 
-            // 检查并移除包含管理员关键词的文本节点
-            const walker = document.createTreeWalker(
-                document.body,
-                NodeFilter.SHOW_TEXT,
-                {
-                    acceptNode: function(node) {
-                        const text = node.textContent.toLowerCase();
-                        if ((text.includes('add product') ||
-                             text.includes('产品详情') ||
-                             text.includes('adjust stock') ||
-                             text.includes('feedback details') ||
-                             text.includes('customer feedback')) &&
-                            !node.parentElement.closest('.chat-container')) {
-                            return NodeFilter.FILTER_ACCEPT;
-                        }
-                        return NodeFilter.FILTER_REJECT;
-                    }
-                }
-            );
+            } else {
+                sendBtn.disabled = false;
+                sendIcon.style.display = 'block';
+                loadingIcon.style.display = 'none';
 
-            const textNodesToRemove = [];
-            let node;
-            while (node = walker.nextNode()) {
-                textNodesToRemove.push(node.parentElement);
+                // 🚀 隐藏提示信息
+                hideThinkingIndicator();
             }
-
-            textNodesToRemove.forEach(element => {
-                if (element && element.parentNode) {
-                    element.parentNode.removeChild(element);
-                    removedCount++;
-                }
-            });
-
-            // 确保客服容器可见且在最前面
-            const chatContainer = document.querySelector('.chat-container');
-            if (chatContainer) {
-                chatContainer.style.display = 'flex';
-                chatContainer.style.visibility = 'visible';
-                chatContainer.style.opacity = '1';
-                chatContainer.style.zIndex = '99999';
-                chatContainer.style.position = 'relative';
-            }
-
-            // 只隐藏明确的管理员相关元素
-            const adminElements = document.querySelectorAll('.modal-template, .admin-container, .sidebar, .modal-content, .modal-form, #modal, #productModal, #stockModal, #feedbackModal');
-            adminElements.forEach(element => {
-                if (!element.closest('.chat-container')) {
-                    element.style.display = 'none';
-                }
-            });
-
-            console.log(`🧹 清理完成，移除了 ${removedCount} 个元素`);
         }
 
-        // 🚨 立即开始清理（在DOM加载前）
-        cleanupAdminElements();
+        // 🚀 显示AI思考指示器（新增）
+        function showThinkingIndicator() {
+            const chatMessages = document.getElementById('chatMessages');
 
-        // 页面加载完成后聚焦输入框和初始化语言
+            // 移除之前的思考指示器
+            const existingIndicator = chatMessages.querySelector('.thinking-indicator');
+            if (existingIndicator) {
+                existingIndicator.remove();
+            }
+
+            // 创建新的思考指示器
+            const thinkingDiv = document.createElement('div');
+            thinkingDiv.className = 'thinking-indicator';
+            thinkingDiv.innerHTML = `
+                <div class="message ai">
+                    <div class="avatar ai">🤖</div>
+                    <div class="message-content thinking">
+                        <div class="thinking-dots">
+                            <span>AI正在思考</span>
+                            <div class="dots">
+                                <span>.</span>
+                                <span>.</span>
+                                <span>.</span>
+                            </div>
+                        </div>
+                        <div class="thinking-progress">
+                            <div class="progress-bar">
+                                <div class="progress-fill"></div>
+                            </div>
+                            <div class="estimated-time">预计等待: <span id="timeEstimate">计算中...</span></div>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            chatMessages.appendChild(thinkingDiv);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        // 🚀 隐藏AI思考指示器（新增）
+        function hideThinkingIndicator() {
+            const thinkingIndicator = document.querySelector('.thinking-indicator');
+            if (thinkingIndicator) {
+                thinkingIndicator.remove();
+            }
+        }
+
+        // 🚀 显示预估响应时间（新增）
+        function showEstimatedTime() {
+            // 基于历史响应时间计算预估时间
+            const averageResponseTime = getAverageResponseTime();
+            const estimatedSeconds = Math.ceil(averageResponseTime / 1000);
+
+            setTimeout(() => {
+                const timeEstimateElement = document.getElementById('timeEstimate');
+                if (timeEstimateElement) {
+                    timeEstimateElement.textContent = `${estimatedSeconds}秒`;
+                }
+            }, 500);
+        }
+
+        // 🚀 获取平均响应时间（新增）
+        function getAverageResponseTime() {
+            // 从localStorage获取历史响应时间
+            const responseTimes = JSON.parse(localStorage.getItem('aiResponseTimes') || '[]');
+
+            if (responseTimes.length === 0) {
+                return 8000; // 默认8秒
+            }
+
+            // 计算最近10次的平均响应时间
+            const recentTimes = responseTimes.slice(-10);
+            const average = recentTimes.reduce((sum, time) => sum + time, 0) / recentTimes.length;
+
+            return Math.max(3000, Math.min(average, 15000)); // 限制在3-15秒之间
+        }
+
+        // 🚀 记录响应时间（新增）
+        function recordResponseTime(responseTime) {
+            const responseTimes = JSON.parse(localStorage.getItem('aiResponseTimes') || '[]');
+            responseTimes.push(responseTime);
+
+            // 只保留最近50次记录
+            if (responseTimes.length > 50) {
+                responseTimes.splice(0, responseTimes.length - 50);
+            }
+
+            localStorage.setItem('aiResponseTimes', JSON.stringify(responseTimes));
+        }
+
+        // 页面加载完成后初始化
         window.addEventListener('load', function() {
-            console.log('🔄 页面加载完成，开始强力清理...');
-
-            // 多次清理确保彻底
-            cleanupAdminElements();
-            setTimeout(cleanupAdminElements, 100);
-            setTimeout(cleanupAdminElements, 500);
-            setTimeout(cleanupAdminElements, 1000);
-
             messageInput.focus();
             initializeLanguage();
-        });
-
-        // DOM内容加载完成时也清理
-        document.addEventListener('DOMContentLoaded', function() {
-            console.log('🔄 DOM加载完成，清理管理员内容...');
-            cleanupAdminElements();
-        });
-
-        // 定期检查和清理（每2秒）
-        setInterval(cleanupAdminElements, 2000);
-
-        // 监听DOM变化，立即清理新添加的管理员内容
-        const observer = new MutationObserver(function(mutations) {
-            let needsCleanup = false;
-            mutations.forEach(function(mutation) {
-                if (mutation.type === 'childList') {
-                    mutation.addedNodes.forEach(function(node) {
-                        if (node.nodeType === Node.ELEMENT_NODE) {
-                            const text = node.textContent || '';
-                            if (text.includes('Add Product') ||
-                                text.includes('产品详情') ||
-                                text.includes('Adjust Stock') ||
-                                text.includes('Feedback Details') ||
-                                node.id && (node.id.includes('modal') || node.id.includes('admin')) ||
-                                node.className && (node.className.includes('modal') || node.className.includes('admin'))) {
-                                needsCleanup = true;
-                            }
-                        }
-                    });
-                }
-            });
-
-            if (needsCleanup) {
-                console.log('🚨 检测到管理员内容被添加，立即清理！');
-                cleanupAdminElements();
-            }
-        });
-
-        // 开始监听DOM变化
-        observer.observe(document.body, {
-            childList: true,
-            subtree: true
         });
     </script>
 </body>

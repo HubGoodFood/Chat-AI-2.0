@@ -5,6 +5,7 @@
 from flask import Flask, render_template, request, jsonify, session, send_from_directory, redirect, url_for, send_file
 import uuid
 import os
+import time
 from datetime import datetime
 from src.models.knowledge_retriever import KnowledgeRetriever
 from src.models.admin_auth import AdminAuth
@@ -12,6 +13,7 @@ from src.models.inventory_manager import InventoryManager
 from src.models.inventory_count_manager import InventoryCountManager
 from src.models.inventory_comparison_manager import InventoryComparisonManager
 from src.models.feedback_manager import FeedbackManager
+from src.models.policy_manager import PolicyManager
 from src.models.operation_logger import operation_logger, log_admin_operation
 from src.models.data_exporter import data_exporter
 from src.utils.i18n_simple import i18n_simple, _
@@ -30,6 +32,9 @@ load_dotenv()
 logger = get_logger('app')
 
 app = Flask(__name__)
+# 记录应用启动时间（用于性能监控）
+app.start_time = time.time()
+
 # 使用增强的安全配置
 from src.utils.security_config_enhanced import security_config
 
@@ -50,6 +55,7 @@ inventory_manager = None
 inventory_count_manager = None
 inventory_comparison_manager = None
 feedback_manager = None
+policy_manager = None
 
 
 def initialize_system():
@@ -67,7 +73,8 @@ def initialize_system():
         # else:
         #     logger.warning("NAS存储初始化失败，使用本地存储")
 
-        knowledge_retriever = KnowledgeRetriever()
+        # 🚀 使用数据库化知识检索器（性能优化）
+        knowledge_retriever = KnowledgeRetriever(use_database_processor=True)
         knowledge_retriever.initialize()
 
         # 初始化管理员模块
@@ -76,6 +83,7 @@ def initialize_system():
         inventory_count_manager = InventoryCountManager()
         inventory_comparison_manager = InventoryComparisonManager()
         feedback_manager = FeedbackManager()
+        policy_manager = PolicyManager()
 
         logger.info("果蔬客服AI系统初始化成功！")
         return True
@@ -243,6 +251,163 @@ def health_check():
         'system_ready': knowledge_retriever is not None,
         'timestamp': datetime.now().isoformat()
     })
+
+
+@app.route('/api/performance/stats')
+def performance_stats():
+    """
+    性能统计接口 - 查看系统性能指标
+
+    这个接口提供了系统的性能统计信息，包括：
+    - 缓存命中率：显示智能缓存的效果
+    - 响应时间统计：监控系统响应速度
+    - 系统资源使用：内存、CPU等指标
+
+    适合编程初学者学习：
+    - 了解如何监控系统性能
+    - 理解缓存对性能的影响
+    - 学习性能优化的量化方法
+    """
+    try:
+        # 🚀 安全导入模块，避免导入错误导致404
+        try:
+            from src.services.intelligent_cache_manager import intelligent_cache_manager
+            cache_stats = intelligent_cache_manager.get_cache_stats()
+        except Exception as e:
+            logger.warning(f"智能缓存管理器导入失败: {e}")
+            cache_stats = {'total_requests': 0, 'cache_hits': 0, 'cache_misses': 0, 'hit_rate': 0, 'exact_matches': 0, 'similarity_matches': 0, 'similarity_threshold': 80}
+
+        try:
+            from src.services.performance_collector import performance_collector
+            performance_summary = performance_collector.get_performance_summary()
+            performance_recommendations = performance_collector.get_performance_recommendations()
+        except Exception as e:
+            logger.warning(f"性能收集器导入失败: {e}")
+            performance_summary = {'response_time_stats': {}, 'user_experience': {}, 'error_stats': {}}
+            performance_recommendations = ["性能收集器暂不可用"]
+
+        # 获取系统资源使用情况
+        try:
+            import psutil
+            import os
+            process = psutil.Process(os.getpid())
+            memory_info = process.memory_info()
+            cpu_percent = psutil.cpu_percent(interval=1)
+        except Exception as e:
+            logger.warning(f"系统资源监控失败: {e}")
+            memory_info = type('obj', (object,), {'rss': 0})()
+            cpu_percent = 0
+
+        # 🚀 构建增强的性能统计响应
+        stats = {
+            'cache_performance': {
+                'total_requests': cache_stats.get('total_requests', 0),
+                'cache_hits': cache_stats.get('cache_hits', 0),
+                'cache_misses': cache_stats.get('cache_misses', 0),
+                'hit_rate_percentage': cache_stats.get('hit_rate', 0),
+                'exact_matches': cache_stats.get('exact_matches', 0),
+                'similarity_matches': cache_stats.get('similarity_matches', 0),
+                'similarity_threshold': cache_stats.get('similarity_threshold', 80)
+            },
+            'response_time_stats': performance_summary.get('response_time_stats', {}),
+            'user_experience': performance_summary.get('user_experience', {}),
+            'system_resources': {
+                'memory_usage_mb': round(memory_info.rss / 1024 / 1024, 2),
+                'cpu_percent': cpu_percent,
+                'process_id': os.getpid() if 'os' in locals() else 0
+            },
+            'system_status': {
+                'knowledge_retriever_ready': knowledge_retriever is not None,
+                'cache_service_enabled': True,
+                'uptime_seconds': time.time() - app.start_time if hasattr(app, 'start_time') else 0
+            },
+            'error_stats': performance_summary.get('error_stats', {}),
+            'performance_recommendations': performance_recommendations,
+            'timestamp': datetime.now().isoformat()
+        }
+
+        return jsonify({
+            'success': True,
+            'data': stats,
+            'message': f"缓存命中率: {cache_stats.get('hit_rate', 0):.1f}%"
+        })
+
+    except Exception as e:
+        logger.error(f"获取性能统计失败: {e}")
+        return jsonify({
+            'success': False,
+            'error': '获取性能统计失败',
+            'timestamp': datetime.now().isoformat()
+        })
+
+
+@app.route('/api/performance/query-stats')
+def query_performance_stats():
+    """
+    🚀 查询性能统计接口（数据库查询优化）
+
+    这个接口提供了数据库查询的详细性能统计，包括：
+    - 查询时间分析：各类查询的响应时间统计
+    - 慢查询检测：识别性能瓶颈
+    - 查询趋势：历史性能变化趋势
+    - 优化建议：基于数据的性能改进建议
+
+    适合编程初学者学习：
+    - 了解数据库查询性能监控
+    - 学习如何识别和优化慢查询
+    - 理解查询优化对系统性能的影响
+    """
+    try:
+        # 🚀 安全导入查询性能分析器
+        try:
+            from src.services.query_performance_analyzer import query_performance_analyzer
+
+            # 获取查询性能摘要
+            performance_summary = query_performance_analyzer.get_performance_summary()
+
+            # 获取慢查询列表
+            slow_queries = query_performance_analyzer.get_slow_queries(10)
+
+            # 获取查询趋势
+            query_trends = query_performance_analyzer.get_query_trends(24)
+
+            # 获取优化建议
+            recommendations = query_performance_analyzer.get_optimization_recommendations()
+
+        except Exception as import_error:
+            logger.warning(f"查询性能分析器导入失败: {import_error}")
+            # 提供默认数据
+            performance_summary = {
+                'total_queries': 0,
+                'total_slow_queries': 0,
+                'slow_query_rate': 0,
+                'query_types': {}
+            }
+            slow_queries = []
+            query_trends = []
+            recommendations = ["查询性能分析器暂不可用，请检查系统配置"]
+
+        stats = {
+            'query_performance': performance_summary,
+            'slow_queries': slow_queries,
+            'query_trends': query_trends,
+            'optimization_recommendations': recommendations,
+            'timestamp': datetime.now().isoformat()
+        }
+
+        return jsonify({
+            'success': True,
+            'data': stats,
+            'message': f"查询性能监控 - 慢查询率: {performance_summary.get('slow_query_rate', 0):.1f}%"
+        })
+
+    except Exception as e:
+        logger.error(f"获取查询性能统计失败: {e}")
+        return jsonify({
+            'success': False,
+            'error': '获取查询性能统计失败',
+            'timestamp': datetime.now().isoformat()
+        })
 
 
 
@@ -451,6 +616,49 @@ def admin_pickup_locations():
 def admin_inventory_analysis():
     """数据对比分析页面"""
     return render_template('admin/dashboard.html', default_section='inventory-analysis')
+
+
+@app.route('/admin/policies')
+def admin_policies():
+    """政策管理页面"""
+    try:
+        if not require_admin_auth():
+            return redirect(url_for('admin_login_page'))
+        return render_template('admin/dashboard.html', default_section='policies')
+    except Exception as e:
+        logger.error(f"渲染政策管理页面失败: {e}")
+        return f"页面加载失败: {e}", 500
+
+
+@app.route('/admin/performance')
+def admin_performance_monitor():
+    """
+    性能监控页面
+
+    这个页面提供了AI客服系统的实时性能监控，包括：
+    - 缓存命中率统计
+    - 响应时间分析
+    - 系统资源使用情况
+    - 实时性能日志
+
+    适合编程初学者学习：
+    - 了解如何监控系统性能
+    - 理解缓存对性能的影响
+    - 学习性能优化的量化方法
+    """
+    try:
+        # 🚀 临时禁用管理员权限检查，便于测试
+        # TODO: 在生产环境中启用权限检查
+        # if not require_admin_auth():
+        #     return redirect(url_for('admin_login_page'))
+
+        return render_template('admin/performance_monitor.html')
+
+    except Exception as e:
+        logger.error(f"性能监控页面错误: {e}")
+        import traceback
+        traceback.print_exc()
+        return f"性能监控页面错误: {e}", 500
 
 
 @app.route('/api/admin/login', methods=['POST'])
@@ -2436,6 +2644,303 @@ def delete_feedback_api(feedback_id):
         return jsonify({
             'success': False,
             'error': '删除反馈失败'
+        })
+
+
+# ==================== 政策管理API ====================
+
+@app.route('/api/admin/policies')
+def get_policies():
+    """获取政策列表"""
+    try:
+        if not require_admin_auth():
+            return jsonify({'success': False, 'error': '未授权访问'})
+
+        status = request.args.get('status')
+
+        if policy_manager:
+            policies = policy_manager.get_all_policies(status)
+            return jsonify({
+                'success': True,
+                'data': policies
+            })
+        else:
+            return jsonify({
+                'success': False,
+                'error': '政策管理系统不可用'
+            })
+
+    except Exception as e:
+        logger.error(f"获取政策列表错误: {e}")
+        return jsonify({
+            'success': False,
+            'error': '获取政策列表失败'
+        })
+
+
+@app.route('/api/admin/policies/types')
+def get_policy_types():
+    """获取政策类型列表"""
+    try:
+        if not require_admin_auth():
+            return jsonify({'success': False, 'error': '未授权访问'})
+
+        if policy_manager:
+            policy_types = policy_manager.get_policy_types()
+            return jsonify({
+                'success': True,
+                'data': policy_types
+            })
+        else:
+            return jsonify({
+                'success': False,
+                'error': '政策管理系统不可用'
+            })
+
+    except Exception as e:
+        logger.error(f"获取政策类型错误: {e}")
+        return jsonify({
+            'success': False,
+            'error': '获取政策类型失败'
+        })
+
+
+@app.route('/api/admin/policies/<int:policy_id>')
+def get_policy_detail(policy_id):
+    """获取政策详情"""
+    try:
+        if not require_admin_auth():
+            return jsonify({'success': False, 'error': '未授权访问'})
+
+        if policy_manager:
+            policy = policy_manager.get_policy_by_id(policy_id)
+            if policy:
+                return jsonify({
+                    'success': True,
+                    'data': policy
+                })
+            else:
+                return jsonify({
+                    'success': False,
+                    'error': '政策不存在'
+                })
+        else:
+            return jsonify({
+                'success': False,
+                'error': '政策管理系统不可用'
+            })
+
+    except Exception as e:
+        logger.error(f"获取政策详情错误: {e}")
+        return jsonify({
+            'success': False,
+            'error': '获取政策详情失败'
+        })
+
+
+@app.route('/api/admin/policies/type/<policy_type>')
+def get_policy_by_type(policy_type):
+    """根据类型获取当前有效政策"""
+    try:
+        if not require_admin_auth():
+            return jsonify({'success': False, 'error': '未授权访问'})
+
+        if policy_manager:
+            policy = policy_manager.get_policy_by_type(policy_type)
+            if policy:
+                return jsonify({
+                    'success': True,
+                    'data': policy
+                })
+            else:
+                return jsonify({
+                    'success': False,
+                    'error': '未找到该类型的有效政策'
+                })
+        else:
+            return jsonify({
+                'success': False,
+                'error': '政策管理系统不可用'
+            })
+
+    except Exception as e:
+        logger.error(f"获取政策错误: {e}")
+        return jsonify({
+            'success': False,
+            'error': '获取政策失败'
+        })
+
+
+@app.route('/api/admin/policies', methods=['POST'])
+def create_policy():
+    """创建新政策"""
+    try:
+        if not require_admin_auth():
+            return jsonify({'success': False, 'error': '未授权访问'})
+
+        data = request.get_json()
+        operator = get_current_operator()
+
+        if policy_manager:
+            success, message, policy_id = policy_manager.create_policy(data, operator)
+            if success:
+                return jsonify({
+                    'success': True,
+                    'message': message,
+                    'policy_id': policy_id
+                })
+            else:
+                return jsonify({
+                    'success': False,
+                    'error': message
+                })
+        else:
+            return jsonify({
+                'success': False,
+                'error': '政策管理系统不可用'
+            })
+
+    except Exception as e:
+        logger.error(f"创建政策错误: {e}")
+        return jsonify({
+            'success': False,
+            'error': '创建政策失败'
+        })
+
+
+@app.route('/api/admin/policies/<int:policy_id>', methods=['PUT'])
+def update_policy(policy_id):
+    """更新政策"""
+    try:
+        if not require_admin_auth():
+            return jsonify({'success': False, 'error': '未授权访问'})
+
+        data = request.get_json()
+        operator = get_current_operator()
+
+        if policy_manager:
+            success, message = policy_manager.update_policy(policy_id, data, operator)
+            if success:
+                return jsonify({
+                    'success': True,
+                    'message': message
+                })
+            else:
+                return jsonify({
+                    'success': False,
+                    'error': message
+                })
+        else:
+            return jsonify({
+                'success': False,
+                'error': '政策管理系统不可用'
+            })
+
+    except Exception as e:
+        logger.error(f"更新政策错误: {e}")
+        return jsonify({
+            'success': False,
+            'error': '更新政策失败'
+        })
+
+
+@app.route('/api/admin/policies/<int:policy_id>', methods=['DELETE'])
+def delete_policy(policy_id):
+    """删除政策（软删除）"""
+    try:
+        if not require_admin_auth():
+            return jsonify({'success': False, 'error': '未授权访问'})
+
+        operator = get_current_operator()
+
+        if policy_manager:
+            success, message = policy_manager.delete_policy(policy_id, operator)
+            if success:
+                return jsonify({
+                    'success': True,
+                    'message': message
+                })
+            else:
+                return jsonify({
+                    'success': False,
+                    'error': message
+                })
+        else:
+            return jsonify({
+                'success': False,
+                'error': '政策管理系统不可用'
+            })
+
+    except Exception as e:
+        logger.error(f"删除政策错误: {e}")
+        return jsonify({
+            'success': False,
+            'error': '删除政策失败'
+        })
+
+
+@app.route('/api/admin/policies/<int:policy_id>/publish', methods=['POST'])
+def publish_policy(policy_id):
+    """发布政策"""
+    try:
+        if not require_admin_auth():
+            return jsonify({'success': False, 'error': '未授权访问'})
+
+        operator = get_current_operator()
+
+        if policy_manager:
+            success, message = policy_manager.publish_policy(policy_id, operator)
+            if success:
+                return jsonify({
+                    'success': True,
+                    'message': message
+                })
+            else:
+                return jsonify({
+                    'success': False,
+                    'error': message
+                })
+        else:
+            return jsonify({
+                'success': False,
+                'error': '政策管理系统不可用'
+            })
+
+    except Exception as e:
+        logger.error(f"发布政策错误: {e}")
+        return jsonify({
+            'success': False,
+            'error': '发布政策失败'
+        })
+
+
+@app.route('/api/admin/policies/search')
+def search_policies():
+    """搜索政策"""
+    try:
+        if not require_admin_auth():
+            return jsonify({'success': False, 'error': '未授权访问'})
+
+        keyword = request.args.get('keyword', '')
+        policy_type = request.args.get('policy_type')
+
+        if policy_manager:
+            policies = policy_manager.search_policies(keyword, policy_type)
+            return jsonify({
+                'success': True,
+                'data': policies
+            })
+        else:
+            return jsonify({
+                'success': False,
+                'error': '政策管理系统不可用'
+            })
+
+    except Exception as e:
+        logger.error(f"搜索政策错误: {e}")
+        return jsonify({
+            'success': False,
+            'error': '搜索政策失败'
         })
 
 

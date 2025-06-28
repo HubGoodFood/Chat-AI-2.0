@@ -306,10 +306,65 @@ class OperationLog(Base):
         return f'<OperationLog {self.operator}: {self.operation_type}>'
 
 
+class Policy(Base):
+    """平台政策模型"""
+    __tablename__ = 'policies'
+
+    id = Column(Integer, primary_key=True)
+    policy_type = Column(String(50), nullable=False, index=True)  # 政策类型
+    title = Column(String(200), nullable=False)  # 政策标题
+    content = Column(Text, nullable=False)  # 政策内容（富文本HTML）
+    version = Column(String(20), nullable=False, default='1.0')  # 版本号
+    status = Column(String(20), default='draft', index=True)  # draft, active, archived
+
+    # 元数据
+    summary = Column(String(500))  # 政策摘要
+    keywords = Column(String(200))  # 关键词，用于搜索
+
+    # 操作信息
+    created_by = Column(String(50), nullable=False, index=True)
+    updated_by = Column(String(50))
+    published_by = Column(String(50))
+
+    # 时间戳
+    created_at = Column(DateTime, default=datetime.utcnow, index=True)
+    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    published_at = Column(DateTime, index=True)
+
+    # 复合索引
+    __table_args__ = (
+        Index('idx_policy_type_status', 'policy_type', 'status'),
+        Index('idx_policy_created', 'created_at'),
+        Index('idx_policy_published', 'published_at'),
+    )
+
+    def __repr__(self):
+        return f'<Policy {self.policy_type}: {self.title}>'
+
+    def to_dict(self):
+        """转换为字典"""
+        return {
+            'id': self.id,
+            'policy_type': self.policy_type,
+            'title': self.title,
+            'content': self.content,
+            'version': self.version,
+            'status': self.status,
+            'summary': self.summary,
+            'keywords': self.keywords,
+            'created_by': self.created_by,
+            'updated_by': self.updated_by,
+            'published_by': self.published_by,
+            'created_at': self.created_at.isoformat() if self.created_at else None,
+            'updated_at': self.updated_at.isoformat() if self.updated_at else None,
+            'published_at': self.published_at.isoformat() if self.published_at else None
+        }
+
+
 class AdminUser(Base):
     """管理员用户模型"""
     __tablename__ = 'admin_users'
-    
+
     id = Column(Integer, primary_key=True)
     username = Column(String(50), unique=True, nullable=False, index=True)
     password_hash = Column(String(128), nullable=False)
@@ -318,26 +373,26 @@ class AdminUser(Base):
     full_name = Column(String(100))
     is_active = Column(Boolean, default=True, index=True)
     is_super_admin = Column(Boolean, default=False)
-    
+
     # 密码相关
     password_changed = Column(Boolean, default=False)
     password_updated_at = Column(DateTime)
     login_attempts = Column(Integer, default=0)
     last_attempt_at = Column(DateTime)
     locked_until = Column(DateTime)
-    
+
     # 时间戳
     created_at = Column(DateTime, default=datetime.utcnow)
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
     last_login_at = Column(DateTime)
     last_login_ip = Column(String(45))
-    
+
     # 创建信息
     created_by = Column(String(50))
-    
+
     def __repr__(self):
         return f'<AdminUser {self.username}>'
-    
+
     def to_dict(self):
         """转换为字典（不包含敏感信息）"""
         return {

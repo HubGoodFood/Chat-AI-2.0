@@ -393,4 +393,113 @@
     </div>
 </div>
 
+<!-- 政策管理模态框 -->
+
+<!-- 添加/编辑政策模态框 -->
+<div id="policyModal" class="modal-template">
+    <h2 id="policyModalTitle">{{ _('添加政策') }}</h2>
+    <form id="policyForm">
+        <input type="hidden" id="policyId" name="policy_id">
+
+        <div class="form-row">
+            <div class="form-group">
+                <label for="policyType">{{ _('政策类型') }} *</label>
+                <select id="policyType" name="policy_type" required>
+                    <option value="">{{ _('请选择政策类型') }}</option>
+                    <option value="return_policy">{{ _('退换货政策') }}</option>
+                    <option value="privacy_policy">{{ _('隐私政策') }}</option>
+                    <option value="terms_of_service">{{ _('服务条款') }}</option>
+                    <option value="shipping_policy">{{ _('配送政策') }}</option>
+                    <option value="payment_policy">{{ _('付款政策') }}</option>
+                    <option value="quality_guarantee">{{ _('质量保证') }}</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="policyVersion">{{ _('版本号') }}</label>
+                <input type="text" id="policyVersion" name="version" placeholder="{{ _('如：1.0、2.1等') }}" value="1.0">
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="policyTitle">{{ _('政策标题') }} *</label>
+            <input type="text" id="policyTitle" name="title" required placeholder="{{ _('请输入政策标题') }}">
+        </div>
+
+        <div class="form-group">
+            <label for="policySummary">{{ _('政策摘要') }}</label>
+            <textarea id="policySummary" name="summary" rows="2" placeholder="{{ _('简要描述政策内容（可选）') }}"></textarea>
+        </div>
+
+        <div class="form-group">
+            <label for="policyContent">{{ _('政策内容') }} *</label>
+            <div id="policyEditorContainer" class="editor-container">
+                <div id="policyEditor" style="height: 300px;"></div>
+            </div>
+            <textarea id="policyContent" name="content" style="display: none;" required></textarea>
+            <small class="form-help">{{ _('支持富文本编辑，可以添加格式、链接等') }}</small>
+        </div>
+
+        <div class="form-group">
+            <label for="policyKeywords">{{ _('关键词') }}</label>
+            <input type="text" id="policyKeywords" name="keywords" placeholder="{{ _('用逗号分隔多个关键词，便于搜索') }}">
+        </div>
+
+        <div class="form-row">
+            <div class="form-group">
+                <label for="policyStatus">{{ _('状态') }}</label>
+                <select id="policyStatus" name="status">
+                    <option value="draft">{{ _('草稿') }}</option>
+                    <option value="active">{{ _('已发布') }}</option>
+                    <option value="archived">{{ _('已归档') }}</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="form-actions">
+            <button type="button" class="secondary-btn" onclick="admin.closeModal()">{{ _('取消') }}</button>
+            <button type="button" id="previewPolicyBtn" class="secondary-btn">{{ _('预览') }}</button>
+            <button type="submit" class="primary-btn">{{ _('保存') }}</button>
+            <button type="button" id="publishPolicyBtn" class="success-btn" style="display: none;">{{ _('发布') }}</button>
+        </div>
+    </form>
+</div>
+
+<!-- 政策预览模态框 -->
+<div id="policyPreviewModal" class="modal-template">
+    <h2>{{ _('政策预览') }}</h2>
+    <div id="policyPreviewContent" class="policy-preview-content">
+        <div class="preview-header">
+            <h3 id="previewTitle"></h3>
+            <div class="preview-meta">
+                <span id="previewType"></span>
+                <span id="previewVersion"></span>
+                <span id="previewStatus"></span>
+            </div>
+        </div>
+        <div class="preview-summary">
+            <p id="previewSummary"></p>
+        </div>
+        <div class="preview-content">
+            <div id="previewContentBody"></div>
+        </div>
+    </div>
+    <div class="form-actions">
+        <button type="button" class="secondary-btn" onclick="admin.closeModal()">{{ _('关闭') }}</button>
+        <button type="button" class="primary-btn" onclick="admin.editCurrentPolicy()">{{ _('编辑') }}</button>
+    </div>
+</div>
+
+<!-- 政策详情查看模态框 -->
+<div id="policyDetailModal" class="modal-template">
+    <h2>{{ _('政策详情') }}</h2>
+    <div id="policyDetailContent" class="policy-detail-content">
+        <!-- 政策详情将在这里显示 -->
+    </div>
+    <div class="form-actions">
+        <button type="button" class="secondary-btn" onclick="admin.closeModal()">{{ _('关闭') }}</button>
+        <button type="button" class="primary-btn" onclick="admin.editPolicy()">{{ _('编辑') }}</button>
+        <button type="button" class="success-btn" onclick="admin.publishPolicy()">{{ _('发布') }}</button>
+    </div>
+</div>
+
 

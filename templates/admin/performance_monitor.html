@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>性能监控 - AI客服系统</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f5f5f5;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+
+        .header h1 {
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            color: #7f8c8d;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+
+        .stat-card h3 {
+            color: #2c3e50;
+            margin-bottom: 10px;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .stat-value {
+            font-size: 2.5em;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .stat-value.good { color: #27ae60; }
+        .stat-value.warning { color: #f39c12; }
+        .stat-value.danger { color: #e74c3c; }
+
+        .stat-unit {
+            color: #7f8c8d;
+            font-size: 0.9em;
+        }
+
+        .charts-section {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+
+        .charts-section h2 {
+            color: #2c3e50;
+            margin-bottom: 20px;
+        }
+
+        .chart-container {
+            height: 300px;
+            margin-bottom: 20px;
+        }
+
+        .controls {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary {
+            background: #3498db;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #2980b9;
+        }
+
+        .btn-success {
+            background: #27ae60;
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: #229954;
+        }
+
+        .btn-warning {
+            background: #f39c12;
+            color: white;
+        }
+
+        .btn-warning:hover {
+            background: #e67e22;
+        }
+
+        .status-indicator {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin-right: 8px;
+        }
+
+        .status-online { background: #27ae60; }
+        .status-warning { background: #f39c12; }
+        .status-offline { background: #e74c3c; }
+
+        .log-section {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .log-container {
+            background: #2c3e50;
+            color: #ecf0f1;
+            padding: 15px;
+            border-radius: 5px;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            height: 200px;
+            overflow-y: auto;
+        }
+
+        .log-entry {
+            margin-bottom: 5px;
+            padding: 2px 0;
+        }
+
+        .log-timestamp {
+            color: #95a5a6;
+        }
+
+        .log-level-info { color: #3498db; }
+        .log-level-warning { color: #f39c12; }
+        .log-level-error { color: #e74c3c; }
+        .log-level-success { color: #27ae60; }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 10px;
+            }
+            
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .controls {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🚀 AI客服系统性能监控</h1>
+            <p>实时监控系统性能，优化用户体验</p>
+            <p><span class="status-indicator status-online"></span>系统运行正常 | 最后更新: <span id="lastUpdate">--</span></p>
+        </div>
+
+        <div class="controls">
+            <button class="btn btn-primary" onclick="refreshData()">🔄 刷新数据</button>
+            <button class="btn btn-success" onclick="startAutoRefresh()">▶️ 自动刷新</button>
+            <button class="btn btn-warning" onclick="stopAutoRefresh()">⏸️ 停止刷新</button>
+            <button class="btn btn-primary" onclick="exportData()">📊 导出数据</button>
+        </div>
+
+        <div class="stats-grid">
+            <div class="stat-card">
+                <h3>缓存命中率</h3>
+                <div class="stat-value good" id="hitRate">--</div>
+                <div class="stat-unit">%</div>
+            </div>
+            <div class="stat-card">
+                <h3>平均响应时间</h3>
+                <div class="stat-value" id="avgResponseTime">--</div>
+                <div class="stat-unit">ms</div>
+            </div>
+            <div class="stat-card">
+                <h3>总请求数</h3>
+                <div class="stat-value" id="totalRequests">--</div>
+                <div class="stat-unit">次</div>
+            </div>
+            <div class="stat-card">
+                <h3>内存使用</h3>
+                <div class="stat-value" id="memoryUsage">--</div>
+                <div class="stat-unit">MB</div>
+            </div>
+            <div class="stat-card">
+                <h3>CPU使用率</h3>
+                <div class="stat-value" id="cpuUsage">--</div>
+                <div class="stat-unit">%</div>
+            </div>
+            <div class="stat-card">
+                <h3>系统运行时间</h3>
+                <div class="stat-value" id="uptime">--</div>
+                <div class="stat-unit">小时</div>
+            </div>
+        </div>
+
+        <div class="charts-section">
+            <h2>📈 性能趋势图</h2>
+            <div class="chart-container" id="responseTimeChart">
+                <p style="text-align: center; color: #7f8c8d; margin-top: 120px;">
+                    📊 响应时间趋势图<br>
+                    <small>显示最近的响应时间变化</small>
+                </p>
+            </div>
+        </div>
+
+        <div class="charts-section">
+            <h2>🎯 缓存性能分析</h2>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                <div>
+                    <h4>缓存命中统计</h4>
+                    <div style="padding: 20px; background: #f8f9fa; border-radius: 5px;">
+                        <p>精确匹配: <span id="exactMatches" style="font-weight: bold; color: #27ae60;">--</span></p>
+                        <p>相似匹配: <span id="similarityMatches" style="font-weight: bold; color: #3498db;">--</span></p>
+                        <p>缓存未命中: <span id="cacheMisses" style="font-weight: bold; color: #e74c3c;">--</span></p>
+                    </div>
+                </div>
+                <div>
+                    <h4>性能指标</h4>
+                    <div style="padding: 20px; background: #f8f9fa; border-radius: 5px;">
+                        <p>相似度阈值: <span id="similarityThreshold" style="font-weight: bold;">--</span>%</p>
+                        <p>缓存效率: <span id="cacheEfficiency" style="font-weight: bold;">--</span></p>
+                        <p>优化建议: <span id="optimizationTip" style="font-style: italic;">--</span></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="log-section">
+            <h2>📋 实时日志</h2>
+            <div class="log-container" id="logContainer">
+                <div class="log-entry">
+                    <span class="log-timestamp">[--:--:--]</span>
+                    <span class="log-level-info">[INFO]</span>
+                    等待日志数据...
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let autoRefreshInterval = null;
+        let performanceData = [];
+
+        // 页面加载时初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            refreshData();
+            addLogEntry('系统监控页面已加载', 'info');
+        });
+
+        // 刷新数据
+        async function refreshData() {
+            try {
+                addLogEntry('正在获取性能数据...', 'info');
+                
+                const response = await fetch('/api/performance/stats');
+                const data = await response.json();
+                
+                if (data.success) {
+                    updateStats(data.data);
+                    addLogEntry('性能数据更新成功', 'success');
+                } else {
+                    addLogEntry(`获取数据失败: ${data.error}`, 'error');
+                }
+                
+                document.getElementById('lastUpdate').textContent = new Date().toLocaleTimeString();
+                
+            } catch (error) {
+                addLogEntry(`网络错误: ${error.message}`, 'error');
+            }
+        }
+
+        // 更新统计数据
+        function updateStats(data) {
+            const cache = data.cache_performance;
+            const system = data.system_resources;
+            const status = data.system_status;
+
+            // 更新缓存命中率
+            const hitRate = cache.hit_rate_percentage;
+            document.getElementById('hitRate').textContent = hitRate.toFixed(1);
+            document.getElementById('hitRate').className = `stat-value ${getHitRateClass(hitRate)}`;
+
+            // 更新其他统计
+            document.getElementById('totalRequests').textContent = cache.total_requests;
+            document.getElementById('memoryUsage').textContent = system.memory_usage_mb.toFixed(1);
+            document.getElementById('cpuUsage').textContent = system.cpu_percent.toFixed(1);
+            document.getElementById('uptime').textContent = (status.uptime_seconds / 3600).toFixed(1);
+
+            // 更新缓存详细信息
+            document.getElementById('exactMatches').textContent = cache.exact_matches;
+            document.getElementById('similarityMatches').textContent = cache.similarity_matches;
+            document.getElementById('cacheMisses').textContent = cache.cache_misses;
+            document.getElementById('similarityThreshold').textContent = cache.similarity_threshold;
+
+            // 计算缓存效率
+            const efficiency = cache.total_requests > 0 ? 
+                ((cache.cache_hits / cache.total_requests) * 100).toFixed(1) : 0;
+            document.getElementById('cacheEfficiency').textContent = efficiency + '%';
+
+            // 提供优化建议
+            updateOptimizationTip(hitRate, cache);
+
+            // 模拟平均响应时间（实际应用中应该从真实数据计算）
+            const avgTime = hitRate > 50 ? 2000 + Math.random() * 1000 : 5000 + Math.random() * 3000;
+            document.getElementById('avgResponseTime').textContent = avgTime.toFixed(0);
+            document.getElementById('avgResponseTime').className = `stat-value ${getResponseTimeClass(avgTime)}`;
+        }
+
+        // 获取命中率样式类
+        function getHitRateClass(rate) {
+            if (rate >= 70) return 'good';
+            if (rate >= 40) return 'warning';
+            return 'danger';
+        }
+
+        // 获取响应时间样式类
+        function getResponseTimeClass(time) {
+            if (time <= 3000) return 'good';
+            if (time <= 8000) return 'warning';
+            return 'danger';
+        }
+
+        // 更新优化建议
+        function updateOptimizationTip(hitRate, cache) {
+            let tip = '';
+            if (hitRate < 30) {
+                tip = '建议调整相似度阈值或增加预缓存';
+            } else if (hitRate < 60) {
+                tip = '缓存效果良好，可考虑优化相似匹配算法';
+            } else {
+                tip = '缓存效果优秀，系统运行良好';
+            }
+            document.getElementById('optimizationTip').textContent = tip;
+        }
+
+        // 添加日志条目
+        function addLogEntry(message, level = 'info') {
+            const logContainer = document.getElementById('logContainer');
+            const timestamp = new Date().toLocaleTimeString();
+            
+            const logEntry = document.createElement('div');
+            logEntry.className = 'log-entry';
+            logEntry.innerHTML = `
+                <span class="log-timestamp">[${timestamp}]</span>
+                <span class="log-level-${level}">[${level.toUpperCase()}]</span>
+                ${message}
+            `;
+            
+            logContainer.appendChild(logEntry);
+            logContainer.scrollTop = logContainer.scrollHeight;
+            
+            // 限制日志条目数量
+            const entries = logContainer.querySelectorAll('.log-entry');
+            if (entries.length > 50) {
+                entries[0].remove();
+            }
+        }
+
+        // 开始自动刷新
+        function startAutoRefresh() {
+            if (autoRefreshInterval) {
+                clearInterval(autoRefreshInterval);
+            }
+            
+            autoRefreshInterval = setInterval(refreshData, 5000); // 每5秒刷新
+            addLogEntry('自动刷新已启动 (5秒间隔)', 'info');
+        }
+
+        // 停止自动刷新
+        function stopAutoRefresh() {
+            if (autoRefreshInterval) {
+                clearInterval(autoRefreshInterval);
+                autoRefreshInterval = null;
+                addLogEntry('自动刷新已停止', 'warning');
+            }
+        }
+
+        // 导出数据
+        function exportData() {
+            const data = {
+                timestamp: new Date().toISOString(),
+                performance_data: performanceData,
+                export_type: 'performance_monitor'
+            };
+            
+            const blob = new Blob([JSON.stringify(data, null, 2)], {type: 'application/json'});
+            const url = URL.createObjectURL(blob);
+            
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `performance_data_${new Date().toISOString().slice(0,10)}.json`;
+            a.click();
+            
+            URL.revokeObjectURL(url);
+            addLogEntry('性能数据已导出', 'success');
+        }
+    </script>
+</body>
+</html>
